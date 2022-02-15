@@ -1,20 +1,24 @@
-import React from 'react';
+import React from 'react'
 
-import './layout.css';
+import './index.css'
 
-import Sidebar from '../Sidebar/Sidebar';
+import Sidebar from '../Sidebar'
+import TopNav from '../TopNav'
 
-import { Outlet } from "react-router-dom";
+import { Outlet } from 'react-router-dom'
 
 const Layout = () => {
   return (
     <div className="adminLayout">
       <Sidebar />
       <div className="adminLayout__body">
-        <Outlet />
+        <TopNav />
+        <div className="adminLayout__content">
+          <Outlet />
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout

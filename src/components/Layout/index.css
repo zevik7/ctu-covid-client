@@ -6,5 +6,8 @@
   padding-left: var(--sidebar-width);
   background-color: var(--second-bg);
   min-height: 100vh;
-  padding-left: 30px;
+}
+
+.adminLayout__content {
+  padding: 30px;
 }

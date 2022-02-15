@@ -1,11 +1,11 @@
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import React from 'react'
+import { Route, Routes } from 'react-router-dom'
 
 import HomeLayout from './Layout/HomeLayout.jsx'
 import AdminLayout from './Layout/AdminLayout.jsx'
 
-import Dashboard from '../pages/Dashboard';
-import Customers from '../pages/Customers';
+import Dashboard from '../pages/Dashboard'
+import Customers from '../pages/Customers'
 
 const RoutesApp = () => {
   return (
@@ -16,7 +16,7 @@ const RoutesApp = () => {
         <Route path="customers" element={<Customers />} />
       </Route>
     </Routes>
-  );
-};
+  )
+}
 
-export default RoutesApp;
+export default RoutesApp

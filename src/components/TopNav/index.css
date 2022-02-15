@@ -1,0 +1,28 @@
+.topnav {
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--topnav-height);
+}
+
+.topnav__search {
+  position: relative;
+  height: 50px;
+  background-color: var(--main-bg);
+  display: flex;
+  align-items: center;
+  box-shadow: var(--box-shadow);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.topnav__search > input {
+  height: 100%;
+  width: 100%;
+  padding: 10px 60px 10px 20px;
+  font-size: 1rem;
+  border-radius: var(--border-radius);
+  color: var(--txt-color);
+  background-color: var(--main-bg);
+}
