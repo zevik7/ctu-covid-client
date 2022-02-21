@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import './index.css'
 
@@ -7,9 +7,13 @@ import TopNav from '../TopNav'
 
 import { Outlet } from 'react-router-dom'
 
+import { useSelector, useDispatch } from 'react-redux'
+
 const Layout = () => {
+  const theme = useSelector((state) => state.themeReducer)
+
   return (
-    <div className="adminLayout">
+    <div className={`adminLayout ${theme.mode} ${theme.color}`}>
       <Sidebar />
       <div className="adminLayout__body">
         <TopNav />
