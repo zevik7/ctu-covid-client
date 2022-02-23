@@ -2,9 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import reportWebVitals from './reportWebVitals'
 
-import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import rootReducer from './redux/reducers'
+import store from './redux/store'
 
 import App from './App'
 
@@ -13,9 +12,7 @@ import './assets/css/grid.css'
 import './assets/css/theme.css'
 import './assets/css/index.css'
 
-document.title = 'Tua CRM'
-
-const store = createStore(rootReducer)
+document.title = process.env.REACT_APP_WEBSITE_NAME
 
 ReactDOM.render(
   <Provider store={store}>

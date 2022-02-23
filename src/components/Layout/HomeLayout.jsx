@@ -1,8 +1,15 @@
 import React from 'react'
+import QRCode from 'qrcode.react'
 
 const HomeLayout = () => {
   return (
-    <div>HomeLayout</div>
+    <div
+      style={{
+        padding: '60px',
+      }}
+    >
+      <QRCode value="DIADIEM1" renderAs="svg" />
+    </div>
   )
 }
 

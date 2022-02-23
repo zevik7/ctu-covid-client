@@ -27,7 +27,6 @@ const Sidebar = () => {
   const activeItem = SidebarItemList.findIndex((item) => {
     return item.route === location.pathname
   })
-  console.log(location.pathname)
 
   return (
     <div className="sidebar">
