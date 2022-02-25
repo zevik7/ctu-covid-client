@@ -5,7 +5,11 @@ import HomeLayout from './Layout/HomeLayout.jsx'
 import AdminLayout from './Layout/AdminLayout.jsx'
 
 import Dashboard from '../pages/Dashboard'
-import Customers from '../pages/Customers'
+import User from '../pages/User'
+import Location from '../pages/Location'
+import DeclarationHistory from '../pages/DeclarationHistory'
+import Injection from '../pages/Injection'
+import VaccineType from '../pages/VaccineType'
 
 const RoutesApp = () => {
   return (
@@ -13,7 +17,11 @@ const RoutesApp = () => {
       <Route path="/" element={<HomeLayout />} />
       <Route path="admin" element={<AdminLayout />}>
         <Route path="" element={<Dashboard />} />
-        <Route path="customers" element={<Customers />} />
+        <Route path="user" element={<User />} />
+        <Route path="location" element={<Location />} />
+        <Route path="delaration-history" element={<DeclarationHistory />} />
+        <Route path="injection" element={<Injection />} />
+        <Route path="vaccine-type" element={<VaccineType />} />
       </Route>
     </Routes>
   )
