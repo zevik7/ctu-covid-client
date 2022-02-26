@@ -17,7 +17,7 @@ const drawerWidth = 240
 function AdminLayoutContent() {
   const [openDrawer, setOpenDrawer] = React.useState(false)
 
-  const toggleDrawer = () => {
+  const handleDrawerToggle = () => {
     setOpenDrawer(!openDrawer)
   }
 
@@ -25,8 +25,15 @@ function AdminLayoutContent() {
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppBar drawerWidth={drawerWidth} toggleDrawer={toggleDrawer} />
-        <Drawer open={openDrawer} drawerWidth={drawerWidth} />
+        <AppBar
+          drawerWidth={drawerWidth}
+          handleDrawerToggle={handleDrawerToggle}
+        />
+        <Drawer
+          open={openDrawer}
+          drawerWidth={drawerWidth}
+          handleDrawerToggle={handleDrawerToggle}
+        />
         <Box
           component="main"
           sx={{

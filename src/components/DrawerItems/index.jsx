@@ -14,24 +14,29 @@ import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety'
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useResolvedPath, useMatch } from 'react-router-dom'
 
 import './style.module.scss'
 
-const LinkItem = (props) => (
-  <RouterLink
-    to={props.to}
-    style={{
-      color: 'inherit',
-      textDecoration: 'inherit',
-    }}
-  >
-    <ListItemButton>
-      <ListItemIcon>{props.icon}</ListItemIcon>
-      <ListItemText primary={props.text} />
-    </ListItemButton>
-  </RouterLink>
-)
+const LinkItem = (props) => {
+  let resolved = useResolvedPath(props.to)
+  let match = useMatch({ path: resolved.pathname, end: true })
+
+  return (
+    <RouterLink
+      to={props.to}
+      style={{
+        color: 'inherit',
+        textDecoration: 'inherit',
+      }}
+    >
+      <ListItemButton selected={match}>
+        <ListItemIcon>{props.icon}</ListItemIcon>
+        <ListItemText primary={props.text} />
+      </ListItemButton>
+    </RouterLink>
+  )
+}
 
 export const mainListItems = (
   <Box>
@@ -45,7 +50,7 @@ export const mainListItems = (
     <LinkItem
       to="/admin/declaration"
       icon={<HistoryEduIcon />}
-      text="Tra cứu lịch sử khai báo"
+      text="Lịch sử khai báo"
     />
     <LinkItem
       to="/admin/injection"

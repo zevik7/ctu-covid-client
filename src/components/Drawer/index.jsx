@@ -37,6 +37,7 @@ const MainDrawer = (props) => {
   const { window } = props
   const container =
     window !== undefined ? () => window().document.body : undefined
+
   return (
     <Box
       component="nav"
@@ -47,7 +48,7 @@ const MainDrawer = (props) => {
         container={container}
         variant="temporary"
         open={props.open}
-        onClose={props.toggleDrawer}
+        onClose={props.handleDrawerToggle}
         ModalProps={{
           keepMounted: true, // Better open performance on mobile.
         }}
