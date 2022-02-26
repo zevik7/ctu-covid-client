@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Outlet } from 'react-router-dom'
 
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -15,7 +15,7 @@ const mdTheme = createTheme()
 const drawerWidth = 240
 
 function AdminLayoutContent() {
-  const [openDrawer, setOpenDrawer] = React.useState(true)
+  const [openDrawer, setOpenDrawer] = React.useState(false)
 
   const toggleDrawer = () => {
     setOpenDrawer(!openDrawer)
@@ -25,16 +25,8 @@ function AdminLayoutContent() {
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppBar
-          drawerWidth={drawerWidth}
-          open={openDrawer}
-          toggleDrawer={toggleDrawer}
-        />
-        <Drawer
-          drawerWidth={drawerWidth}
-          open={openDrawer}
-          toggleDrawer={toggleDrawer}
-        />
+        <AppBar drawerWidth={drawerWidth} toggleDrawer={toggleDrawer} />
+        <Drawer open={openDrawer} drawerWidth={drawerWidth} />
         <Box
           component="main"
           sx={{

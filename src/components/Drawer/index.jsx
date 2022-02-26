@@ -1,67 +1,80 @@
 import React from 'react'
 
-import MuiDrawer from '@mui/material/Drawer'
+import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
+import Box from '@mui/material/Box'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import { styled } from '@mui/material/styles'
+import { mainListItems, secondaryListItems } from '../DrawerItems'
 
-import { mainListItems, secondaryListItems } from '../ListItems'
+import Logo from '../Logo'
 
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open, drawerWidth }) => ({
-  '& .MuiDrawer-paper': {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    boxSizing: 'border-box',
-    ...(!open && {
-      overflowX: 'hidden',
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      width: theme.spacing(7),
-      [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(9),
-      },
-    }),
-  },
-}))
+const content = (
+  <Box>
+    <Toolbar
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        px: [1],
+      }}
+    >
+      <Logo />
+    </Toolbar>
+    <Divider />
+    <List component="nav">
+      {mainListItems}
+      <Divider sx={{ my: 1 }} />
+      {secondaryListItems}
+    </List>
+  </Box>
+)
 
 const MainDrawer = (props) => {
+  const { window } = props
+  const container =
+    window !== undefined ? () => window().document.body : undefined
   return (
-    <Drawer
-      variant="permanent"
-      open={props.open}
-      drawerWidth={props.drawerWidth}
+    <Box
+      component="nav"
+      sx={{ width: { sm: props.drawerWidth }, flexShrink: { sm: 0 } }}
+      aria-label="mailbox folders"
     >
-      <Toolbar
+      <Drawer
+        container={container}
+        variant="temporary"
+        open={props.open}
+        onClose={props.toggleDrawer}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          px: [1],
+          display: { xs: 'block', sm: 'none' },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: props.drawerWidth,
+          },
         }}
       >
-        <IconButton onClick={props.toggleDrawer}>
-          <ChevronLeftIcon />
-        </IconButton>
-      </Toolbar>
-      <Divider />
-      <List component="nav">
-        {mainListItems}
-        <Divider sx={{ my: 1 }} />
-        {secondaryListItems}
-      </List>
-    </Drawer>
+        {content}
+      </Drawer>
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: { xs: 'none', sm: 'block' },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: props.drawerWidth,
+          },
+        }}
+        open={props.open}
+      >
+        {content}
+      </Drawer>
+    </Box>
   )
 }
 

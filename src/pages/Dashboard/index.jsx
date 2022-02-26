@@ -37,9 +37,9 @@ const Dashboard = () => {
         </Grid>
         {/* Recent Orders */}
         <Grid item xs={12}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            <Orders />
-          </Paper>
+          <Paper
+            sx={{ p: 2, display: 'flex', flexDirection: 'column' }}
+          ></Paper>
         </Grid>
       </Grid>
     </Container>

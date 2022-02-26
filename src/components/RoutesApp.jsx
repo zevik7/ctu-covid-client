@@ -10,6 +10,7 @@ import Location from '../pages/Location'
 import DeclarationHistory from '../pages/DeclarationHistory'
 import Injection from '../pages/Injection'
 import VaccineType from '../pages/VaccineType'
+import Login from '../pages/Login'
 
 const RoutesApp = () => {
   return (
@@ -19,10 +20,11 @@ const RoutesApp = () => {
         <Route path="" element={<Dashboard />} />
         <Route path="user" element={<User />} />
         <Route path="location" element={<Location />} />
-        <Route path="delaration-history" element={<DeclarationHistory />} />
+        <Route path="declaration" element={<DeclarationHistory />} />
         <Route path="injection" element={<Injection />} />
         <Route path="vaccine-type" element={<VaccineType />} />
       </Route>
+      <Route path="/login" element={<Login />} />
     </Routes>
   )
 }

@@ -1,7 +1,6 @@
 import React from 'react'
 
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles'
-import MuiAppBar from '@mui/material/AppBar'
+import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -9,45 +8,22 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import Typography from '@mui/material/Typography'
 import Badge from '@mui/material/Badge'
 
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open, drawerWidth }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}))
-
 const MainAppBar = (props) => {
   return (
     <AppBar
-      position="absolute"
-      open={props.open}
-      drawerWidth={props.drawerWidth}
+      sx={{
+        position: 'fixed',
+        width: { sm: `calc(100% - ${props.drawerWidth}px)` },
+        ml: { sm: `${props.drawerWidth}px` },
+      }}
     >
-      <Toolbar
-        sx={{
-          pr: '24px', // keep right padding when drawer closed
-        }}
-      >
+      <Toolbar>
         <IconButton
-          edge="start"
           color="inherit"
           aria-label="open drawer"
+          edge="start"
           onClick={props.toggleDrawer}
-          sx={{
-            marginRight: '36px',
-            ...(props.open && { display: 'none' }),
-          }}
+          sx={{ mr: 2, display: { sm: 'none' } }}
         >
           <MenuIcon />
         </IconButton>

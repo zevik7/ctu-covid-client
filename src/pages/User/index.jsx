@@ -1,7 +1,8 @@
 import React from 'react'
+import Orders from '../../components/Orders'
 
 const User = () => {
-  return <div>User</div>
+  return <Orders />
 }
 
 export default User
