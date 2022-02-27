@@ -11,7 +11,7 @@ const Copyright = (props) => {
     >
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        Hệ thống hỗ trợ phòng chống covid-19 CTU
+        {process.env.REACT_APP_WEBSITE_NAME}
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}

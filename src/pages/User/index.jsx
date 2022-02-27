@@ -1,8 +1,8 @@
 import React from 'react'
-import Orders from '../../components/Orders'
+import Table from '../../components/Table'
 
 const User = () => {
-  return <Orders />
+  return <Table />
 }
 
 export default User

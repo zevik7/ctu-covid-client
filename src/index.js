@@ -7,7 +7,7 @@ import store from './redux/store'
 
 import App from './App'
 
-document.title = process.env.REACT_APP_WEBSITE_NAME
+document.title = process.env.REACT_APP_WEBSITE_NAME_SHORT
 
 ReactDOM.render(
   <Provider store={store}>

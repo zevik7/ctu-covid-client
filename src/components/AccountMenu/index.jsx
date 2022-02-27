@@ -12,12 +12,19 @@ import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
 
+import { useAuth } from '../../components/Auth/Context'
+
 export default function AccountMenu() {
+  const { onLogout } = useAuth()
+
   const [anchorEl, setAnchorEl] = React.useState(null)
+
   const open = Boolean(anchorEl)
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
+
   const handleClose = () => {
     setAnchorEl(null)
   }
@@ -83,7 +90,7 @@ export default function AccountMenu() {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={onLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
