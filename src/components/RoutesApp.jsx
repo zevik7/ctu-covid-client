@@ -21,7 +21,7 @@ const RoutesApp = () => {
   return (
     <AuthProvider>
       <Routes>
-        <Route index path="/" element={<HomeLayout />} />
+        <Route path="/" element={<HomeLayout />} />
         <Route
           path="admin"
           element={

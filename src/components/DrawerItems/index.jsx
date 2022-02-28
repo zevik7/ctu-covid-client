@@ -3,16 +3,13 @@ import * as React from 'react'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import ListSubheader from '@mui/material/ListSubheader'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import PeopleIcon from '@mui/icons-material/People'
-import AssignmentIcon from '@mui/icons-material/Assignment'
 import ShareLocationIcon from '@mui/icons-material/ShareLocation'
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu'
 import VaccinesIcon from '@mui/icons-material/Vaccines'
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety'
 import Box from '@mui/material/Box'
-import Link from '@mui/material/Link'
 
 import { Link as RouterLink, useResolvedPath, useMatch } from 'react-router-dom'
 
@@ -30,7 +27,7 @@ const LinkItem = (props) => {
         textDecoration: 'inherit',
       }}
     >
-      <ListItemButton selected={match}>
+      <ListItemButton selected={Boolean(match)}>
         <ListItemIcon>{props.icon}</ListItemIcon>
         <ListItemText primary={props.text} />
       </ListItemButton>

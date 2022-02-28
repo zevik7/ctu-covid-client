@@ -1,13 +1,10 @@
 import * as React from 'react'
-import Box from '@mui/material/Box'
 import Avatar from '@mui/material/Avatar'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
-import Tooltip from '@mui/material/Tooltip'
 import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
@@ -28,6 +25,7 @@ export default function AccountMenu() {
   const handleClose = () => {
     setAnchorEl(null)
   }
+
   return (
     <React.Fragment>
       <IconButton
@@ -37,7 +35,7 @@ export default function AccountMenu() {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
       >
-        <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+        <Avatar sx={{ width: 32, height: 32 }}>Msdf</Avatar>
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -75,26 +73,26 @@ export default function AccountMenu() {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem>
-          <Avatar /> My account
+          <Avatar /> Thông tin cá nhân
         </MenuItem>
         <Divider />
         <MenuItem>
           <ListItemIcon>
             <PersonAdd fontSize="small" />
           </ListItemIcon>
-          Add another account
+          Thêm tài khoản
         </MenuItem>
         <MenuItem>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
-          Settings
+          Cài đặt
         </MenuItem>
         <MenuItem onClick={onLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          Đăng xuất
         </MenuItem>
       </Menu>
     </React.Fragment>
