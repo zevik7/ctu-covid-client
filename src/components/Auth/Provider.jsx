@@ -3,33 +3,35 @@ import { useNavigate } from 'react-router-dom'
 
 import { AuthContext } from './Context'
 
-const getStorageToken = () => {
-  const tokenString = localStorage.getItem('token')
-  return tokenString
+const getStorageUser = () => {
+  const userString = localStorage.getItem('user')
+  const user = JSON.parse(userString)
+  return user
 }
 
-const setStorageToken = (token) => {
-  localStorage.setItem('token', token)
+const setStorageUser = (user) => {
+  localStorage.setItem('user', JSON.stringify(user))
 }
 
 const AuthProvider = ({ children }) => {
   const navigate = useNavigate()
 
-  const [token, setToken] = React.useState(getStorageToken())
+  const [user, setUser] = React.useState(getStorageUser() || {})
 
-  const handleLogin = async (token) => {
-    setToken(token)
-    setStorageToken(token)
+  const handleLogin = async (user) => {
+    setUser(user)
+    setStorageUser(user)
     navigate('/admin')
   }
 
   const handleLogout = () => {
-    setToken(null)
-    localStorage.removeItem('token')
+    setUser({})
+    localStorage.removeItem('user')
   }
 
   const value = {
-    token,
+    token: user.token,
+    user,
     onLogin: handleLogin,
     onLogout: handleLogout,
   }

@@ -1,4 +1,5 @@
 import * as React from 'react'
+
 import Avatar from '@mui/material/Avatar'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
@@ -10,9 +11,11 @@ import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
 
 import { useAuth } from '../../components/Auth/Context'
+import { useNavigate } from 'react-router-dom'
 
 export default function AccountMenu() {
-  const { onLogout } = useAuth()
+  const { user, onLogout } = useAuth()
+  const navigate = useNavigate()
 
   const [anchorEl, setAnchorEl] = React.useState(null)
 
@@ -35,7 +38,12 @@ export default function AccountMenu() {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
       >
-        <Avatar sx={{ width: 32, height: 32 }}>Msdf</Avatar>
+        <Avatar
+          sx={{ width: 32, height: 32 }}
+          src={`${process.env.REACT_APP_SERVER}${user.avatar}`}
+        >
+          Msdf
+        </Avatar>
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -72,8 +80,8 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem>
-          <Avatar /> Thông tin cá nhân
+        <MenuItem onClick={() => navigate('/admin/profile')}>
+          Thông tin cá nhân
         </MenuItem>
         <Divider />
         <MenuItem>

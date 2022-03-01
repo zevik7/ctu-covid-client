@@ -11,6 +11,7 @@ import DeclarationHistory from '../pages/DeclarationHistory'
 import Injection from '../pages/Injection'
 import VaccineType from '../pages/VaccineType'
 import Login from '../pages/Login'
+import Profile from '../pages/Setting/Profile'
 
 import NoMatch from './NoMatch'
 
@@ -22,6 +23,7 @@ const RoutesApp = () => {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<HomeLayout />} />
+
         <Route
           path="admin"
           element={
@@ -36,7 +38,9 @@ const RoutesApp = () => {
           <Route path="declaration" element={<DeclarationHistory />} />
           <Route path="injection" element={<Injection />} />
           <Route path="vaccine-type" element={<VaccineType />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
+
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<NoMatch />} />
       </Routes>
