@@ -4,12 +4,14 @@ import { styled, alpha } from '@mui/material/styles'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
-import MenuIcon from '@mui/icons-material/Menu'
 import InputBase from '@mui/material/InputBase'
-
+import MenuIcon from '@mui/icons-material/Menu'
 import SearchIcon from '@mui/icons-material/Search'
 
 import AccountMenu from '../AccountMenu'
+import ColorMode from '../ColorMode'
+import SwitchMode from '../SwitchMode'
+import { Box } from '@mui/system'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -52,6 +54,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }))
 
 const MainAppBar = (props) => {
+  const colorMode = ColorMode.useColorMode()
+
   return (
     <AppBar
       sx={{
@@ -84,7 +88,15 @@ const MainAppBar = (props) => {
             inputProps={{ 'aria-label': 'search' }}
           />
         </Search>
-        <AccountMenu />
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <SwitchMode handleOnChange={colorMode.toggleColorMode} />
+          <AccountMenu />
+        </Box>
       </Toolbar>
     </AppBar>
   )

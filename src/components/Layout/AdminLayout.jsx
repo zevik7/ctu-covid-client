@@ -9,8 +9,7 @@ import Toolbar from '@mui/material/Toolbar'
 import AppBar from '../AppBar'
 import Copyright from '../Copyright'
 import Drawer from '../Drawer'
-
-const mdTheme = createTheme()
+import ColorMode from '../ColorMode'
 
 const drawerWidth = 240
 
@@ -22,7 +21,7 @@ function AdminLayoutContent() {
   }
 
   return (
-    <ThemeProvider theme={mdTheme}>
+    <ColorMode.Provider>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar
@@ -51,7 +50,7 @@ function AdminLayoutContent() {
           <Copyright sx={{ pt: 4 }} />
         </Box>
       </Box>
-    </ThemeProvider>
+    </ColorMode.Provider>
   )
 }
 
