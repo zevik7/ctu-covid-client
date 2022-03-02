@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-
 import { AuthContext } from './Context'
+import Api from '../../api'
 
 const getStorageUser = () => {
   const userString = localStorage.getItem('user')
@@ -17,6 +17,8 @@ const AuthProvider = ({ children }) => {
   const navigate = useNavigate()
 
   const [user, setUser] = React.useState(getStorageUser() || {})
+
+  Api.setTokenApi(user.token)
 
   const handleLogin = async (user) => {
     setUser(user)

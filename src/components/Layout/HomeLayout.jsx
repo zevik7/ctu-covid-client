@@ -1,16 +1,9 @@
 import React from 'react'
 import QRCode from 'qrcode.react'
+import Home from '../../pages/Home'
 
 const HomeLayout = () => {
-  return (
-    <div
-      style={{
-        padding: '60px',
-      }}
-    >
-      <QRCode value="DIADIEM1" renderAs="svg" />
-    </div>
-  )
+  return <Home />
 }
 
 export default HomeLayout
