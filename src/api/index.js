@@ -7,7 +7,12 @@ const setTokenApi = (token) =>
 
 const loggin = (data) => axios.post(`/admin/auth/login`, data)
 
-const getUsers = () => axios.get(`/user`)
+const getUsers = (params) =>
+  axios.get(`/user`, {
+    params: {
+      ...params,
+    },
+  })
 
 export default {
   setTokenApi,

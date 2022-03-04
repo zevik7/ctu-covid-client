@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { viVN } from '@mui/material/locale'
 
 const Context = React.createContext({ toggleColorMode: () => {} })
 
@@ -17,11 +18,14 @@ const Provider = (props) => {
 
   const theme = React.useMemo(
     () =>
-      createTheme({
-        palette: {
-          mode,
+      createTheme(
+        {
+          palette: {
+            mode,
+          },
         },
-      }),
+        viVN
+      ),
     [mode]
   )
 

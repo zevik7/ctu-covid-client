@@ -21,6 +21,9 @@ import Switch from '@mui/material/Switch'
 import DeleteIcon from '@mui/icons-material/Delete'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import { visuallyHidden } from '@mui/utils'
+import { Button } from '@mui/material'
+
+import Modal from '../Modal'
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -126,7 +129,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Nutrition
+          Danh sách người dùng
         </Typography>
       )}
 
@@ -137,19 +140,24 @@ const EnhancedTableToolbar = (props) => {
           </IconButton>
         </Tooltip>
       )}
+      <Button variant="contained">Thêm</Button>
     </Toolbar>
   )
 }
 
 export default function EnhancedTable(props) {
-  const { headCells, bodyCells, metaData, renderRow } = props
+  const { headCells, bodyCells, renderRow } = props
 
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('name')
   const [selected, setSelected] = useState([])
   const [dense, setDense] = useState(false)
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(10)
+
+  const [openModal, setOpenModal] = useState(false)
+
+  const handleCloseModal = () => setOpenModal(false)
+
+  const handleOpenModal = () => setOpenModal(true)
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -159,19 +167,19 @@ export default function EnhancedTable(props) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = bodyCells.map((n) => n.name)
+      const newSelecteds = bodyCells.map((n) => n._id)
       setSelected(newSelecteds)
       return
     }
     setSelected([])
   }
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name)
+  const handleClick = (event, _id) => {
+    const selectedIndex = selected.indexOf(_id)
     let newSelected = []
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name)
+      newSelected = newSelected.concat(selected, _id)
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1))
     } else if (selectedIndex === selected.length - 1) {
@@ -186,30 +194,16 @@ export default function EnhancedTable(props) {
     setSelected(newSelected)
   }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
-
   const handleChangeDense = (event) => {
     setDense(event.target.checked)
   }
 
-  const isSelected = (name) => selected.indexOf(name) !== -1
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - props.headCells.length)
-      : 0
+  const isSelected = (_id) => selected.indexOf(_id) !== -1
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
+        <Modal open={openModal} handleClose={handleCloseModal} />
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
@@ -224,29 +218,29 @@ export default function EnhancedTable(props) {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={props.bodyCells.length}
+              rowCount={bodyCells.length}
             />
             <TableBody>
               {bodyCells
                 .slice()
                 .sort(getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name)
+                  const isItemSelected = isSelected(row._id)
                   const labelId = `enhanced-table-checkbox-${index}`
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row._id}
                       selected={isItemSelected}
+                      onClick={handleOpenModal}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
+                          onClick={(event) => handleClick(event, row._id)}
                           color="primary"
                           checked={isItemSelected}
                           inputProps={{
@@ -267,27 +261,9 @@ export default function EnhancedTable(props) {
                     </TableRow>
                   )
                 })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={bodyCells.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
