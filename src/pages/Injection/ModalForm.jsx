@@ -24,6 +24,7 @@ import Copyright from '../../components/Copyright'
 import Logo from '../../components/Logo'
 import { useAuth } from '../../components/Auth/Context'
 import { updateUser, storeUser } from '../../api'
+
 import { Container } from '@mui/material'
 
 import dateFormat from 'dateformat'
@@ -37,13 +38,18 @@ const ModalForm = (props) => {
   const [successAlert, setSuccessAlert] = useState(false)
 
   const [form, setForm] = useState({
-    name: { value: data.name || '', error: false, errorTxt: '' },
-    birthday: { value: data.birthday || '', error: false, errorTxt: '' },
-    gender: { value: data.gender || '', error: false, errorTxt: '' },
-    email: { value: data.email || '', error: false, errorTxt: '' },
-    phone: { value: data.phone || '', error: false, errorTxt: '' },
-    address: { value: data.address || '', error: false, errorTxt: '' },
-    avatar: { value: data.avatar || '', error: false, errorTxt: '' },
+    user: {
+      name: data?.user?.name,
+      phone: data?.user?.phone,
+      email: data?.user?.email,
+      avtar: data?.user?.avatar,
+    },
+    vaccine_type: {
+      _id: data?.vaccine_type?._id,
+      name: data?.vaccine_type?.name,
+    },
+    injection_date: data?.injection_date,
+    images: data?.images,
   })
 
   const handleInput = (e) => {

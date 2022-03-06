@@ -1,78 +1,151 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
+import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
+import Link from '@mui/material/Link'
+import Paper from '@mui/material/Paper'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
+import FormLabel from '@mui/material/FormLabel'
 import RadioGroup from '@mui/material/RadioGroup'
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker'
 import Radio from '@mui/material/Radio'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
+import Alert from '@mui/material/Alert'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 
 import Copyright from '../../components/Copyright'
 import Logo from '../../components/Logo'
 import { useAuth } from '../../components/Auth/Context'
-import Api from '../../api'
+import { updateUser, storeUser } from '../../api'
+
 import { Container } from '@mui/material'
 
 import dateFormat from 'dateformat'
 
 const ModalForm = (props) => {
-  const { data } = props
+  const { data, handleClose } = props
 
+  // edit or add method
   const _id = data._id
 
+  const [successAlert, setSuccessAlert] = useState(false)
+
   const [form, setForm] = useState({
-    name: data.name,
-    birthday: data.birthday,
-    gender: data.gender,
-    email: data.email,
-    phone: data.phone,
-    address: data.address,
-    avatar: data.avatar,
+    name: { value: data.name || '', error: false, errorTxt: '' },
+    birthday: { value: data.birthday || '', error: false, errorTxt: '' },
+    gender: { value: data.gender || '', error: false, errorTxt: '' },
+    email: { value: data.email || '', error: false, errorTxt: '' },
+    phone: { value: data.phone || '', error: false, errorTxt: '' },
+    address: { value: data.address || '', error: false, errorTxt: '' },
+    avatar: { value: data.avatar || '', error: false, errorTxt: '' },
   })
+
+  const handleInput = (e) => {
+    const name = e.target.name
+    const value = e.target.value
+    let error = false
+    let errorTxt = ''
+
+    if (!value) {
+      error = true
+      errorTxt = 'Yêu cầu nhập trường này'
+    } else {
+      switch (name) {
+        case 'email':
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            error = true
+            errorTxt = 'Email không hợp lệ'
+          }
+          break
+        case 'phone':
+          const regex =
+            /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/
+          if (!regex.test(value)) {
+            error = true
+            errorTxt = 'Số điện thoại không hợp lệ'
+          }
+          break
+        default:
+          break
+      }
+    }
+
+    setForm({ ...form, [name]: { value, error, errorTxt } })
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault()
 
+    const isError = Object.keys(form).find((key, index) => form[key].error)
+
+    if (isError) return
+
     const data = new FormData(event.currentTarget)
+
+    // Call api
+    if (_id) {
+      // Edit action
+      updateUser(
+        {
+          _id,
+        },
+        data
+      )
+        .then(() => {
+          setSuccessAlert(!successAlert)
+        })
+        .catch((err) => console.log(err))
+    } else {
+      // Add action
+      storeUser(data)
+        .then((rs) => {
+          setSuccessAlert(!successAlert)
+        })
+        .catch((err) => console.log(err))
+    }
   }
 
   return (
-    <Container>
+    <>
       <Typography variant="h5" mb={2}>
         Thông tin chi tiết
       </Typography>
-      <Grid container spacing={2}>
-        <Grid item md={2}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexDirection: 'column',
-            }}
-          >
-            <Avatar
+      <Box component="form" noValidate onSubmit={handleSubmit}>
+        <Grid container spacing={2}>
+          <Grid item md={3}>
+            <Box
               sx={{
-                width: '100%',
-                height: '100%',
-              }}
-              variant="square"
-              src={process.env.REACT_APP_SERVER + data.avatar}
-            />
-            <Button
-              variant="outlined"
-              sx={{
-                marginTop: 2,
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'column',
               }}
             >
-              Thay đổi
-            </Button>
-          </Box>
-        </Grid>
-        <Grid item md={10}>
-          <Box component="form" noValidate onSubmit={handleSubmit}>
+              <Avatar
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                }}
+                variant="square"
+                src={process.env.REACT_APP_SERVER + data.avatar}
+              />
+              <Button
+                variant="outlined"
+                sx={{
+                  marginTop: 2,
+                }}
+              >
+                {_id ? 'Thay đổi' : 'Thêm'}
+              </Button>
+            </Box>
+          </Grid>
+          <Grid item md={9}>
             <TextField
               required
               fullWidth
@@ -81,41 +154,44 @@ const ModalForm = (props) => {
               name="name"
               autoComplete="name"
               autoFocus
-              value={form.name}
-              onChange={(e) => {}}
               sx={{
                 mb: '8px',
               }}
+              value={form.name.value}
+              onChange={(e) => handleInput(e)}
+              error={form.name.error}
+              helperText={form.name.errorTxt}
             />
             <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
+                alignItems: 'center',
                 margin: '16px 0 8px 0',
               }}
             >
               <TextField
-                id="date"
+                id="birthday"
                 label="Ngày sinh"
                 type="date"
-                name="date"
-                value={dateFormat(form.birthday, 'yyyy-mm-dd')}
-                sx={{ mr: 2, width: 220 }}
+                name="birthday"
+                sx={{ mr: 2, width: 200 }}
                 InputLabelProps={{
                   shrink: true,
                 }}
+                value={dateFormat(form.birthday.value, 'yyyy-mm-dd')}
+                onChange={(e) => handleInput(e)}
+                error={form.birthday.error}
+                helperText={form.birthday.errorTxt}
               />
-              <RadioGroup row>
-                <FormControlLabel
-                  value="male"
-                  control={<Radio checked={form.gender === 'Nam' && true} />}
-                  label="Nam"
-                />
-                <FormControlLabel
-                  value="female"
-                  control={<Radio checked={form.gender === 'Nữ' && true} />}
-                  label="Nữ"
-                />
+              <RadioGroup
+                row
+                value={form.gender.value === 'Nam' ? 'Nam' : 'Nữ'}
+                name="gender"
+                onChange={(e) => handleInput(e)}
+              >
+                <FormControlLabel value="Nam" control={<Radio />} label="Nam" />
+                <FormControlLabel value="Nữ" control={<Radio />} label="Nữ" />
               </RadioGroup>
             </Box>
             <TextField
@@ -125,8 +201,10 @@ const ModalForm = (props) => {
               id="email"
               label="Email"
               name="email"
-              onChange={(e) => {}}
-              value={form.email}
+              value={form.email.value}
+              onChange={(e) => handleInput(e)}
+              error={form.email.error}
+              helperText={form.email.errorTxt}
             />
             <TextField
               required
@@ -135,8 +213,10 @@ const ModalForm = (props) => {
               id="phone"
               label="Số điện thoại"
               name="phone"
-              onChange={(e) => {}}
-              value={form.phone}
+              value={form.phone.value}
+              onChange={(e) => handleInput(e)}
+              error={form.phone.error}
+              helperText={form.phone.errorTxt}
             />
             <TextField
               required
@@ -145,31 +225,37 @@ const ModalForm = (props) => {
               id="address"
               label="Địa chỉ"
               name="address"
-              onChange={(e) => {}}
-              value={form.address}
+              value={form.address.value}
+              onChange={(e) => handleInput(e)}
+              error={form.address.error}
+              helperText={form.address.errorTxt}
             />
-          </Box>
-        </Grid>
-        <Grid item md={12}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <Button
-              variant="contained"
+          </Grid>
+          <Grid item md={12}>
+            <Box
               sx={{
-                mr: 2,
+                display: 'flex',
+                justifyContent: 'flex-end',
               }}
             >
-              Lưu
-            </Button>
-            <Button variant="text">Đóng</Button>
-          </Box>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  mr: 2,
+                }}
+              >
+                {_id ? 'Lưu' : 'Thêm'}
+              </Button>
+              <Button variant="text" onClick={handleClose}>
+                Đóng
+              </Button>
+            </Box>
+            {successAlert && <Alert severity="success">Lưu thành công</Alert>}
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
+      </Box>
+    </>
   )
 }
 

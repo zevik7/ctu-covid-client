@@ -12,7 +12,7 @@ import { Button } from '@mui/material'
 import Modal from '../Modal'
 
 const TableToolbar = (props) => {
-  const { handleOpenModal, handleDeleteBtn, selected } = props
+  const { title, handleOpenModal, handleDeleteBtn, selected } = props
 
   const [openModal, setOpenModal] = useState(false)
 
@@ -48,7 +48,7 @@ const TableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Danh sách người dùng
+          {title}
         </Typography>
       )}
 

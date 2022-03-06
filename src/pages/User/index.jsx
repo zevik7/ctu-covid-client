@@ -8,7 +8,7 @@ import TableToolbar from '../../components/TableToolbar'
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
 import Modal from '../../components/Modal'
-import Api from '../../api'
+import { getUsers, destroyUsers } from '../../api'
 import ModalForm from './ModalForm'
 
 const tableHeadCells = [
@@ -59,7 +59,7 @@ const User = () => {
   const [selected, setSelected] = useState([])
 
   const callApi = () => {
-    Api.getUsers({
+    getUsers({
       currentPage: page,
       perPage: tableRowsPerPage,
     }).then((rs) => {
@@ -114,7 +114,7 @@ const User = () => {
   }
 
   const handleDeleteTableRows = (selected) => {
-    Api.destroyUsers({
+    destroyUsers({
       ids: [...selected],
     }).then((rs) => {
       setSelected([])
@@ -123,7 +123,7 @@ const User = () => {
   }
 
   useEffect(() => {
-    Api.getUsers({
+    getUsers({
       currentPage: page,
       perPage: tableRowsPerPage,
     }).then((rs) => {
@@ -132,7 +132,7 @@ const User = () => {
   }, [openModal])
 
   const handleChangePage = (event, newPage) => {
-    Api.getUsers({
+    getUsers({
       currentPage: +newPage + 1,
       perPage: tableRowsPerPage,
     }).then((rs) => {
@@ -141,7 +141,7 @@ const User = () => {
   }
 
   const handleChangeRowsPerPage = (event) => {
-    Api.getUsers({
+    getUsers({
       currentPage: page,
       perPage: parseInt(event.target.value, 10),
     }).then((rs) => {
@@ -156,6 +156,7 @@ const User = () => {
           <ModalForm data={modalData} handleClose={handleCloseModal} />
         </Modal>
         <TableToolbar
+          title="Danh sách người dùng"
           numSelected={selected.length}
           handleOpenModal={handleOpenModal}
           handleDeleteBtn={handleDeleteTableRows}
