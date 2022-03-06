@@ -1,20 +1,14 @@
-export const setMode = (mode) => {
+export const openModal = (mode) => {
   return {
-    type: 'SET_MODE',
+    type: 'OPEN_MODAL',
     payload: mode,
   }
 }
 
-export const setColor = (color) => {
+export const close = (color) => {
   return {
     type: 'SET_COLOR',
     payload: color,
-  }
-}
-
-export const getTheme = () => {
-  return {
-    type: 'GET_THEME',
   }
 }
 

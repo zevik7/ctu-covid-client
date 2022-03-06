@@ -11,9 +11,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
   bgcolor: 'background.paper',
-  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 }
@@ -31,6 +29,7 @@ export default function TransitionsModal(props) {
         BackdropProps={{
           timeout: 500,
         }}
+        classes={{ focus: 'border-none' }}
       >
         <Fade in={props.open}>
           <Box sx={style}>{props.children}</Box>

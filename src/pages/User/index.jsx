@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import dateFormat from 'dateformat'
 
-import { Box, Button } from '@mui/material'
+import { Box, Paper } from '@mui/material'
 import TableCell from '@mui/material/TableCell'
 
+import TableToolbar from '../../components/TableToolbar'
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
+import Modal from '../../components/Modal'
 import Api from '../../api'
+import ModalForm from './ModalForm'
 
 const tableHeadCells = [
   {
@@ -34,11 +37,6 @@ const tableHeadCells = [
     numeric: false,
     label: 'Số điện thoại',
   },
-  {
-    id: 'editor',
-    numeric: false,
-    label: 'Thao tác',
-  },
 ]
 
 const handleRenderTableRow = (row) => (
@@ -46,40 +44,97 @@ const handleRenderTableRow = (row) => (
     <TableCell>{row.name}</TableCell>
     <TableCell>{row.gender}</TableCell>
     <TableCell>{dateFormat(row.birthday, 'dd/mm/yyyy')}</TableCell>
-    <TableCell>{row.contact.email}</TableCell>
-    <TableCell>{row.contact.phone}</TableCell>
-    <TableCell>
-      <Button size="small" variant="outlined">
-        Sửa
-      </Button>
-    </TableCell>
+    <TableCell>{row.email}</TableCell>
+    <TableCell>{row.phone}</TableCell>
   </>
 )
 
 const User = () => {
   const [tableBodyCells, setTableBodyCells] = useState([])
-  const [count, setCount] = useState(0)
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(20)
+  const [totalPage, setTotalPage] = useState(0)
+  const [page, setPage] = useState(1)
+  const [tableRowsPerPage, setTableRowsPerPage] = useState(20)
+  const [openModal, setOpenModal] = useState(false)
+  const [modalData, setModalData] = useState({})
+  const [selected, setSelected] = useState([])
 
-  useEffect(() => {
-    Api.getUsers().then((rs) => {
+  const callApi = () => {
+    Api.getUsers({
+      currentPage: page,
+      perPage: tableRowsPerPage,
+    }).then((rs) => {
       setAllState(rs.data)
     })
-  }, [])
+  }
 
   const setAllState = (apiData) => {
     const { data, currentPage, perPage, totalPage } = apiData
     setTableBodyCells(data)
-    setCount(totalPage)
+    setTotalPage(totalPage)
     setPage(currentPage)
-    setRowsPerPage(perPage)
+    setTableRowsPerPage(perPage)
   }
+
+  const handleCloseModal = () => setOpenModal(false)
+
+  const handleOpenModal = (data) => {
+    setOpenModal(true)
+    setModalData(data)
+  }
+
+  const handleTableRowClick = (event, _id) => {
+    event.stopPropagation()
+
+    const selectedIndex = selected.indexOf(_id)
+    let newSelected = []
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, _id)
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1))
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1))
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      )
+    }
+
+    setSelected(newSelected)
+  }
+
+  const handleTableRowClickAll = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = tableBodyCells.map((n) => n._id)
+      setSelected(newSelecteds)
+      return
+    }
+    setSelected([])
+  }
+
+  const handleDeleteTableRows = (selected) => {
+    Api.destroyUsers({
+      ids: [...selected],
+    }).then((rs) => {
+      setSelected([])
+      callApi()
+    })
+  }
+
+  useEffect(() => {
+    Api.getUsers({
+      currentPage: page,
+      perPage: tableRowsPerPage,
+    }).then((rs) => {
+      setAllState(rs.data)
+    })
+  }, [openModal])
 
   const handleChangePage = (event, newPage) => {
     Api.getUsers({
       currentPage: +newPage + 1,
-      perPage: rowsPerPage,
+      perPage: tableRowsPerPage,
     }).then((rs) => {
       setAllState(rs.data)
     })
@@ -95,19 +150,34 @@ const User = () => {
   }
 
   return (
-    <Box>
-      <Table
-        headCells={tableHeadCells}
-        bodyCells={tableBodyCells}
-        renderRow={handleRenderTableRow}
-      />
-      <TablePagination
-        count={count}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        handleChangePage={handleChangePage}
-        handleChangeRowsPerPage={handleChangeRowsPerPage}
-      />
+    <Box sx={{ width: '100%' }}>
+      <Paper sx={{ width: '100%', mb: 2 }}>
+        <Modal open={openModal} handleClose={handleCloseModal}>
+          <ModalForm data={modalData} handleClose={handleCloseModal} />
+        </Modal>
+        <TableToolbar
+          numSelected={selected.length}
+          handleOpenModal={handleOpenModal}
+          handleDeleteBtn={handleDeleteTableRows}
+          selected={selected}
+        />
+        <Table
+          headCells={tableHeadCells}
+          bodyCells={tableBodyCells}
+          selected={selected}
+          handleRenderRow={handleRenderTableRow}
+          handleOpenModal={handleOpenModal}
+          handleSelectClick={handleTableRowClick}
+          handleSelectAllClick={handleTableRowClickAll}
+        />
+        <TablePagination
+          count={totalPage}
+          page={page}
+          rowsPerPage={tableRowsPerPage}
+          handleChangePage={handleChangePage}
+          handleChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+      </Paper>
     </Box>
   )
 }

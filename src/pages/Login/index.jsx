@@ -40,7 +40,6 @@ export default function SignInSide() {
 
     Api.loggin(data)
       .then((rs) => {
-        console.log('Thành công', rs.data)
         onLogin(rs.data)
       })
       .catch((err) => console.log(err))
