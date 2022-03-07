@@ -14,6 +14,8 @@ const style = {
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,
+  maxHeight: '100vh',
+  overflowY: 'auto',
 }
 
 export default function TransitionsModal(props) {

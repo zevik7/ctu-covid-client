@@ -9,7 +9,9 @@ import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
 import Modal from '../../components/Modal'
 import { getVaccinations, destroyVaccinations } from '../../api'
-import ModalForm from './ModalForm'
+
+import EditForm from './EditForm'
+import AddForm from './AddForm'
 
 const tableHeadCells = [
   {
@@ -48,8 +50,9 @@ const User = () => {
   const [totalPage, setTotalPage] = useState(0)
   const [page, setPage] = useState(1)
   const [tableRowsPerPage, setTableRowsPerPage] = useState(20)
-  const [openModal, setOpenModal] = useState(false)
-  const [modalData, setModalData] = useState({})
+  const [openEditForm, setOpenEditForm] = useState(false)
+  const [openAddForm, setOpenAddForm] = useState(false)
+  const [editFormData, setEditFormData] = useState({})
   const [selected, setSelected] = useState([])
 
   const callApi = () => {
@@ -69,12 +72,16 @@ const User = () => {
     setTableRowsPerPage(perPage)
   }
 
-  const handleCloseModal = () => setOpenModal(false)
+  const handleCloseEditForm = () => setOpenEditForm(false)
 
-  const handleOpenModal = (data) => {
-    setOpenModal(true)
-    setModalData(data)
+  const handleOpenEditForm = (data) => {
+    setOpenEditForm(true)
+    setEditFormData(data)
   }
+
+  const handleCloseAddForm = () => setOpenAddForm(false)
+
+  const handleOpenAddForm = () => setOpenAddForm(true)
 
   const handleTableRowClick = (event, _id) => {
     event.stopPropagation()
@@ -123,7 +130,7 @@ const User = () => {
     }).then((rs) => {
       setAllState(rs.data)
     })
-  }, [openModal])
+  }, [openEditForm])
 
   const handleChangePage = (event, newPage) => {
     getVaccinations({
@@ -146,13 +153,20 @@ const User = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <Modal open={openModal} handleClose={handleCloseModal}>
-          <ModalForm data={modalData} handleClose={handleCloseModal} />
+        <Modal open={openEditForm} handleClose={handleCloseEditForm}>
+          <EditForm
+            data={editFormData}
+            handleClose={handleCloseEditForm}
+            handleSetEditFormData={setEditFormData}
+          />
+        </Modal>
+        <Modal open={openAddForm} handleClose={handleOpenAddForm}>
+          <AddForm handleClose={handleCloseAddForm} />
         </Modal>
         <TableToolbar
           title="Danh sách tiêm chủng"
           numSelected={selected.length}
-          handleOpenModal={handleOpenModal}
+          handleOpenModal={handleOpenAddForm}
           handleDeleteBtn={handleDeleteTableRows}
           selected={selected}
         />
@@ -161,7 +175,7 @@ const User = () => {
           bodyCells={tableBodyCells}
           selected={selected}
           handleRenderRow={handleRenderTableRow}
-          handleOpenModal={handleOpenModal}
+          handleOpenModal={handleOpenEditForm}
           handleSelectClick={handleTableRowClick}
           handleSelectAllClick={handleTableRowClickAll}
         />

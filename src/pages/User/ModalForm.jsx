@@ -112,7 +112,7 @@ const ModalForm = (props) => {
   }
 
   return (
-    <>
+    <Box>
       <Typography variant="h5" mb={2}>
         Thông tin chi tiết
       </Typography>
@@ -254,7 +254,7 @@ const ModalForm = (props) => {
           </Grid>
         </Grid>
       </Box>
-    </>
+    </Box>
   )
 }
 
