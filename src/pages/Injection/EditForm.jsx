@@ -8,18 +8,21 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import InputLabel from '@mui/material/InputLabel'
 
-import { updateUser, storeUser } from '../../api'
+import { updateVaccination, getVaccineTypes } from '../../api'
 
 const EditForm = (props) => {
-  const { data, handleClose, handleSetEditFormData } = props
+  const { data, handleClose } = props
+  const _id = data._id
 
   const [successAlert, setSuccessAlert] = useState(false)
 
-  const _id = data._id
+  const [vaccineTypeOptions, setVaccineTypeOptions] = useState()
 
   const [form, setForm] = useState({
-    user_id: data.user._id,
     user_name: data.user.name,
     user_phone: data.user.phone,
     user_email: data.user.email,
@@ -29,35 +32,52 @@ const EditForm = (props) => {
     images: data.images,
   })
 
+  useEffect(() => {
+    getVaccineTypes().then((rs) => {
+      setVaccineTypeOptions(rs.data.data)
+    })
+  }, [])
+
   const handleInput = (e) => {
     const name = e.target.name
     const value = e.target.value
+    let fieldsChange = {
+      [name]: value,
+    }
 
-    setForm({ ...form, [name]: value })
+    if (name === 'vaccine_type_id') {
+      const vaccine_type_name = vaccineTypeOptions.find(
+        (option, index) => option._id === value
+      ).name
+      fieldsChange['vaccine_type_name'] = vaccine_type_name
+    }
+
+    setForm({ ...form, ...fieldsChange })
   }
 
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(form).find((key, index) => form[key].error)
-
-    if (isError) return
-
-    const data = new FormData(event.currentTarget)
-
+    const data = {
+      vaccine_type: {
+        _id: form.vaccine_type_id,
+        name: form.vaccine_type_name,
+      },
+      injection_date: form.injection_date,
+      images: form.images,
+    }
     // Edit action
-    updateUser(
+    updateVaccination(
       {
         _id,
       },
       data
     )
-      .then(() => {
+      .then((rs) => {
         setSuccessAlert(!successAlert)
+        console.log(rs.data)
       })
       .catch((err) => console.log(err))
-
-    handleSetEditFormData({})
   }
 
   return (
@@ -111,15 +131,31 @@ const EditForm = (props) => {
             />
           </Grid>
           <Grid item md={6}>
-            <TextField
-              required
-              fullWidth
-              id="vaccine_type_name"
-              label="Loại vắc-xin"
-              name="vaccine_type_name"
-              value={form.vaccine_type_name}
-              onChange={(e) => handleInput(e)}
-            />
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <InputLabel id="select-standard-label" sx={{ mr: 2 }}>
+                Loại vắc-xin
+              </InputLabel>
+              {vaccineTypeOptions && (
+                <Select
+                  labelId="select-standard-label"
+                  id="vaccine_type_id"
+                  name="vaccine_type_id"
+                  onChange={(e) => handleInput(e)}
+                  value={form.vaccine_type_id}
+                >
+                  {vaccineTypeOptions.map((option, index) => (
+                    <MenuItem key={index} value={option._id}>
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            </Box>
           </Grid>
           <Grid item md={6}>
             <TextField

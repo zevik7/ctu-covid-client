@@ -7,16 +7,59 @@ import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import Menu from '@mui/material/Menu'
 import Alert from '@mui/material/Alert'
+import InputLabel from '@mui/material/InputLabel'
+import FormControl from '@mui/material/FormControl'
+import Autocomplete from '@mui/material/Autocomplete'
 
-import { updateUser, storeUser } from '../../api'
+import { getVaccineTypes, getUsers, storeVaccination } from '../../api'
 
 const AddForm = (props) => {
   const { handleClose } = props
 
   const [successAlert, setSuccessAlert] = useState(false)
+  const [errInputUser, setErrInputUser] = useState(false)
+  const [vaccineTypeOptions, setVaccineTypeOptions] = useState()
 
   const [searchText, setSearchText] = useState('')
+  const [searchSuggestions, setSearchSuggestions] = useState()
+
+  const handleSelectedOption = (option) => {
+    if (!option) {
+      setForm({
+        ...form,
+        ...{
+          user_id: '',
+          user_name: '',
+          user_phone: '',
+          user_email: '',
+        },
+      })
+      setErrInputUser(true)
+      return
+    }
+    setErrInputUser(false)
+    setForm({
+      ...form,
+      ...{
+        user_id: option._id,
+        user_name: option.name,
+        user_phone: option.phone,
+        user_email: option.email,
+      },
+    })
+  }
+
+  useEffect(() => {
+    getUsers({
+      search: searchText,
+    }).then((rs) => {
+      setSearchSuggestions(rs.data.data)
+    })
+  }, [searchText])
 
   const [form, setForm] = useState({
     user_id: '',
@@ -25,25 +68,62 @@ const AddForm = (props) => {
     user_email: '',
     vaccine_type_id: '',
     vaccine_type_name: '',
-    injection_date: Date.now,
+    injection_date: dateFormat(Date.now(), 'yyyy-mm-dd'),
     images: '',
   })
+
+  useEffect(() => {
+    getVaccineTypes().then((rs) => {
+      setVaccineTypeOptions(rs.data.data)
+      setForm({
+        ...form,
+        vaccine_type_id: rs.data.data[0]._id,
+        vaccine_type_name: rs.data.data[0].name,
+      })
+    })
+  }, [])
 
   const handleInput = (e) => {
     const name = e.target.name
     const value = e.target.value
 
-    setForm({ ...form, [name]: value })
+    let fieldsChange = {
+      [name]: value,
+    }
+
+    if (name === 'vaccine_type_id') {
+      const vaccine_type_name = vaccineTypeOptions.find(
+        (option, index) => option._id === value
+      ).name
+      fieldsChange['vaccine_type_name'] = vaccine_type_name
+    }
+
+    setForm({ ...form, ...fieldsChange })
   }
 
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(form).find((key, index) => form[key].error)
+    if (!form.user_id) return
 
-    if (isError) return
+    const data = {
+      user: {
+        _id: form.user_id,
+        name: form.user_name,
+        phone: form.user_phone,
+        email: form.user_email,
+      },
+      vaccine_type: {
+        _id: form.vaccine_type_id,
+        name: form.vaccine_type_name,
+      },
+      injection_date: form.injection_date,
+      images: form.images,
+    }
 
-    const data = new FormData(event.currentTarget)
+    storeVaccination(data)
+      .then(() => setSuccessAlert(true))
+      .catch((err) => console.log(err))
   }
 
   return (
@@ -54,34 +134,58 @@ const AddForm = (props) => {
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item md={12}>
-            <TextField
-              required
-              fullWidth
-              id="search"
-              label="Tìm người dùng bằng tên, số điện thoại hoặc email"
-              name="search"
-              autoComplete="search"
-              autoFocus
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-            />
+            {searchSuggestions && (
+              <Autocomplete
+                required
+                fullWidth
+                id="search-field"
+                autoFocus
+                filterOptions={(options, state) => options}
+                onChange={(event, newValue) => {
+                  handleSelectedOption(newValue)
+                }}
+                inputValue={searchText}
+                onInputChange={(event, newInputValue) => {
+                  setSearchText(newInputValue)
+                }}
+                options={searchSuggestions}
+                isOptionEqualToValue={(option, value) =>
+                  option.name === value.name
+                }
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField
+                    error={errInputUser}
+                    helperText="Vui lòng chọn người dùng"
+                    {...params}
+                    label="Tìm người dùng bằng tên, số điện thoại hoặc email"
+                  />
+                )}
+              />
+            )}
           </Grid>
           <Grid item md={6}>
-            <TextField
-              required
-              fullWidth
-              disabled
-              id="user_name"
-              label="Họ tên"
-              name="user_name"
-              autoComplete="user_name"
-              autoFocus
-              value={form.user_name}
-              onChange={(e) => handleInput(e)}
+            <Box
               sx={{
-                marginRight: '10px',
+                position: 'relative',
               }}
-            />
+            >
+              <TextField
+                required
+                fullWidth
+                disabled
+                id="user_name"
+                label="Họ tên"
+                name="user_name"
+                autoComplete="user_name"
+                autoFocus
+                value={form.user_name}
+                onChange={(e) => handleInput(e)}
+                sx={{
+                  marginRight: '10px',
+                }}
+              />
+            </Box>
           </Grid>
           <Grid item md={6}>
             <TextField
@@ -110,15 +214,27 @@ const AddForm = (props) => {
             />
           </Grid>
           <Grid item md={6}>
-            <TextField
-              required
-              fullWidth
-              id="vaccine_type_name"
-              label="Loại vắc-xin"
-              name="vaccine_type_name"
-              value={form.vaccine_type_name}
-              onChange={(e) => handleInput(e)}
-            />
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">
+                Loại vắc-xin
+              </InputLabel>
+              {vaccineTypeOptions && (
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="vaccine_type_id"
+                  name="vaccine_type_id"
+                  label="Loại vắc-xin"
+                  onChange={(e) => handleInput(e)}
+                  value={form.vaccine_type_id}
+                >
+                  {vaccineTypeOptions.map((option, index) => (
+                    <MenuItem key={index} value={option._id}>
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            </FormControl>
           </Grid>
           <Grid item md={6}>
             <TextField
@@ -130,7 +246,7 @@ const AddForm = (props) => {
               InputLabelProps={{
                 shrink: true,
               }}
-              // value={dateFormat(form.injection_date, 'yyyy-mm-dd')}
+              value={form.injection_date}
               onChange={(e) => handleInput(e)}
             />
           </Grid>

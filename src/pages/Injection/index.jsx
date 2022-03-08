@@ -130,7 +130,7 @@ const User = () => {
     }).then((rs) => {
       setAllState(rs.data)
     })
-  }, [openEditForm])
+  }, [openEditForm, openAddForm])
 
   const handleChangePage = (event, newPage) => {
     getVaccinations({
@@ -154,13 +154,9 @@ const User = () => {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <Modal open={openEditForm} handleClose={handleCloseEditForm}>
-          <EditForm
-            data={editFormData}
-            handleClose={handleCloseEditForm}
-            handleSetEditFormData={setEditFormData}
-          />
+          <EditForm data={editFormData} handleClose={handleCloseEditForm} />
         </Modal>
-        <Modal open={openAddForm} handleClose={handleOpenAddForm}>
+        <Modal open={openAddForm} handleClose={handleCloseAddForm}>
           <AddForm handleClose={handleCloseAddForm} />
         </Modal>
         <TableToolbar

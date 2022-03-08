@@ -5,7 +5,7 @@ export const getVaccinations = (params) =>
     params,
   })
 
-export const updateVaccinations = (params, data) =>
+export const updateVaccination = (params, data) =>
   axios.put(`/vaccination`, data, {
     params,
   })
