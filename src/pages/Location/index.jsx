@@ -7,9 +7,9 @@ import TableToolbar from '../../components/TableToolbar'
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
 import Modal from '../../components/Modal'
-import GoogleMap from '../../components/GoogleMap'
 import { getLocations, destroyLocation } from '../../api'
 import ModalForm from './ModalForm'
+import Map from '../../components/Map'
 
 const tableHeadCells = [
   {
@@ -143,34 +143,49 @@ const User = () => {
         <Modal open={openModal} handleClose={handleCloseModal}>
           <ModalForm data={modalData} handleClose={handleCloseModal} />
         </Modal>
-        <Grid container spacing={2}>
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            minHeight: '80vh',
+          }}
+        >
           <Grid item md={6}>
-            <GoogleMap />
+            <Map />
           </Grid>
           <Grid item md={6}>
-            <TableToolbar
-              title="Danh sách các địa điểm khai báo"
-              numSelected={selected.length}
-              handleOpenModal={handleOpenModal}
-              handleDeleteBtn={handleDeleteTableRows}
-              selected={selected}
-            />
-            <Table
-              headCells={tableHeadCells}
-              bodyCells={tableBodyCells}
-              selected={selected}
-              handleRenderRow={handleRenderTableRow}
-              handleOpenModal={handleOpenModal}
-              handleSelectClick={handleTableRowClick}
-              handleSelectAllClick={handleTableRowClickAll}
-            />
-            <TablePagination
-              count={totalPage}
-              page={page}
-              rowsPerPage={tableRowsPerPage}
-              handleChangePage={handleChangePage}
-              handleChangeRowsPerPage={handleChangeRowsPerPage}
-            />
+            <Box
+              sx={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <TableToolbar
+                title="Danh sách các địa điểm khai báo"
+                numSelected={selected.length}
+                handleOpenModal={handleOpenModal}
+                handleDeleteBtn={handleDeleteTableRows}
+                selected={selected}
+              />
+              <Table
+                headCells={tableHeadCells}
+                bodyCells={tableBodyCells}
+                selected={selected}
+                handleRenderRow={handleRenderTableRow}
+                handleOpenModal={handleOpenModal}
+                handleSelectClick={handleTableRowClick}
+                handleSelectAllClick={handleTableRowClickAll}
+              />
+              <TablePagination
+                count={totalPage}
+                page={page}
+                rowsPerPage={tableRowsPerPage}
+                handleChangePage={handleChangePage}
+                handleChangeRowsPerPage={handleChangeRowsPerPage}
+              />
+            </Box>
           </Grid>
         </Grid>
       </Paper>
