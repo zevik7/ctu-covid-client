@@ -38,11 +38,15 @@ const LinkItem = (props) => {
 export const mainListItems = (
   <Box>
     <LinkItem to="/admin" icon={<DashboardIcon />} text="Trang chủ" />
-    <LinkItem to="/admin/user" icon={<PeopleIcon />} text="Người dùng" />
+    <LinkItem
+      to="/admin/user"
+      icon={<PeopleIcon />}
+      text="Quản lý người dùng"
+    />
     <LinkItem
       to="/admin/location"
       icon={<ShareLocationIcon />}
-      text="Địa điểm"
+      text="Địa điểm khai báo"
     />
     <LinkItem
       to="/admin/declaration"
@@ -52,9 +56,13 @@ export const mainListItems = (
     <LinkItem
       to="/admin/injection"
       icon={<HealthAndSafetyIcon />}
-      text="Tiêm chủng"
+      text="Thông tin tiêm chủng"
     />
-    <LinkItem to="/admin/vaccine-type" icon={<VaccinesIcon />} text="Vắc xin" />
+    <LinkItem
+      to="/admin/vaccine-type"
+      icon={<VaccinesIcon />}
+      text="Thông tin vắc-xin"
+    />
   </Box>
 )
 

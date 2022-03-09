@@ -114,7 +114,7 @@ export default function EnhancedTable(props) {
     <>
       <TableContainer>
         <Table
-          sx={{ minWidth: 750 }}
+          sx={[...(Array.isArray(props.sx) ? props.sx : [props.sx])]}
           aria-labelledby="tableTitle"
           size={dense ? 'small' : 'medium'}
         >

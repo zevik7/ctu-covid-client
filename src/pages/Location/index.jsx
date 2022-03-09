@@ -1,51 +1,39 @@
 import { useEffect, useState } from 'react'
 import dateFormat from 'dateformat'
 
-import { Box, Paper } from '@mui/material'
-import TableCell from '@mui/material/TableCell'
+import { Box, Paper, Grid, TableCell } from '@mui/material'
 
 import TableToolbar from '../../components/TableToolbar'
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
 import Modal from '../../components/Modal'
-import { getUsers, destroyUsers } from '../../api'
+import GoogleMap from '../../components/GoogleMap'
+import { getLocations, destroyLocation } from '../../api'
 import ModalForm from './ModalForm'
 
 const tableHeadCells = [
   {
     id: 'name',
     numeric: false,
-    label: 'Họ tên',
+    label: 'Địa chỉ',
   },
   {
-    id: 'gender',
+    id: 'created_by_name',
     numeric: false,
-    label: 'Giới tính',
+    label: 'Người tạo',
   },
   {
-    id: 'birthday',
+    id: 'updated_at',
     numeric: false,
-    label: 'Ngày sinh',
-  },
-  {
-    id: 'email',
-    numeric: false,
-    label: 'Email',
-  },
-  {
-    id: 'phone',
-    numeric: false,
-    label: 'Số điện thoại',
+    label: 'Cập nhật vào',
   },
 ]
 
 const handleRenderTableRow = (row) => (
   <>
     <TableCell>{row.name}</TableCell>
-    <TableCell>{row.gender}</TableCell>
-    <TableCell>{dateFormat(row.birthday, 'dd/mm/yyyy')}</TableCell>
-    <TableCell>{row.email}</TableCell>
-    <TableCell>{row.phone}</TableCell>
+    <TableCell>{row.created_by.name}</TableCell>
+    <TableCell>{dateFormat(row.updated_at, 'dd/mm/yyyy')}</TableCell>
   </>
 )
 
@@ -59,7 +47,7 @@ const User = () => {
   const [selected, setSelected] = useState([])
 
   const callApi = () => {
-    getUsers({
+    getLocations({
       currentPage: page,
       perPage: tableRowsPerPage,
     }).then((rs) => {
@@ -114,7 +102,7 @@ const User = () => {
   }
 
   const handleDeleteTableRows = (selected) => {
-    destroyUsers({
+    destroyLocation({
       ids: [...selected],
     }).then((rs) => {
       setSelected([])
@@ -123,7 +111,7 @@ const User = () => {
   }
 
   useEffect(() => {
-    getUsers({
+    getLocations({
       currentPage: page,
       perPage: tableRowsPerPage,
     }).then((rs) => {
@@ -132,7 +120,7 @@ const User = () => {
   }, [openModal])
 
   const handleChangePage = (event, newPage) => {
-    getUsers({
+    getLocations({
       currentPage: +newPage + 1,
       perPage: tableRowsPerPage,
     }).then((rs) => {
@@ -141,7 +129,7 @@ const User = () => {
   }
 
   const handleChangeRowsPerPage = (event) => {
-    getUsers({
+    getLocations({
       currentPage: page,
       perPage: parseInt(event.target.value, 10),
     }).then((rs) => {
@@ -155,29 +143,36 @@ const User = () => {
         <Modal open={openModal} handleClose={handleCloseModal}>
           <ModalForm data={modalData} handleClose={handleCloseModal} />
         </Modal>
-        <TableToolbar
-          title="Danh sách người dùng"
-          numSelected={selected.length}
-          handleOpenModal={handleOpenModal}
-          handleDeleteBtn={handleDeleteTableRows}
-          selected={selected}
-        />
-        <Table
-          headCells={tableHeadCells}
-          bodyCells={tableBodyCells}
-          selected={selected}
-          handleRenderRow={handleRenderTableRow}
-          handleOpenModal={handleOpenModal}
-          handleSelectClick={handleTableRowClick}
-          handleSelectAllClick={handleTableRowClickAll}
-        />
-        <TablePagination
-          count={totalPage}
-          page={page}
-          rowsPerPage={tableRowsPerPage}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+        <Grid container spacing={2}>
+          <Grid item md={6}>
+            <GoogleMap />
+          </Grid>
+          <Grid item md={6}>
+            <TableToolbar
+              title="Danh sách các địa điểm khai báo"
+              numSelected={selected.length}
+              handleOpenModal={handleOpenModal}
+              handleDeleteBtn={handleDeleteTableRows}
+              selected={selected}
+            />
+            <Table
+              headCells={tableHeadCells}
+              bodyCells={tableBodyCells}
+              selected={selected}
+              handleRenderRow={handleRenderTableRow}
+              handleOpenModal={handleOpenModal}
+              handleSelectClick={handleTableRowClick}
+              handleSelectAllClick={handleTableRowClickAll}
+            />
+            <TablePagination
+              count={totalPage}
+              page={page}
+              rowsPerPage={tableRowsPerPage}
+              handleChangePage={handleChangePage}
+              handleChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          </Grid>
+        </Grid>
       </Paper>
     </Box>
   )
