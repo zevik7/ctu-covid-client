@@ -3,13 +3,15 @@ import dateFormat from 'dateformat'
 
 import { Box, Paper, Grid, TableCell } from '@mui/material'
 
+import { getLocations, destroyLocation } from '../../api'
+
 import TableToolbar from '../../components/TableToolbar'
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
 import Modal from '../../components/Modal'
-import { getLocations, destroyLocation } from '../../api'
-import ModalForm from './ModalForm'
+import EditForm from './EditForm'
 import Map from '../../components/Map'
+import AddForm from './AddForm'
 
 const tableHeadCells = [
   {
@@ -38,12 +40,14 @@ const handleRenderTableRow = (row) => (
 )
 
 const User = () => {
-  const [tableBodyCells, setTableBodyCells] = useState([])
+  const [data, setData] = useState([])
   const [totalPage, setTotalPage] = useState(0)
   const [page, setPage] = useState(1)
   const [tableRowsPerPage, setTableRowsPerPage] = useState(20)
-  const [openModal, setOpenModal] = useState(false)
-  const [modalData, setModalData] = useState({})
+
+  const [openEditModal, setOpenEditModal] = useState(false)
+  const [openAddModal, setOpenAddModal] = useState(false)
+  const [editFormData, setEditFormData] = useState({})
   const [selected, setSelected] = useState([])
 
   const callApi = () => {
@@ -57,18 +61,22 @@ const User = () => {
 
   const setAllState = (apiData) => {
     const { data, currentPage, perPage, totalPage } = apiData
-    setTableBodyCells(data)
+    setData(data)
     setTotalPage(totalPage)
     setPage(currentPage)
     setTableRowsPerPage(perPage)
   }
 
-  const handleCloseModal = () => setOpenModal(false)
+  const handleCloseEditModal = () => setOpenEditModal(false)
 
-  const handleOpenModal = (data) => {
-    setOpenModal(true)
-    setModalData(data)
+  const handleOpenEditModal = (data) => {
+    setOpenEditModal(true)
+    setEditFormData(data)
   }
+
+  const handleCloseAddModal = () => setOpenAddModal(false)
+
+  const handleOpenAddModal = (data) => setOpenAddModal(true)
 
   const handleTableRowClick = (event, _id) => {
     event.stopPropagation()
@@ -94,7 +102,7 @@ const User = () => {
 
   const handleTableRowClickAll = (event) => {
     if (event.target.checked) {
-      const newSelecteds = tableBodyCells.map((n) => n._id)
+      const newSelecteds = data.map((n) => n._id)
       setSelected(newSelecteds)
       return
     }
@@ -111,13 +119,8 @@ const User = () => {
   }
 
   useEffect(() => {
-    getLocations({
-      currentPage: page,
-      perPage: tableRowsPerPage,
-    }).then((rs) => {
-      setAllState(rs.data)
-    })
-  }, [openModal])
+    callApi()
+  }, [openEditModal, openAddModal])
 
   const handleChangePage = (event, newPage) => {
     getLocations({
@@ -140,8 +143,11 @@ const User = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <Modal open={openModal} handleClose={handleCloseModal}>
-          <ModalForm data={modalData} handleClose={handleCloseModal} />
+        <Modal open={openEditModal} handleClose={handleCloseEditModal}>
+          <EditForm data={editFormData} handleClose={handleCloseEditModal} />
+        </Modal>
+        <Modal open={openAddModal} handleClose={handleCloseAddModal}>
+          <AddForm handleClose={handleCloseAddModal} />
         </Modal>
         <Grid
           container
@@ -151,7 +157,12 @@ const User = () => {
           }}
         >
           <Grid item md={6}>
-            <Map />
+            <Map
+              makers={data.map((location, id) => ({
+                position: location.position,
+                popup: '',
+              }))}
+            />
           </Grid>
           <Grid item md={6}>
             <Box
@@ -165,16 +176,16 @@ const User = () => {
               <TableToolbar
                 title="Danh sách các địa điểm khai báo"
                 numSelected={selected.length}
-                handleOpenModal={handleOpenModal}
+                handleOpenModal={handleOpenAddModal}
                 handleDeleteBtn={handleDeleteTableRows}
                 selected={selected}
               />
               <Table
                 headCells={tableHeadCells}
-                bodyCells={tableBodyCells}
+                bodyCells={data}
                 selected={selected}
                 handleRenderRow={handleRenderTableRow}
-                handleOpenModal={handleOpenModal}
+                handleOpenModal={handleOpenEditModal}
                 handleSelectClick={handleTableRowClick}
                 handleSelectAllClick={handleTableRowClickAll}
               />
