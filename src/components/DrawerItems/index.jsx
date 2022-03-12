@@ -10,6 +10,7 @@ import HistoryEduIcon from '@mui/icons-material/HistoryEdu'
 import VaccinesIcon from '@mui/icons-material/Vaccines'
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety'
 import Box from '@mui/material/Box'
+import NotificationsIcon from '@mui/icons-material/Notifications'
 
 import { Link as RouterLink, useResolvedPath, useMatch } from 'react-router-dom'
 
@@ -62,6 +63,11 @@ export const mainListItems = (
       to="/admin/vaccine-type"
       icon={<VaccinesIcon />}
       text="Thông tin vắc-xin"
+    />
+    <LinkItem
+      to="/admin/notification"
+      icon={<NotificationsIcon />}
+      text="Quản lý thông báo"
     />
   </Box>
 )

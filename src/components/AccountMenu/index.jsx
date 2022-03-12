@@ -80,10 +80,6 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={() => navigate('/admin/profile')}>
-          Thông tin cá nhân
-        </MenuItem>
-        <Divider />
         <MenuItem>
           <ListItemIcon>
             <PersonAdd fontSize="small" />

@@ -39,6 +39,7 @@ const RoutesApp = () => {
           <Route path="injection" element={<Injection />} />
           <Route path="vaccine-type" element={<VaccineType />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="notification" element={<Profile />} />
         </Route>
 
         <Route path="/login" element={<Login />} />

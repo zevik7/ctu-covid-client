@@ -37,6 +37,7 @@ function EnhancedTableHead(props) {
     numSelected,
     rowCount,
     onRequestSort,
+    disabledCheckbox,
   } = props
 
   const createSortHandler = (property) => (event) => {
@@ -46,17 +47,20 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
-          />
-        </TableCell>
+        {!disabledCheckbox && (
+          <TableCell padding="checkbox">
+            <Checkbox
+              color="primary"
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={rowCount > 0 && numSelected === rowCount}
+              onChange={onSelectAllClick}
+              inputProps={{
+                'aria-label': 'select all desserts',
+              }}
+            />
+          </TableCell>
+        )}
+
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -88,14 +92,15 @@ export default function EnhancedTable(props) {
     headCells,
     bodyCells,
     selected,
+    disabledCheckbox,
     handleRenderRow,
     handleOpenModal,
     handleSelectClick,
     handleSelectAllClick,
   } = props
 
-  const [order, setOrder] = useState('asc')
-  const [orderBy, setOrderBy] = useState('name')
+  const [order, setOrder] = useState()
+  const [orderBy, setOrderBy] = useState()
   const [dense, setDense] = useState(false)
 
   const handleRequestSort = (event, property) => {
@@ -126,6 +131,7 @@ export default function EnhancedTable(props) {
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
             rowCount={bodyCells.length}
+            disabledCheckbox={disabledCheckbox}
           />
           <TableBody>
             {bodyCells
@@ -144,17 +150,23 @@ export default function EnhancedTable(props) {
                     key={row._id}
                     selected={isItemSelected}
                     onClick={() => handleOpenModal(row)}
+                    sx={{
+                      cursor: 'pointer',
+                    }}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        onClick={(event) => handleSelectClick(event, row._id)}
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId,
-                        }}
-                      />
-                    </TableCell>
+                    {!disabledCheckbox && (
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          onClick={(event) => handleSelectClick(event, row._id)}
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId,
+                          }}
+                        />
+                      </TableCell>
+                    )}
+
                     <TableCell
                       id={labelId}
                       scope="row"

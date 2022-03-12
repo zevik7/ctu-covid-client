@@ -15,3 +15,5 @@ export * from './vaccination'
 export * from './vaccine_type'
 
 export * from './location'
+
+export * from './health_declaration'

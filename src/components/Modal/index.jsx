@@ -14,7 +14,7 @@ const style = {
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,
-  maxHeight: '100vh',
+  maxHeight: '90vh',
   overflowY: 'auto',
 }
 
