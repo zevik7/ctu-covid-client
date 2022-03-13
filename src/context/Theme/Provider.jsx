@@ -1,8 +1,7 @@
-import * as React from 'react'
+import React from 'react'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { viVN } from '@mui/material/locale'
-
-const Context = React.createContext({ toggleColorMode: () => {} })
+import { ThemeContext } from './Context'
 
 const Provider = (props) => {
   const [mode, setMode] = React.useState('light')
@@ -30,19 +29,10 @@ const Provider = (props) => {
   )
 
   return (
-    <Context.Provider value={colorMode}>
+    <ThemeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
-    </Context.Provider>
+    </ThemeContext.Provider>
   )
 }
 
-// Custom hook
-const useColorMode = () => {
-  return React.useContext(Context)
-}
-
-export default {
-  Context,
-  Provider,
-  useColorMode,
-}
+export default Provider

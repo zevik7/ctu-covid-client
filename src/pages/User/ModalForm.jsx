@@ -22,7 +22,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 
 import Copyright from '../../components/Copyright'
 import Logo from '../../components/Logo'
-import { useAuth } from '../../components/Auth/Context'
+import { useAuth } from '../../context/Auth/Context'
 import { updateUser, storeUser } from '../../api'
 import { Container } from '@mui/material'
 

@@ -6,7 +6,7 @@ import Chart from 'react-apexcharts'
 import Deposits from '../../components/Deposits'
 import Map from '../../components/Map'
 
-import { useAuth } from '../../components/Auth/Context'
+import { useAuth } from '../../context/Auth/Context'
 
 const Dashboard = () => {
   const [pieChart, setPieChart] = useState({

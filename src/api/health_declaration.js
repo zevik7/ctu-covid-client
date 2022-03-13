@@ -12,7 +12,7 @@ export const updateDeclaration = (params, data) =>
 
 export const storeDeclaration = (data) => axios.post(`/heath_declaration`, data)
 
-export const destroyDeclaration = (data) =>
+export const destroyDeclarations = (data) =>
   axios.delete(`/heath_declaration`, {
     params: data,
   })

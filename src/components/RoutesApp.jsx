@@ -15,36 +15,39 @@ import Profile from '../pages/Setting/Profile'
 
 import NoMatch from './NoMatch'
 
-import AuthProvider from './Auth/Provider'
-import ProtectedRoute from './Auth/ProtectedRoute'
+import AuthProvider from '../context/Auth/Provider'
+import ProtectedRoute from '../context/Auth/ProtectedRoute'
+import ThemeProvider from '../context/Theme/Provider'
 
 const RoutesApp = () => {
   return (
     <AuthProvider>
-      <Routes>
-        <Route path="/" element={<HomeLayout />} />
+      <ThemeProvider>
+        <Routes>
+          <Route path="/" element={<HomeLayout />} />
 
-        <Route
-          path="admin"
-          element={
-            <ProtectedRoute>
-              <AdminLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="" element={<Dashboard />} />
-          <Route path="user" element={<User />} />
-          <Route path="location" element={<Location />} />
-          <Route path="declaration" element={<DeclarationHistory />} />
-          <Route path="injection" element={<Injection />} />
-          <Route path="vaccine-type" element={<VaccineType />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="notification" element={<Profile />} />
-        </Route>
+          <Route
+            path="admin"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="" element={<Dashboard />} />
+            <Route path="user" element={<User />} />
+            <Route path="location" element={<Location />} />
+            <Route path="declaration" element={<DeclarationHistory />} />
+            <Route path="injection" element={<Injection />} />
+            <Route path="vaccine-type" element={<VaccineType />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="notification" element={<Profile />} />
+          </Route>
 
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<NoMatch />} />
-      </Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<NoMatch />} />
+        </Routes>
+      </ThemeProvider>
     </AuthProvider>
   )
 }

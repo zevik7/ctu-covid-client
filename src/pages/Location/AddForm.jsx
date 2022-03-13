@@ -10,7 +10,7 @@ import Alert from '@mui/material/Alert'
 import { storeLocation } from '../../api'
 import Map from '../../components/Map'
 
-import { useAuth } from '../../components/Auth/Context'
+import { useAuth } from '../../context/Auth/Context'
 
 const AddForm = (props) => {
   const { user } = useAuth()

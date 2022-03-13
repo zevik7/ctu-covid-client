@@ -3,7 +3,7 @@ import dateFormat from 'dateformat'
 
 import { Box, Paper, Grid, TableCell, Typography } from '@mui/material'
 
-import { getHealthDeclaraions, destroyLocation } from '../../api'
+import { getHealthDeclaraions, destroyLocations } from '../../api'
 
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
@@ -81,7 +81,7 @@ const handleRenderTableRow = (row) => {
 
 const DeclarationHistory = () => {
   const [data, setData] = useState([])
-  const [totalPage, setTotalPage] = useState(0)
+  const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
   const [tableRowsPerPage, setTableRowsPerPage] = useState(20)
 
@@ -98,9 +98,9 @@ const DeclarationHistory = () => {
   }
 
   const setAllState = (apiData) => {
-    const { data, currentPage, perPage, totalPage } = apiData
+    const { data, currentPage, perPage, count } = apiData
     setData(data)
-    setTotalPage(totalPage)
+    setCount(count)
     setPage(currentPage)
     setTableRowsPerPage(+perPage)
   }
@@ -175,7 +175,7 @@ const DeclarationHistory = () => {
               selected={[]}
             />
             <TablePagination
-              count={totalPage}
+              count={count}
               page={page}
               rowsPerPage={tableRowsPerPage}
               handleChangePage={handleChangePage}

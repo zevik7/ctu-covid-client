@@ -10,7 +10,7 @@ import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
 
-import { useAuth } from '../../components/Auth/Context'
+import { useAuth } from '../../context/Auth/Context'
 import { useNavigate } from 'react-router-dom'
 
 export default function AccountMenu() {

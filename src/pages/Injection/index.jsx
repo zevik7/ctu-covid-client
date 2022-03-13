@@ -47,7 +47,7 @@ const handleRenderTableRow = (row) => (
 
 const User = () => {
   const [tableBodyCells, setTableBodyCells] = useState([])
-  const [totalPage, setTotalPage] = useState(0)
+  const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
   const [tableRowsPerPage, setTableRowsPerPage] = useState(20)
   const [openEditForm, setOpenEditForm] = useState(false)
@@ -65,9 +65,9 @@ const User = () => {
   }
 
   const setAllState = (apiData) => {
-    const { data, currentPage, perPage, totalPage } = apiData
+    const { data, currentPage, perPage, count } = apiData
     setTableBodyCells(data)
-    setTotalPage(totalPage)
+    setCount(count)
     setPage(currentPage)
     setTableRowsPerPage(perPage)
   }
@@ -176,7 +176,7 @@ const User = () => {
           handleSelectAllClick={handleTableRowClickAll}
         />
         <TablePagination
-          count={totalPage}
+          count={count}
           page={page}
           rowsPerPage={tableRowsPerPage}
           handleChangePage={handleChangePage}

@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import SearchIcon from '@mui/icons-material/Search'
 
 import AccountMenu from '../AccountMenu'
-import ColorMode from '../ColorMode'
+import { useTheme } from '../../context/Theme/Context'
 import SwitchMode from '../SwitchMode'
 import { Box } from '@mui/system'
 
@@ -54,7 +54,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }))
 
 const MainAppBar = (props) => {
-  const colorMode = ColorMode.useColorMode()
+  const colorMode = useTheme()
 
   return (
     <AppBar

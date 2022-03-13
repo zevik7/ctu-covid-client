@@ -12,7 +12,7 @@ export const updateLocation = (params, data) =>
 
 export const storeLocation = (data) => axios.post(`/location`, data)
 
-export const destroyLocation = (data) =>
+export const destroyLocations = (data) =>
   axios.delete(`/location`, {
     params: data,
   })
