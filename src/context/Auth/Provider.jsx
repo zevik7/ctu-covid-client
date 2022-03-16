@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from './Context'
 import { setTokenApi } from '../../api'
@@ -16,27 +16,30 @@ const setStorageUser = (user) => {
 const AuthProvider = ({ children }) => {
   const navigate = useNavigate()
 
-  const [user, setUser] = React.useState(getStorageUser() || {})
+  const [user, setUser] = useState(getStorageUser() || {})
 
   setTokenApi(user.token)
 
-  const handleLogin = async (user) => {
+  const handleOnSetUser = useCallback((user) => {
     setUser(user)
     setStorageUser(user)
-    navigate('/admin')
-  }
+  }, [])
 
-  const handleLogout = () => {
-    setUser({})
-    localStorage.removeItem('user')
-  }
-
-  const value = {
-    token: user.token,
-    user,
-    onLogin: handleLogin,
-    onLogout: handleLogout,
-  }
+  const value = useMemo(
+    () => ({
+      user,
+      handleOnSetUser,
+      onLogin: (user) => {
+        handleOnSetUser(user)
+        navigate('/admin')
+      },
+      onLogout: () => {
+        setUser({})
+        localStorage.removeItem('user')
+      },
+    }),
+    [user]
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

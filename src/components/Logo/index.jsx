@@ -1,10 +1,33 @@
 import { Box, Avatar, Typography } from '@mui/material'
 
-const Logo = () => {
+const Logo = (props) => {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Avatar alt="App Logo" src="/logo.png" sx={{ marginRight: '5px' }} />
-      <Typography color="text.secondary">CTU-Covid</Typography>
+    <Box
+      sx={[
+        {
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          height: '50%',
+        },
+        ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
+      ]}
+    >
+      <img
+        src="/logo.png"
+        style={{
+          marginRight: '5%',
+          width: '35%',
+          objectFit: 'contain',
+        }}
+      />
+      <Typography
+        color="text.secondary"
+        variant={props.textVariant}
+        sx={{ width: '60%' }}
+      >
+        CTU-Covid
+      </Typography>
     </Box>
   )
 }

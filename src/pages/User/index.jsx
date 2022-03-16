@@ -58,6 +58,8 @@ const User = () => {
   const [modalData, setModalData] = useState({})
   const [selected, setSelected] = useState([])
 
+  console.log('parent-render')
+
   const callApi = () => {
     getUsers({
       currentPage: page,
@@ -129,7 +131,7 @@ const User = () => {
     }).then((rs) => {
       setAllState(rs.data)
     })
-  }, [openModal])
+  }, [])
 
   const handleChangePage = (event, newPage) => {
     getUsers({
@@ -154,6 +156,7 @@ const User = () => {
       <Paper sx={{ width: '100%', mb: 2 }}>
         <Modal open={openModal} handleClose={handleCloseModal}>
           <ModalForm data={modalData} handleClose={handleCloseModal} />
+          {true && console.log('first')}
         </Modal>
         <TableToolbar
           title="Danh sách người dùng"

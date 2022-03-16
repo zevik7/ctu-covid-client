@@ -21,6 +21,9 @@ const Provider = (props) => {
         {
           palette: {
             mode,
+            background: {
+              lightBlue: "url('/images/Light-Blue-Wallpapers.jpg')",
+            },
           },
         },
         viVN

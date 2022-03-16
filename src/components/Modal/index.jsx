@@ -15,7 +15,8 @@ const style = {
   boxShadow: 24,
   p: 4,
   maxHeight: '90vh',
-  overflowY: 'auto',
+  maxWidth: '100%',
+  overflow: 'auto',
 }
 
 export default function TransitionsModal(props) {
@@ -32,9 +33,16 @@ export default function TransitionsModal(props) {
           timeout: 500,
         }}
         classes={{ focus: 'border-none' }}
+        sx={{
+          overflow: 'auto',
+        }}
       >
         <Fade in={props.open}>
-          <Box sx={style}>{props.children}</Box>
+          <Box
+            sx={[style, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}
+          >
+            {props.children}
+          </Box>
         </Fade>
       </Modal>
     </div>

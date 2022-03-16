@@ -1,23 +1,22 @@
-import * as React from 'react'
+import { useState } from 'react'
 
 import Avatar from '@mui/material/Avatar'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
 
 import { useAuth } from '../../context/Auth/Context'
-import { useNavigate } from 'react-router-dom'
+
+import SettingModal from './SettingModal'
 
 export default function AccountMenu() {
   const { user, onLogout } = useAuth()
-  const navigate = useNavigate()
-
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [openSettingModal, setOpenSettingModal] = useState(false)
 
   const open = Boolean(anchorEl)
 
@@ -29,21 +28,26 @@ export default function AccountMenu() {
     setAnchorEl(null)
   }
 
+  const handleOpenSettingModal = () => setOpenSettingModal(true)
+
+  const handleCloseSettingModal = () => setOpenSettingModal(false)
+
   return (
-    <React.Fragment>
+    <>
+      {openSettingModal && (
+        <SettingModal handleClose={handleCloseSettingModal} />
+      )}
       <IconButton
         onClick={handleClick}
-        size="small"
+        size="medium"
         aria-controls={open ? 'account-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
       >
         <Avatar
-          sx={{ width: 32, height: 32 }}
+          sx={{ width: 36, height: 36 }}
           src={`${process.env.REACT_APP_SERVER}${user.avatar}`}
-        >
-          Msdf
-        </Avatar>
+        />
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -56,9 +60,9 @@ export default function AccountMenu() {
           sx: {
             overflow: 'visible',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: 1.5,
+            mt: 0.5,
             '& .MuiAvatar-root': {
-              width: 32,
+              width: 20,
               height: 32,
               ml: -0.5,
               mr: 1,
@@ -68,7 +72,7 @@ export default function AccountMenu() {
               display: 'block',
               position: 'absolute',
               top: 0,
-              right: 14,
+              right: 20,
               width: 10,
               height: 10,
               bgcolor: 'background.paper',
@@ -80,17 +84,17 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
+        <MenuItem onClick={handleOpenSettingModal}>
+          <ListItemIcon>
+            <Settings fontSize="small" />
+          </ListItemIcon>
+          Cài đặt tài khoản
+        </MenuItem>
         <MenuItem>
           <ListItemIcon>
             <PersonAdd fontSize="small" />
           </ListItemIcon>
           Thêm tài khoản
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Cài đặt
         </MenuItem>
         <MenuItem onClick={onLogout}>
           <ListItemIcon>
@@ -99,6 +103,6 @@ export default function AccountMenu() {
           Đăng xuất
         </MenuItem>
       </Menu>
-    </React.Fragment>
+    </>
   )
 }

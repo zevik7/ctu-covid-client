@@ -10,11 +10,8 @@ const Copyright = (props) => {
       {...props}
     >
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        {process.env.REACT_APP_WEBSITE_NAME}
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
+      {process.env.REACT_APP_WEBSITE_NAME}
+      {' 2022.'}
     </Typography>
   )
 }

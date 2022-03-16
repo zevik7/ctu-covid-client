@@ -22,7 +22,12 @@ const content = (
         px: [1],
       }}
     >
-      <Logo />
+      <Logo
+        sx={{
+          width: '140px',
+        }}
+        textVariant="subtitle1"
+      />
     </Toolbar>
     <Divider />
     <List component="nav">

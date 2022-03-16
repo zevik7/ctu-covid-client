@@ -36,6 +36,8 @@ const ModalForm = (props) => {
 
   const [successAlert, setSuccessAlert] = useState(false)
 
+  console.log('child-render', successAlert)
+
   const [form, setForm] = useState({
     name: { value: data.name || '', error: false, errorTxt: '' },
     birthday: { value: data.birthday || '', error: false, errorTxt: '' },
@@ -45,6 +47,10 @@ const ModalForm = (props) => {
     address: { value: data.address || '', error: false, errorTxt: '' },
     avatar: { value: data.avatar || '', error: false, errorTxt: '' },
   })
+
+  useEffect(() => {
+    console.log('use effect')
+  }, [])
 
   const handleInput = (e) => {
     const name = e.target.name
@@ -98,14 +104,14 @@ const ModalForm = (props) => {
         data
       )
         .then(() => {
-          setSuccessAlert(!successAlert)
+          setSuccessAlert(true)
         })
         .catch((err) => console.log(err))
     } else {
       // Add action
       storeUser(data)
         .then((rs) => {
-          setSuccessAlert(!successAlert)
+          setSuccessAlert(true)
         })
         .catch((err) => console.log(err))
     }
@@ -113,7 +119,7 @@ const ModalForm = (props) => {
 
   return (
     <Box>
-      <Typography variant="h5" mb={2}>
+      <Typography variant="h6" mb={2}>
         Thông tin chi tiết
       </Typography>
       <Box component="form" noValidate onSubmit={handleSubmit}>

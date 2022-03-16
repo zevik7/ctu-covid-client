@@ -47,6 +47,9 @@ export default function Login() {
       alignItems="center"
       sx={{
         height: '100vh',
+        backgroundImage: (theme) => theme.palette.background.lightBlue,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
       }}
     >
       <CssBaseline />
@@ -62,9 +65,15 @@ export default function Login() {
           flexDirection: 'column',
           alignItems: 'center',
           boxShadow: 4,
+          bgcolor: 'background.paper',
         }}
       >
-        <Logo />
+        <Logo
+          sx={{
+            width: '200px',
+          }}
+          textVariant="h5"
+        />
         <Typography
           component="h1"
           variant="h5"
