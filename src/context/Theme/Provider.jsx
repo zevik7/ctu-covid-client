@@ -1,9 +1,11 @@
 import React from 'react'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import MuiThemeProvider from '@mui/material/styles/ThemeProvider'
+import createTheme from '@mui/material/styles/createTheme'
+import responsiveFontSizes from '@mui/material/styles/responsiveFontSizes'
 import { viVN } from '@mui/material/locale'
 import { ThemeContext } from './Context'
 
-const Provider = (props) => {
+const ThemeProvider = (props) => {
   const [mode, setMode] = React.useState('light')
 
   const colorMode = React.useMemo(
@@ -17,25 +19,27 @@ const Provider = (props) => {
 
   const theme = React.useMemo(
     () =>
-      createTheme(
-        {
-          palette: {
-            mode,
-            background: {
-              lightBlue: "url('/images/Light-Blue-Wallpapers.jpg')",
+      responsiveFontSizes(
+        createTheme(
+          {
+            palette: {
+              mode,
+              background: {
+                lightBlue: "url('/images/Light-Blue-Wallpapers.jpg')",
+              },
             },
           },
-        },
-        viVN
+          viVN
+        )
       ),
     [mode]
   )
 
   return (
     <ThemeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+      <MuiThemeProvider theme={theme}>{props.children}</MuiThemeProvider>
     </ThemeContext.Provider>
   )
 }
 
-export default Provider
+export { ThemeProvider }

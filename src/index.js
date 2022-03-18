@@ -11,7 +11,6 @@ document.title = process.env.REACT_APP_WEBSITE_NAME_SHORT
 
 ReactDOM.render(
   <Provider store={store}>
-    render
     <App />
   </Provider>,
   document.getElementById('root')

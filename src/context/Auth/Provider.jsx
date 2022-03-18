@@ -21,6 +21,7 @@ const AuthProvider = ({ children }) => {
   setTokenApi(user.token)
 
   const handleOnSetUser = useCallback((user) => {
+    // May not need useCallback
     setUser(user)
     setStorageUser(user)
   }, [])
@@ -44,4 +45,4 @@ const AuthProvider = ({ children }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-export default AuthProvider
+export { AuthProvider }

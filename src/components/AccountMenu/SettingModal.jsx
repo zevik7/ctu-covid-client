@@ -14,7 +14,7 @@ import Input from '@mui/material/Input'
 import Avatar from '@mui/material/Avatar'
 
 import Modal from '../../components/Modal'
-import { useAuth } from '../../context/Auth/Context'
+import { useAuth } from '../../context/Auth'
 import { getUser, updateUser } from '../../api'
 
 const SettingModal = (props) => {
@@ -103,6 +103,7 @@ const SettingModal = (props) => {
       .then((rs) => {
         setSuccessAlert(true)
         auth.handleOnSetUser({ ...auth.user, ...rs.data })
+        setEnableSubmitBtn(false)
       })
       .catch((err) => console.log(err))
   }
@@ -280,14 +281,15 @@ const SettingModal = (props) => {
               </Button>
             </Box>
             {successAlert && (
-              <Alert
-                severity="success"
+              <Modal
+                open={successAlert}
+                handleClose={() => setSuccessAlert(false)}
                 sx={{
-                  mt: 1,
+                  p: 0,
                 }}
               >
-                Lưu thành công
-              </Alert>
+                <Alert severity="success">Lưu thành công</Alert>
+              </Modal>
             )}
           </Grid>
         </Grid>

@@ -15,9 +15,9 @@ import Profile from '../pages/Setting/Profile'
 
 import NoMatch from './NoMatch'
 
-import AuthProvider from '../context/Auth/Provider'
-import ProtectedRoute from '../context/Auth/ProtectedRoute'
-import ThemeProvider from '../context/Theme/Provider'
+import { AuthProvider } from '../context/Auth'
+import ProtectedRoute from './ProtectedRoute'
+import { ThemeProvider } from '../context/Theme'
 
 const RoutesApp = () => {
   return (

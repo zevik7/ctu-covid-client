@@ -9,7 +9,7 @@ import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
 
-import { useAuth } from '../../context/Auth/Context'
+import { useAuth } from '../../context/Auth'
 
 import SettingModal from './SettingModal'
 
@@ -31,8 +31,6 @@ export default function AccountMenu() {
   const handleOpenSettingModal = () => setOpenSettingModal(true)
 
   const handleCloseSettingModal = () => setOpenSettingModal(false)
-
-  // console.log(`${process.env.REACT_APP_SERVER}${user.avatar}`)
 
   return (
     <>
