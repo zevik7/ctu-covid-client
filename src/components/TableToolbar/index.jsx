@@ -31,6 +31,7 @@ const TableToolbar = (props) => {
             ),
         }),
       }}
+      styled={{ position: '-webkit-sticky', position: 'sticky', top: 0 }}
     >
       {numSelected > 0 ? (
         <Typography
@@ -39,7 +40,7 @@ const TableToolbar = (props) => {
           variant="subtitle1"
           component="div"
         >
-          {numSelected} selected
+          {numSelected} đã chọn
         </Typography>
       ) : (
         <Typography

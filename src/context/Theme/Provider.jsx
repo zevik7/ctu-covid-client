@@ -1,4 +1,4 @@
-import React from 'react'
+import { useMemo, useState } from 'react'
 import MuiThemeProvider from '@mui/material/styles/ThemeProvider'
 import createTheme from '@mui/material/styles/createTheme'
 import responsiveFontSizes from '@mui/material/styles/responsiveFontSizes'
@@ -6,9 +6,9 @@ import { viVN } from '@mui/material/locale'
 import { ThemeContext } from './Context'
 
 const ThemeProvider = (props) => {
-  const [mode, setMode] = React.useState('light')
+  const [mode, setMode] = useState('light')
 
-  const colorMode = React.useMemo(
+  const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
         setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'))
@@ -17,7 +17,7 @@ const ThemeProvider = (props) => {
     []
   )
 
-  const theme = React.useMemo(
+  const theme = useMemo(
     () =>
       responsiveFontSizes(
         createTheme(

@@ -3,42 +3,32 @@ import { useNavigate } from 'react-router-dom'
 
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
-import Link from '@mui/material/Link'
-import Paper from '@mui/material/Paper'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import FormLabel from '@mui/material/FormLabel'
 import RadioGroup from '@mui/material/RadioGroup'
-import DesktopDatePicker from '@mui/lab/DesktopDatePicker'
 import Radio from '@mui/material/Radio'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
+import Input from '@mui/material/Input'
 
-import Copyright from '../../components/Copyright'
-import Logo from '../../components/Logo'
-import { useAuth } from '../../context/Auth/Context'
+import Modal from '../../components/Modal'
 import { updateUser, storeUser } from '../../api'
-import { Container } from '@mui/material'
 
 import dateFormat from 'dateformat'
 
-const ModalForm = (props) => {
-  const { data, handleClose } = props
+const MainModal = (props) => {
+  const { open, data, updateRows, handleClose } = props
 
   // edit or add method
   const _id = data._id
 
   const [successAlert, setSuccessAlert] = useState(false)
+  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
+  const [avatarUpload, setAvatarUpload] = useState(null)
 
-  console.log('child-render', successAlert)
-
-  const [form, setForm] = useState({
+  const [user, setUser] = useState({
     name: { value: data.name || '', error: false, errorTxt: '' },
     birthday: { value: data.birthday || '', error: false, errorTxt: '' },
     gender: { value: data.gender || '', error: false, errorTxt: '' },
@@ -47,10 +37,6 @@ const ModalForm = (props) => {
     address: { value: data.address || '', error: false, errorTxt: '' },
     avatar: { value: data.avatar || '', error: false, errorTxt: '' },
   })
-
-  useEffect(() => {
-    console.log('use effect')
-  }, [])
 
   const handleInput = (e) => {
     const name = e.target.name
@@ -82,13 +68,14 @@ const ModalForm = (props) => {
       }
     }
 
-    setForm({ ...form, [name]: { value, error, errorTxt } })
+    setUser({ ...user, [name]: { value, error, errorTxt } })
+    setEnableSubmitBtn(true)
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(form).find((key, index) => form[key].error)
+    const isError = Object.keys(user).find((key, index) => user[key].error)
 
     if (isError) return
 
@@ -97,78 +84,104 @@ const ModalForm = (props) => {
     // Call api
     if (_id) {
       // Edit action
-      updateUser(
+      await updateUser(
         {
           _id,
         },
         data
-      )
-        .then(() => {
-          setSuccessAlert(true)
-        })
-        .catch((err) => console.log(err))
+      ).catch((err) => console.log(err))
     } else {
       // Add action
-      storeUser(data)
-        .then((rs) => {
-          setSuccessAlert(true)
-        })
-        .catch((err) => console.log(err))
+      await storeUser(data).catch((err) => console.log(err))
+    }
+    setSuccessAlert(true)
+    setEnableSubmitBtn(false)
+    updateRows()
+  }
+
+  const handleChangeAvatar = (e) => {
+    setEnableSubmitBtn(true)
+
+    if (e.target.files && e.target.files[0]) {
+      let avatar = e.target.files[0]
+      setAvatarUpload(URL.createObjectURL(avatar))
     }
   }
 
   return (
-    <Box>
-      <Typography variant="h6" mb={2}>
-        Thông tin chi tiết
-      </Typography>
-      <Box component="form" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item md={3}>
-            <Box
+    <Modal open={open} handleClose={handleClose}>
+      <Box
+        component="form"
+        noValidate
+        onSubmit={handleSubmit}
+        sx={{
+          minWidth: 300,
+        }}
+      >
+        <Typography variant="h6">Thông tin cá nhân</Typography>
+        <Grid container spacing={2} justifyContent="center" alignItems="center">
+          <Grid
+            container
+            item
+            xs={7}
+            lg={4}
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Avatar
+              src={
+                avatarUpload
+                  ? avatarUpload
+                  : process.env.REACT_APP_SERVER + user.avatar.value
+              }
               sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                flexDirection: 'column',
+                width: '100%',
+                height: 'auto',
+                objectFit: 'contain',
               }}
-            >
-              <Avatar
+              variant="square"
+            />
+            <label htmlFor="contained-button-file">
+              <Input
+                name="avatar"
+                accept="image/*"
+                id="contained-button-file"
+                type="file"
                 sx={{
-                  width: '100%',
-                  height: '100%',
+                  display: 'none',
                 }}
-                variant="square"
-                src={process.env.REACT_APP_SERVER + data.avatar}
+                onChange={handleChangeAvatar}
               />
               <Button
                 variant="outlined"
+                component="span"
                 sx={{
-                  marginTop: 2,
+                  marginTop: 1,
                 }}
               >
-                {_id ? 'Thay đổi' : 'Thêm'}
+                Thay đổi
               </Button>
-            </Box>
+            </label>
           </Grid>
-          <Grid item md={9}>
+          <Grid item ex={12} lg={8}>
             <TextField
               required
               fullWidth
+              margin="normal"
               id="name"
               label="Họ tên"
               name="name"
               autoComplete="name"
               autoFocus
-              sx={{
-                mb: '8px',
-              }}
-              value={form.name.value}
+              value={user.name.value}
               onChange={(e) => handleInput(e)}
-              error={form.name.error}
-              helperText={form.name.errorTxt}
+              error={user.name.error}
+              helperText={user.name.errorTxt}
             />
             <Box
               sx={{
+                width: '100%',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -180,18 +193,18 @@ const ModalForm = (props) => {
                 label="Ngày sinh"
                 type="date"
                 name="birthday"
-                sx={{ mr: 2, width: 200 }}
+                sx={{ mr: 2, minWidth: 150 }}
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={dateFormat(form.birthday.value, 'yyyy-mm-dd')}
+                value={dateFormat(user.birthday.value, 'yyyy-mm-dd')}
                 onChange={(e) => handleInput(e)}
-                error={form.birthday.error}
-                helperText={form.birthday.errorTxt}
+                error={user.birthday.error}
+                helperText={user.birthday.errorTxt}
               />
               <RadioGroup
                 row
-                value={form.gender.value === 'Nam' ? 'Nam' : 'Nữ'}
+                value={user.gender.value === 'Nam' ? 'Nam' : 'Nữ'}
                 name="gender"
                 onChange={(e) => handleInput(e)}
               >
@@ -206,10 +219,10 @@ const ModalForm = (props) => {
               id="email"
               label="Email"
               name="email"
-              value={form.email.value}
+              value={user.email.value}
               onChange={(e) => handleInput(e)}
-              error={form.email.error}
-              helperText={form.email.errorTxt}
+              error={user.email.error}
+              helperText={user.email.errorTxt}
             />
             <TextField
               required
@@ -218,10 +231,10 @@ const ModalForm = (props) => {
               id="phone"
               label="Số điện thoại"
               name="phone"
-              value={form.phone.value}
+              value={user.phone.value}
               onChange={(e) => handleInput(e)}
-              error={form.phone.error}
-              helperText={form.phone.errorTxt}
+              error={user.phone.error}
+              helperText={user.phone.errorTxt}
             />
             <TextField
               required
@@ -230,13 +243,13 @@ const ModalForm = (props) => {
               id="address"
               label="Địa chỉ"
               name="address"
-              value={form.address.value}
+              value={user.address.value}
               onChange={(e) => handleInput(e)}
-              error={form.address.error}
-              helperText={form.address.errorTxt}
+              error={user.address.error}
+              helperText={user.address.errorTxt}
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <Box
               sx={{
                 display: 'flex',
@@ -249,19 +262,45 @@ const ModalForm = (props) => {
                 sx={{
                   mr: 2,
                 }}
+                disabled={!enableSubmitBtn}
               >
-                {_id ? 'Lưu' : 'Thêm'}
+                Lưu
               </Button>
               <Button variant="text" onClick={handleClose}>
                 Đóng
               </Button>
             </Box>
-            {successAlert && <Alert severity="success">Lưu thành công</Alert>}
+            {successAlert && (
+              <Modal
+                open={successAlert}
+                handleClose={() => setSuccessAlert(false)}
+                sx={{
+                  p: 0,
+                }}
+              >
+                <Alert
+                  severity="success"
+                  onClose={() => setSuccessAlert(false)}
+                  sx={{
+                    fontSize: 16,
+                    alignItems: 'center',
+                    '.MuiAlert-action': {
+                      pt: 0,
+                    },
+                    '.MuiAlert-message': {
+                      whiteSpace: 'nowrap',
+                    },
+                  }}
+                >
+                  Lưu thành công
+                </Alert>
+              </Modal>
+            )}
           </Grid>
         </Grid>
       </Box>
-    </Box>
+    </Modal>
   )
 }
 
-export default ModalForm
+export default MainModal

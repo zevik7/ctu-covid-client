@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import CssBaseline from '@mui/material/CssBaseline'
@@ -12,7 +12,7 @@ import Drawer from '../Drawer'
 const drawerWidth = 240
 
 function AdminLayoutContent() {
-  const [openDrawer, setOpenDrawer] = React.useState(false)
+  const [openDrawer, setOpenDrawer] = useState(false)
 
   const handleDrawerToggle = () => {
     setOpenDrawer(!openDrawer)
@@ -44,7 +44,7 @@ function AdminLayoutContent() {
       >
         <Toolbar />
         <Outlet />
-        <Copyright sx={{ pt: 4 }} />
+        <Copyright sx={{ p: 4 }} />
       </Box>
     </Box>
   )

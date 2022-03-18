@@ -120,7 +120,6 @@ const SettingModal = (props) => {
   return (
     <Modal open={true} handleClose={handleClose}>
       <Box
-        enctype="multipart/form-data"
         component="form"
         noValidate
         onSubmit={handleSubmit}
@@ -288,7 +287,22 @@ const SettingModal = (props) => {
                   p: 0,
                 }}
               >
-                <Alert severity="success">Lưu thành công</Alert>
+                <Alert
+                  severity="success"
+                  onClose={() => setSuccessAlert(false)}
+                  sx={{
+                    fontSize: 16,
+                    alignItems: 'center',
+                    '.MuiAlert-action': {
+                      pt: 0,
+                    },
+                    '.MuiAlert-message': {
+                      whiteSpace: 'nowrap',
+                    },
+                  }}
+                >
+                  Lưu thành công
+                </Alert>
               </Modal>
             )}
           </Grid>

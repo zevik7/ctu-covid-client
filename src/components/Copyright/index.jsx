@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, Link } from '@mui/material'
+import { Typography } from '@mui/material'
 
 const Copyright = (props) => {
   return (
@@ -8,6 +8,7 @@ const Copyright = (props) => {
       color="text.secondary"
       align="center"
       {...props}
+      sx={[...(Array.isArray(props.sx) ? props.sx : [props.sx])]}
     >
       {'Copyright © '}
       {process.env.REACT_APP_WEBSITE_NAME}
