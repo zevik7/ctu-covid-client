@@ -18,11 +18,12 @@ import { useAuth } from '../../context/Auth/Context'
 import { loggin } from '../../api'
 
 export default function Login() {
-  const { token, onLogin } = useAuth()
+  const { user, onLogin } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (token) navigate('/admin')
+    if (user.token) navigate('/admin')
+    console.log(user)
   }, [])
 
   const [username, setUserName] = useState('')
@@ -31,7 +32,10 @@ export default function Login() {
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    const data = new FormData(event.currentTarget)
+    const data = {
+      username,
+      password,
+    }
 
     loggin(data)
       .then((rs) => {

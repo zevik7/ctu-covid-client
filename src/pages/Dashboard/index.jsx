@@ -9,6 +9,7 @@ import Map from '../../components/Map'
 import { useAuth } from '../../context/Auth/Context'
 
 const Dashboard = () => {
+  console.log('dashboard render')
   const [pieChart, setPieChart] = useState({
     series: [990, 31022, 23100],
     options: {

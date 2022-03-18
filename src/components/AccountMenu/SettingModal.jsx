@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import dateFormat from 'dateformat'
 
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -10,13 +11,11 @@ import Radio from '@mui/material/Radio'
 import Typography from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
 import Input from '@mui/material/Input'
+import Avatar from '@mui/material/Avatar'
 
 import Modal from '../../components/Modal'
 import { useAuth } from '../../context/Auth/Context'
 import { getUser, updateUser } from '../../api'
-
-import dateFormat from 'dateformat'
-import { Avatar } from '@mui/material'
 
 const SettingModal = (props) => {
   const { handleClose } = props
@@ -103,8 +102,7 @@ const SettingModal = (props) => {
     )
       .then((rs) => {
         setSuccessAlert(true)
-        // handleOnSetUser()
-        console.log(rs.data.data.value)
+        auth.handleOnSetUser({ ...auth.user, ...rs.data })
       })
       .catch((err) => console.log(err))
   }
@@ -117,8 +115,6 @@ const SettingModal = (props) => {
       setAvatarUpload(URL.createObjectURL(avatar))
     }
   }
-
-  console.log('setting modal render')
 
   return (
     <Modal open={true} handleClose={handleClose}>

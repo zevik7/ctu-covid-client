@@ -5,7 +5,7 @@ axios.defaults.baseURL = process.env.REACT_APP_SERVER_API
 export const setTokenApi = (token) =>
   (axios.defaults.headers.common = { Authorization: `Bearer ${token}` })
 
-export const loggin = (data) => axios.post(`/admin/auth/login`, data)
+export * from './auth'
 
 export * from './user'
 

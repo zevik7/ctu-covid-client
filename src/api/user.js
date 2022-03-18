@@ -5,7 +5,7 @@ export const getUsers = (params) =>
     params,
   })
 
-export const getUser = (id) => axios.get(`/user/${id}`)
+export const getUser = (_id) => axios.get(`/user/${_id}`)
 
 export const updateUser = (params, data) =>
   axios.put(`/user`, data, {

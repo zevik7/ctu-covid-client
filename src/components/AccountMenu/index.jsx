@@ -32,6 +32,8 @@ export default function AccountMenu() {
 
   const handleCloseSettingModal = () => setOpenSettingModal(false)
 
+  // console.log(`${process.env.REACT_APP_SERVER}${user.avatar}`)
+
   return (
     <>
       {openSettingModal && (
