@@ -26,7 +26,7 @@ const SettingModal = (props) => {
   const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
   const [avatarUpload, setAvatarUpload] = useState(null)
 
-  const [user, setUser] = useState({
+  const [form, setForm] = useState({
     name: { value: '', error: false, errorTxt: '' },
     birthday: { value: '', error: false, errorTxt: '' },
     gender: { value: '', error: false, errorTxt: '' },
@@ -47,7 +47,7 @@ const SettingModal = (props) => {
           errorTxt: '',
         }
       })
-      setUser(authUserMap)
+      setForm(authUserMap)
     })
   }, [])
 
@@ -81,14 +81,14 @@ const SettingModal = (props) => {
       }
     }
 
-    setUser({ ...user, [name]: { value, error, errorTxt } })
+    setForm({ ...form, [name]: { value, error, errorTxt } })
     setEnableSubmitBtn(true)
   }
 
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(user).find((key, index) => user[key].error)
+    const isError = Object.keys(form).find((key, index) => form[key].error)
 
     if (isError) return
 
@@ -118,7 +118,7 @@ const SettingModal = (props) => {
   }
 
   return (
-    <Modal open={true} handleClose={handleClose}>
+    <Modal handleClose={handleClose}>
       <Box
         component="form"
         noValidate
@@ -142,7 +142,7 @@ const SettingModal = (props) => {
               src={
                 avatarUpload
                   ? avatarUpload
-                  : process.env.REACT_APP_SERVER + user.avatar.value
+                  : process.env.REACT_APP_SERVER + form.avatar.value
               }
               sx={{
                 width: '100%',
@@ -183,10 +183,10 @@ const SettingModal = (props) => {
               name="name"
               autoComplete="name"
               autoFocus
-              value={user.name.value}
+              value={form.name.value}
               onChange={(e) => handleInput(e)}
-              error={user.name.error}
-              helperText={user.name.errorTxt}
+              error={form.name.error}
+              helperText={form.name.errorTxt}
             />
             <Box
               sx={{
@@ -206,14 +206,14 @@ const SettingModal = (props) => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={dateFormat(user.birthday.value, 'yyyy-mm-dd')}
+                value={dateFormat(form.birthday.value, 'yyyy-mm-dd')}
                 onChange={(e) => handleInput(e)}
-                error={user.birthday.error}
-                helperText={user.birthday.errorTxt}
+                error={form.birthday.error}
+                helperText={form.birthday.errorTxt}
               />
               <RadioGroup
                 row
-                value={user.gender.value === 'Nam' ? 'Nam' : 'Nữ'}
+                value={form.gender.value === 'Nam' ? 'Nam' : 'Nữ'}
                 name="gender"
                 onChange={(e) => handleInput(e)}
               >
@@ -228,10 +228,10 @@ const SettingModal = (props) => {
               id="email"
               label="Email"
               name="email"
-              value={user.email.value}
+              value={form.email.value}
               onChange={(e) => handleInput(e)}
-              error={user.email.error}
-              helperText={user.email.errorTxt}
+              error={form.email.error}
+              helperText={form.email.errorTxt}
             />
             <TextField
               required
@@ -240,10 +240,10 @@ const SettingModal = (props) => {
               id="phone"
               label="Số điện thoại"
               name="phone"
-              value={user.phone.value}
+              value={form.phone.value}
               onChange={(e) => handleInput(e)}
-              error={user.phone.error}
-              helperText={user.phone.errorTxt}
+              error={form.phone.error}
+              helperText={form.phone.errorTxt}
             />
             <TextField
               required
@@ -252,10 +252,10 @@ const SettingModal = (props) => {
               id="address"
               label="Địa chỉ"
               name="address"
-              value={user.address.value}
+              value={form.address.value}
               onChange={(e) => handleInput(e)}
-              error={user.address.error}
-              helperText={user.address.errorTxt}
+              error={form.address.error}
+              helperText={form.address.errorTxt}
             />
           </Grid>
           <Grid item xs={12}>

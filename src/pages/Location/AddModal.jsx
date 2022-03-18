@@ -9,10 +9,11 @@ import Alert from '@mui/material/Alert'
 
 import { storeLocation } from '../../api'
 import Map from '../../components/Map'
+import Modal from '../../components/Modal'
 
 import { useAuth } from '../../context/Auth/Context'
 
-const AddForm = (props) => {
+const AddModal = (props) => {
   const { user } = useAuth()
   const { handleClose } = props
 
@@ -62,7 +63,7 @@ const AddForm = (props) => {
   }
 
   return (
-    <>
+    <Modal handleClose={handleClose}>
       <Typography variant="h6" mb={1}>
         Thêm địa điểm khai báo mới
       </Typography>
@@ -124,8 +125,8 @@ const AddForm = (props) => {
           </Grid>
         </Grid>
       </Box>
-    </>
+    </Modal>
   )
 }
 
-export default AddForm
+export default AddModal

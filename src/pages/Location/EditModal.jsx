@@ -8,6 +8,7 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
 import Map from '../../components/Map'
+import Modal from '../../components/Modal'
 
 import { updateLocation } from '../../api'
 import QRCode from 'qrcode.react'
@@ -27,7 +28,7 @@ const downloadQR = (id) => {
   a.click()
 }
 
-const EditForm = (props) => {
+const EditModal = (props) => {
   const { data, handleClose } = props
 
   const _id = data._id
@@ -78,7 +79,7 @@ const EditForm = (props) => {
   }
 
   return (
-    <>
+    <Modal handleClose={handleClose}>
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item md={6}>
@@ -186,8 +187,8 @@ const EditForm = (props) => {
           </Grid>
         </Grid>
       </Box>
-    </>
+    </Modal>
   )
 }
 
-export default EditForm
+export default EditModal

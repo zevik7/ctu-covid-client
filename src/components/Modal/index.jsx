@@ -25,7 +25,7 @@ export default function TransitionsModal(props) {
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
-        open={props.open || false}
+        open={props.open || true}
         onClose={props.handleClose}
         closeAfterTransition
         BackdropComponent={Backdrop}
@@ -37,7 +37,7 @@ export default function TransitionsModal(props) {
           overflow: 'auto',
         }}
       >
-        <Fade in={props.open}>
+        <Fade in={props.open || true}>
           <Box
             sx={[style, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}
           >

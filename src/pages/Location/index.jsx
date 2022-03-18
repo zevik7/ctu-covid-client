@@ -9,9 +9,9 @@ import TableToolbar from '../../components/TableToolbar'
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
 import Modal from '../../components/Modal'
-import EditForm from './EditForm'
+import EditModal from './EditModal'
 import Map from '../../components/Map'
-import AddForm from './AddForm'
+import AddModal from './AddModal'
 
 const tableHeadCells = [
   {
@@ -40,43 +40,43 @@ const handleRenderTableRow = (row) => (
 )
 
 const User = () => {
-  const [data, setData] = useState([])
+  const [tableBodyCells, setTableBodyCells] = useState([])
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
-  const [tableRowsPerPage, setTableRowsPerPage] = useState(20)
+  const [rowsPerPage, setRowsPerPage] = useState(20)
 
   const [openEditModal, setOpenEditModal] = useState(false)
   const [openAddModal, setOpenAddModal] = useState(false)
-  const [editFormData, setEditFormData] = useState({})
+  const [editModalData, setEditModalData] = useState({})
   const [selected, setSelected] = useState([])
+
+  useEffect(() => {
+    callApi()
+  }, [])
 
   const callApi = () => {
     getLocations({
       currentPage: page,
-      perPage: tableRowsPerPage,
+      perPage: rowsPerPage,
     }).then((rs) => {
-      setAllState(rs.data)
+      const { data, currentPage, perPage, count } = rs.data
+      setTableBodyCells(data)
+      setCount(count)
+      setPage(currentPage)
+      setRowsPerPage(perPage)
     })
-  }
-
-  const setAllState = (apiData) => {
-    const { data, currentPage, perPage, count } = apiData
-    setData(data)
-    setCount(count)
-    setPage(currentPage)
-    setTableRowsPerPage(perPage)
   }
 
   const handleCloseEditModal = () => setOpenEditModal(false)
 
   const handleOpenEditModal = (data) => {
     setOpenEditModal(true)
-    setEditFormData(data)
+    setEditModalData(data)
   }
 
   const handleCloseAddModal = () => setOpenAddModal(false)
 
-  const handleOpenAddModal = (data) => setOpenAddModal(true)
+  const handleOpenAddModal = () => setOpenAddModal(true)
 
   const handleTableRowClick = (event, _id) => {
     event.stopPropagation()
@@ -102,7 +102,7 @@ const User = () => {
 
   const handleTableRowClickAll = (event) => {
     if (event.target.checked) {
-      const newSelecteds = data.map((n) => n._id)
+      const newSelecteds = tableBodyCells.map((n) => n._id)
       setSelected(newSelecteds)
       return
     }
@@ -118,16 +118,15 @@ const User = () => {
     })
   }
 
-  useEffect(() => {
-    callApi()
-  }, [openEditModal, openAddModal])
-
   const handleChangePage = (event, newPage) => {
     getLocations({
       currentPage: +newPage + 1,
-      perPage: tableRowsPerPage,
+      perPage: rowsPerPage,
     }).then((rs) => {
-      setAllState(rs.data)
+      const { data, currentPage, perPage, count } = rs.data
+      setTableBodyCells(data)
+      setCount(count)
+      setPage(currentPage)
     })
   }
 
@@ -136,71 +135,80 @@ const User = () => {
       currentPage: page,
       perPage: parseInt(event.target.value, 10),
     }).then((rs) => {
-      setAllState(rs.data)
+      const { data, currentPage, perPage, count } = rs.data
+      setTableBodyCells(data)
+      setPage(currentPage)
+      setRowsPerPage(perPage)
     })
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <Modal open={openEditModal} handleClose={handleCloseEditModal}>
-          <EditForm data={editFormData} handleClose={handleCloseEditModal} />
-        </Modal>
-        <Modal open={openAddModal} handleClose={handleCloseAddModal}>
-          <AddForm handleClose={handleCloseAddModal} />
-        </Modal>
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            minHeight: '80vh',
-          }}
-        >
-          <Grid item md={6}>
-            <Map
-              makers={data.map((location, id) => ({
-                position: location.position,
-                popup: '',
-              }))}
-            />
-          </Grid>
-          <Grid item md={6}>
-            <Box
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <TableToolbar
-                title="Danh sách các địa điểm khai báo"
-                numSelected={selected.length}
-                handleOpenModal={handleOpenAddModal}
-                handleDeleteBtn={handleDeleteTableRows}
-                selected={selected}
-              />
-              <Table
-                headCells={tableHeadCells}
-                bodyCells={data}
-                selected={selected}
-                handleRenderRow={handleRenderTableRow}
-                handleOpenModal={handleOpenEditModal}
-                handleSelectClick={handleTableRowClick}
-                handleSelectAllClick={handleTableRowClickAll}
-              />
-              <TablePagination
-                count={count}
-                page={page}
-                rowsPerPage={tableRowsPerPage}
-                handleChangePage={handleChangePage}
-                handleChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </Box>
-          </Grid>
+    <Paper>
+      {openEditModal && (
+        <EditModal
+          open={openEditModal}
+          data={editModalData}
+          handleClose={handleCloseEditModal}
+        />
+      )}
+      {openAddModal && (
+        <AddModal
+          open={openAddModal}
+          data={editModalData}
+          handleClose={handleCloseAddModal}
+        />
+      )}
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          minHeight: '80vh',
+        }}
+      >
+        <Grid item md={6}>
+          <Map
+            makers={tableBodyCells.map((location, id) => ({
+              position: location.position,
+              popup: '',
+            }))}
+          />
         </Grid>
-      </Paper>
-    </Box>
+        <Grid item md={6}>
+          <Box
+            sx={{
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+          >
+            <TableToolbar
+              title="Danh sách các địa điểm khai báo"
+              numSelected={selected.length}
+              handleOpenModal={handleOpenAddModal}
+              handleDeleteBtn={handleDeleteTableRows}
+              selected={selected}
+            />
+            <Table
+              headCells={tableHeadCells}
+              bodyCells={tableBodyCells}
+              selected={selected}
+              handleRenderRow={handleRenderTableRow}
+              handleOpenModal={handleOpenEditModal}
+              handleSelectClick={handleTableRowClick}
+              handleSelectAllClick={handleTableRowClickAll}
+            />
+            <TablePagination
+              count={count}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              handleChangePage={handleChangePage}
+              handleChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          </Box>
+        </Grid>
+      </Grid>
+    </Paper>
   )
 }
 

@@ -57,6 +57,23 @@ const User = () => {
   const [modalData, setModalData] = useState({})
   const [selected, setSelected] = useState([])
 
+  useEffect(() => {
+    callApi(page, rowsPerPage)
+  }, [])
+
+  const callApi = (page, perPage) => {
+    getUsers({
+      currentPage: page,
+      perPage: perPage,
+    }).then((rs) => {
+      const { data, currentPage, perPage, count } = rs.data
+      setTableBodyCells(data)
+      setCount(count)
+      setPage(currentPage)
+      setRowsPerPage(perPage)
+    })
+  }
+
   const handleCloseModal = () => setOpenModal(false)
 
   const handleOpenModal = (data) => {
@@ -100,53 +117,16 @@ const User = () => {
       ids: [...selected],
     }).then((rs) => {
       setSelected([])
-      callApi()
-    })
-  }
-
-  useEffect(() => {
-    getUsers({
-      currentPage: page,
-      perPage: rowsPerPage,
-    }).then((rs) => {
-      callApi()
-    })
-  }, [])
-
-  const callApi = () => {
-    getUsers({
-      currentPage: page,
-      perPage: rowsPerPage,
-    }).then((rs) => {
-      const { data, currentPage, perPage, count } = rs.data
-      setTableBodyCells(data)
-      setCount(count)
-      setPage(currentPage)
-      setRowsPerPage(perPage)
+      callApi(page, rowsPerPage)
     })
   }
 
   const handleChangePage = (event, newPage) => {
-    getUsers({
-      currentPage: +newPage + 1,
-      perPage: rowsPerPage,
-    }).then((rs) => {
-      const { data, currentPage } = rs.data
-      setTableBodyCells(data)
-      setPage(currentPage)
-    })
+    callApi(+newPage + 1, rowsPerPage)
   }
 
   const handleChangeRowsPerPage = (event) => {
-    getUsers({
-      currentPage: page,
-      perPage: parseInt(event.target.value, 10),
-    }).then((rs) => {
-      const { data, currentPage, perPage, count } = rs.data
-      setTableBodyCells(data)
-      setPage(currentPage)
-      setRowsPerPage(perPage)
-    })
+    callApi(page, +event.target.value)
   }
 
   return (
