@@ -5,6 +5,7 @@ import Chart from 'react-apexcharts'
 
 import Deposits from '../../components/Deposits'
 import Map from '../../components/Map'
+import AlertDialog from '../../components/AlertDialog'
 
 const Dashboard = () => {
   const [pieChart, setPieChart] = useState({

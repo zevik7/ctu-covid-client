@@ -10,13 +10,43 @@ import Grid from '@mui/material/Grid'
 import RadioGroup from '@mui/material/RadioGroup'
 import Radio from '@mui/material/Radio'
 import Typography from '@mui/material/Typography'
-import Alert from '@mui/material/Alert'
 import Input from '@mui/material/Input'
 
 import Modal from '../../components/Modal'
+import AlertDialog from '../../components/AlertDialog'
 import { updateUser, storeUser } from '../../api'
 
 import dateFormat from 'dateformat'
+
+const validateField = (name, value) => {
+  let error = false
+  let errorTxt = ''
+
+  if (!value) {
+    error = true
+    errorTxt = 'Yêu cầu nhập trường này'
+  } else {
+    switch (name) {
+      case 'email':
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = true
+          errorTxt = 'Email không hợp lệ'
+        }
+        break
+      case 'phone':
+        const regex =
+          /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/
+        if (!regex.test(value)) {
+          error = true
+          errorTxt = 'Số điện thoại không hợp lệ'
+        }
+        break
+      default:
+        break
+    }
+  }
+  return { error, errorTxt }
+}
 
 const MainModal = (props) => {
   const { open, data, updateRows, handleClose } = props
@@ -25,48 +55,32 @@ const MainModal = (props) => {
   const _id = data._id
 
   const [successAlert, setSuccessAlert] = useState(false)
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
   const [avatarUpload, setAvatarUpload] = useState(null)
+  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [form, setForm] = useState({
     name: { value: data.name || '', error: false, errorTxt: '' },
-    birthday: { value: data.birthday || '', error: false, errorTxt: '' },
-    gender: { value: data.gender || '', error: false, errorTxt: '' },
+    birthday: {
+      value: data.birthday || new Date(),
+      error: false,
+      errorTxt: '',
+    },
+    gender: { value: data.gender || 'Nam', error: false, errorTxt: '' },
     email: { value: data.email || '', error: false, errorTxt: '' },
     phone: { value: data.phone || '', error: false, errorTxt: '' },
     address: { value: data.address || '', error: false, errorTxt: '' },
-    avatar: { value: data.avatar || '', error: false, errorTxt: '' },
+    avatar: {
+      value: data.avatar || '/images/default_avatar.jpeg',
+      error: false,
+      errorTxt: '',
+    },
   })
 
   const handleInput = (e) => {
     const name = e.target.name
     const value = e.target.value
-    let error = false
-    let errorTxt = ''
 
-    if (!value) {
-      error = true
-      errorTxt = 'Yêu cầu nhập trường này'
-    } else {
-      switch (name) {
-        case 'email':
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-            error = true
-            errorTxt = 'Email không hợp lệ'
-          }
-          break
-        case 'phone':
-          const regex =
-            /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/
-          if (!regex.test(value)) {
-            error = true
-            errorTxt = 'Số điện thoại không hợp lệ'
-          }
-          break
-        default:
-          break
-      }
-    }
+    const { error, errorTxt } = validateField(name, value)
 
     setForm({ ...form, [name]: { value, error, errorTxt } })
     setEnableSubmitBtn(true)
@@ -75,33 +89,52 @@ const MainModal = (props) => {
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(form).find((key, index) => form[key].error)
+    const isError = Object.keys(form).find(
+      (key, index) => form[key].error || !form[key].value
+    )
 
     if (isError) return
 
     const data = new FormData(event.currentTarget)
 
-    // Call api
-    if (_id) {
-      // Edit action
-      await updateUser(
-        {
-          _id,
-        },
-        data
-      ).catch((err) => console.log(err))
-    } else {
-      // Add action
-      const result = await storeUser(data).catch((err) => console.log(err))
+    try {
+      // Call api
+      if (_id) {
+        // Edit action
+        await updateUser(
+          {
+            _id,
+          },
+          data
+        )
+      } else {
+        // Add action
+        await storeUser(data)
+      }
+      setSuccessAlert(true)
+      updateRows()
+      setEnableSubmitBtn(false)
+    } catch (rs) {
+      const errors = rs?.response?.data?.errors
+
+      if (errors) {
+        if (errors.hasOwnProperty('email')) {
+          setForm((form) => ({
+            ...form,
+            email: { ...form.email, error: true, errorTxt: errors.email },
+          }))
+        }
+
+        if (errors.hasOwnProperty('phone'))
+          setForm((form) => ({
+            ...form,
+            phone: { ...form.phone, error: true, errorTxt: errors.phone },
+          }))
+      }
     }
-    setSuccessAlert(true)
-    setEnableSubmitBtn(false)
-    updateRows()
   }
 
   const handleChangeAvatar = (e) => {
-    setEnableSubmitBtn(true)
-
     if (e.target.files && e.target.files[0]) {
       let avatar = e.target.files[0]
       setAvatarUpload(URL.createObjectURL(avatar))
@@ -264,37 +297,18 @@ const MainModal = (props) => {
                 }}
                 disabled={!enableSubmitBtn}
               >
-                Lưu
+                {_id ? 'Lưu' : 'Thêm'}
               </Button>
               <Button variant="text" onClick={handleClose}>
                 Đóng
               </Button>
             </Box>
             {successAlert && (
-              <Modal
-                open={successAlert}
+              <AlertDialog
+                title="Thông báo"
+                text={(_id ? 'Cập nhật' : 'Thêm') + ' thành công'}
                 handleClose={() => setSuccessAlert(false)}
-                sx={{
-                  p: 0,
-                }}
-              >
-                <Alert
-                  severity="success"
-                  onClose={() => setSuccessAlert(false)}
-                  sx={{
-                    fontSize: 16,
-                    alignItems: 'center',
-                    '.MuiAlert-action': {
-                      pt: 0,
-                    },
-                    '.MuiAlert-message': {
-                      whiteSpace: 'nowrap',
-                    },
-                  }}
-                >
-                  Lưu thành công
-                </Alert>
-              </Modal>
+              />
             )}
           </Grid>
         </Grid>

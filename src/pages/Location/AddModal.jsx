@@ -15,9 +15,10 @@ import { useAuth } from '../../context/Auth/Context'
 
 const AddModal = (props) => {
   const { user } = useAuth()
-  const { handleClose } = props
+  const { handleClose, updateRows } = props
 
   const [successAlert, setSuccessAlert] = useState(false)
+  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [form, setForm] = useState({
     name: {
@@ -33,6 +34,7 @@ const AddModal = (props) => {
 
     if (!value) error = true
     setForm({ ...form, name: { value, error } })
+    setEnableSubmitBtn(true)
   }
 
   const handleMapClick = (e) => {
@@ -58,6 +60,8 @@ const AddModal = (props) => {
     })
       .then(() => {
         setSuccessAlert(true)
+        updateRows()
+        setEnableSubmitBtn(false)
       })
       .catch((err) => console.log(err))
   }
@@ -114,6 +118,7 @@ const AddModal = (props) => {
                 sx={{
                   mr: 2,
                 }}
+                disabled={!enableSubmitBtn}
               >
                 Thêm
               </Button>
@@ -121,7 +126,32 @@ const AddModal = (props) => {
                 Đóng
               </Button>
             </Box>
-            {successAlert && <Alert severity="success">Thêm thành công</Alert>}
+            {successAlert && (
+              <Modal
+                open={successAlert}
+                handleClose={() => setSuccessAlert(false)}
+                sx={{
+                  p: 0,
+                }}
+              >
+                <Alert
+                  severity="success"
+                  onClose={() => setSuccessAlert(false)}
+                  sx={{
+                    fontSize: 16,
+                    alignItems: 'center',
+                    '.MuiAlert-action': {
+                      pt: 0,
+                    },
+                    '.MuiAlert-message': {
+                      whiteSpace: 'nowrap',
+                    },
+                  }}
+                >
+                  Lưu thành công
+                </Alert>
+              </Modal>
+            )}
           </Grid>
         </Grid>
       </Box>

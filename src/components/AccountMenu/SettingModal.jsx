@@ -9,13 +9,43 @@ import Grid from '@mui/material/Grid'
 import RadioGroup from '@mui/material/RadioGroup'
 import Radio from '@mui/material/Radio'
 import Typography from '@mui/material/Typography'
-import Alert from '@mui/material/Alert'
 import Input from '@mui/material/Input'
 import Avatar from '@mui/material/Avatar'
 
 import Modal from '../../components/Modal'
+import AlertDialog from '../../components/AlertDialog'
 import { useAuth } from '../../context/Auth'
 import { getUser, updateUser } from '../../api'
+
+const validateField = (name, value) => {
+  let error = false
+  let errorTxt = ''
+
+  if (!value) {
+    error = true
+    errorTxt = 'Yêu cầu nhập trường này'
+  } else {
+    switch (name) {
+      case 'email':
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = true
+          errorTxt = 'Email không hợp lệ'
+        }
+        break
+      case 'phone':
+        const regex =
+          /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/
+        if (!regex.test(value)) {
+          error = true
+          errorTxt = 'Số điện thoại không hợp lệ'
+        }
+        break
+      default:
+        break
+    }
+  }
+  return { error, errorTxt }
+}
 
 const SettingModal = (props) => {
   const { handleClose } = props
@@ -23,8 +53,8 @@ const SettingModal = (props) => {
   const auth = useAuth()
 
   const [successAlert, setSuccessAlert] = useState(false)
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
   const [avatarUpload, setAvatarUpload] = useState(null)
+  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [form, setForm] = useState({
     name: { value: '', error: false, errorTxt: '' },
@@ -54,32 +84,8 @@ const SettingModal = (props) => {
   const handleInput = (e) => {
     const name = e.target.name
     const value = e.target.value
-    let error = false
-    let errorTxt = ''
 
-    if (!value) {
-      error = true
-      errorTxt = 'Yêu cầu nhập trường này'
-    } else {
-      switch (name) {
-        case 'email':
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-            error = true
-            errorTxt = 'Email không hợp lệ'
-          }
-          break
-        case 'phone':
-          const regex =
-            /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/
-          if (!regex.test(value)) {
-            error = true
-            errorTxt = 'Số điện thoại không hợp lệ'
-          }
-          break
-        default:
-          break
-      }
-    }
+    const { error, errorTxt } = validateField(name, value)
 
     setForm({ ...form, [name]: { value, error, errorTxt } })
     setEnableSubmitBtn(true)
@@ -88,7 +94,9 @@ const SettingModal = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(form).find((key, index) => form[key].error)
+    const isError = Object.keys(form).find(
+      (key, index) => form[key].error || !form[key].value
+    )
 
     if (isError) return
 
@@ -105,12 +113,27 @@ const SettingModal = (props) => {
         auth.handleOnSetUser({ ...auth.user, ...rs.data })
         setEnableSubmitBtn(false)
       })
-      .catch((err) => console.log(err))
+      .catch((rs) => {
+        const errors = rs?.response?.data?.errors
+
+        if (errors) {
+          if (errors.hasOwnProperty('email')) {
+            setForm((form) => ({
+              ...form,
+              email: { ...form.email, error: true, errorTxt: errors.email },
+            }))
+          }
+
+          if (errors.hasOwnProperty('phone'))
+            setForm((form) => ({
+              ...form,
+              phone: { ...form.phone, error: true, errorTxt: errors.phone },
+            }))
+        }
+      })
   }
 
   const handleChangeAvatar = (e) => {
-    setEnableSubmitBtn(true)
-
     if (e.target.files && e.target.files[0]) {
       let avatar = e.target.files[0]
       setAvatarUpload(URL.createObjectURL(avatar))
@@ -121,8 +144,8 @@ const SettingModal = (props) => {
     <Modal handleClose={handleClose}>
       <Box
         component="form"
-        noValidate
         onSubmit={handleSubmit}
+        noValidate
         sx={{
           minWidth: 300,
         }}
@@ -280,30 +303,10 @@ const SettingModal = (props) => {
               </Button>
             </Box>
             {successAlert && (
-              <Modal
-                open={successAlert}
+              <AlertDialog
+                text="Cập nhật thành công"
                 handleClose={() => setSuccessAlert(false)}
-                sx={{
-                  p: 0,
-                }}
-              >
-                <Alert
-                  severity="success"
-                  onClose={() => setSuccessAlert(false)}
-                  sx={{
-                    fontSize: 16,
-                    alignItems: 'center',
-                    '.MuiAlert-action': {
-                      pt: 0,
-                    },
-                    '.MuiAlert-message': {
-                      whiteSpace: 'nowrap',
-                    },
-                  }}
-                >
-                  Lưu thành công
-                </Alert>
-              </Modal>
+              />
             )}
           </Grid>
         </Grid>

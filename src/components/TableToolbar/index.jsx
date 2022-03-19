@@ -9,7 +9,8 @@ import Stack from '@mui/material/Stack'
 import AlertTitle from '@mui/material/AlertTitle'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { Button } from '@mui/material'
-import Modal from '../Modal'
+
+import AlertDialog from '../AlertDialog'
 
 const TableToolbar = (props) => {
   const { title, handleOpenModal, handleDeleteBtn, selected } = props
@@ -66,36 +67,22 @@ const TableToolbar = (props) => {
       )}
 
       {openModal && (
-        <Modal open={openModal} handleClose={() => setOpenModal(!openModal)}>
-          <Alert severity="warning">
-            <AlertTitle>Cảnh báo</AlertTitle>
-            Xóa những mục đã chọn <br />{' '}
-            <strong>Điều này sẽ không thể khôi phục</strong>
-          </Alert>
-          <Stack
-            direction="row"
-            spacing={2}
-            sx={{
-              mt: 2,
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-            }}
-          >
-            <Button
-              color="error"
-              variant="contained"
-              onClick={() => {
-                handleDeleteBtn(selected)
-                setOpenModal(false)
-              }}
-            >
-              Xóa
-            </Button>
-            <Button variant="text" onClick={() => setOpenModal(false)}>
-              Hủy
-            </Button>
-          </Stack>
-        </Modal>
+        <AlertDialog
+          title="Cảnh báo"
+          text={
+            <>
+              Xóa những mục đã chọn <br />{' '}
+              <strong>Điều này sẽ không thể khôi phục</strong>
+            </>
+          }
+          severity="warning"
+          btnColor="warning"
+          handleClose={() => setOpenModal(!openModal)}
+          handleConfirm={() => {
+            handleDeleteBtn(selected)
+            setOpenModal(false)
+          }}
+        />
       )}
       <Button variant="contained" onClick={() => handleOpenModal({})}>
         Thêm

@@ -51,13 +51,13 @@ const User = () => {
   const [selected, setSelected] = useState([])
 
   useEffect(() => {
-    callApi()
+    callApi(page, rowsPerPage)
   }, [])
 
-  const callApi = () => {
+  const callApi = (page, perPage) => {
     getLocations({
       currentPage: page,
-      perPage: rowsPerPage,
+      perPage,
     }).then((rs) => {
       const { data, currentPage, perPage, count } = rs.data
       setTableBodyCells(data)
@@ -119,27 +119,11 @@ const User = () => {
   }
 
   const handleChangePage = (event, newPage) => {
-    getLocations({
-      currentPage: +newPage + 1,
-      perPage: rowsPerPage,
-    }).then((rs) => {
-      const { data, currentPage, perPage, count } = rs.data
-      setTableBodyCells(data)
-      setCount(count)
-      setPage(currentPage)
-    })
+    callApi(+newPage + 1, rowsPerPage)
   }
 
   const handleChangeRowsPerPage = (event) => {
-    getLocations({
-      currentPage: page,
-      perPage: parseInt(event.target.value, 10),
-    }).then((rs) => {
-      const { data, currentPage, perPage, count } = rs.data
-      setTableBodyCells(data)
-      setPage(currentPage)
-      setRowsPerPage(perPage)
-    })
+    callApi(page, +event.target.value)
   }
 
   return (
@@ -149,6 +133,7 @@ const User = () => {
           open={openEditModal}
           data={editModalData}
           handleClose={handleCloseEditModal}
+          updateRows={() => callApi(page, rowsPerPage)}
         />
       )}
       {openAddModal && (
@@ -156,11 +141,11 @@ const User = () => {
           open={openAddModal}
           data={editModalData}
           handleClose={handleCloseAddModal}
+          updateRows={() => callApi(page, rowsPerPage)}
         />
       )}
       <Grid
         container
-        spacing={2}
         sx={{
           minHeight: '80vh',
         }}
