@@ -9,7 +9,7 @@ export * from './auth'
 
 export * from './user'
 
-export * from './vaccination'
+export * from './injection'
 
 export * from './vaccine_type'
 

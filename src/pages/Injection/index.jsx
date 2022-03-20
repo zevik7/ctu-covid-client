@@ -8,7 +8,7 @@ import TableToolbar from '../../components/TableToolbar'
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
 import Modal from '../../components/Modal'
-import { getVaccinations, destroyVaccinations } from '../../api'
+import { getInjections, destroyInjections } from '../../api'
 
 import EditForm from './EditForm'
 import AddForm from './AddForm'
@@ -56,7 +56,7 @@ const User = () => {
   const [selected, setSelected] = useState([])
 
   const callApi = () => {
-    getVaccinations({
+    getInjections({
       currentPage: page,
       perPage: tableRowsPerPage,
     }).then((rs) => {
@@ -115,7 +115,7 @@ const User = () => {
   }
 
   const handleDeleteTableRows = (selected) => {
-    destroyVaccinations({
+    destroyInjections({
       ids: [...selected],
     }).then((rs) => {
       setSelected([])
@@ -124,7 +124,7 @@ const User = () => {
   }
 
   useEffect(() => {
-    getVaccinations({
+    getInjections({
       currentPage: page,
       perPage: tableRowsPerPage,
     }).then((rs) => {
@@ -133,7 +133,7 @@ const User = () => {
   }, [openEditForm, openAddForm])
 
   const handleChangePage = (event, newPage) => {
-    getVaccinations({
+    getInjections({
       currentPage: +newPage + 1,
       perPage: tableRowsPerPage,
     }).then((rs) => {
@@ -142,7 +142,7 @@ const User = () => {
   }
 
   const handleChangeRowsPerPage = (event) => {
-    getVaccinations({
+    getInjections({
       currentPage: page,
       perPage: parseInt(event.target.value, 10),
     }).then((rs) => {

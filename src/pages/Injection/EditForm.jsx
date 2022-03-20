@@ -12,7 +12,7 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import InputLabel from '@mui/material/InputLabel'
 
-import { updateVaccination, getVaccineTypes } from '../../api'
+import { updateInjection, getVaccineTypes } from '../../api'
 
 const EditForm = (props) => {
   const { data, handleClose } = props
@@ -67,7 +67,7 @@ const EditForm = (props) => {
       images: form.images,
     }
     // Edit action
-    updateVaccination(
+    updateInjection(
       {
         _id,
       },

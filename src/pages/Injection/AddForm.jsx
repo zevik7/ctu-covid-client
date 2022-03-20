@@ -15,7 +15,7 @@ import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
 import Autocomplete from '@mui/material/Autocomplete'
 
-import { getVaccineTypes, getUsers, storeVaccination } from '../../api'
+import { getVaccineTypes, getUsers, storeInjection } from '../../api'
 
 const AddForm = (props) => {
   const { handleClose } = props
@@ -121,7 +121,7 @@ const AddForm = (props) => {
       images: form.images,
     }
 
-    storeVaccination(data)
+    storeInjection(data)
       .then(() => setSuccessAlert(true))
       .catch((err) => console.log(err))
   }
