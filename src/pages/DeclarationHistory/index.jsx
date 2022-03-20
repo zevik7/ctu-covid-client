@@ -7,8 +7,9 @@ import { getHealthDeclaraions, destroyLocations } from '../../api'
 
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
-import Modal from '../../components/Modal'
-import ViewForm from './ViewForm'
+import ViewModal from './ViewModal'
+import HistoryModal from './HistoryModal'
+import RelatedUsersModal from './RelatedUsersModal'
 import NoteBar from './NoteBar'
 
 const tableHeadCells = [
@@ -40,7 +41,6 @@ const tableHeadCells = [
 ]
 
 const handleRenderTableRow = (row) => {
-  const shapeCircleStyles = { borderRadius: '50%' }
   return (
     <>
       <TableCell>{row.user.name}</TableCell>
@@ -83,108 +83,109 @@ const DeclarationHistory = () => {
   const [data, setData] = useState([])
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
-  const [tableRowsPerPage, setTableRowsPerPage] = useState(20)
+  const [rowsPerPage, setRowsPerPage] = useState(20)
 
   const [openViewModal, setOpenViewModal] = useState(false)
-  const [viewFormData, setViewFormData] = useState({})
+  const [viewModalData, setViewModalData] = useState({})
 
-  const callApi = () => {
+  const [openHistoryModal, setOpenHistoryModal] = useState(false)
+  const [openRelatedUsersModal, setOpenRelatedUsersModal] = useState(false)
+
+  const callApi = (page, perPage) => {
     getHealthDeclaraions({
       currentPage: page,
-      perPage: tableRowsPerPage,
+      perPage: perPage,
     }).then((rs) => {
-      setAllState(rs.data)
+      const { data, currentPage, perPage, count } = rs.data
+      setData(data)
+      setCount(count)
+      setPage(currentPage)
+      setRowsPerPage(perPage)
     })
-  }
-
-  const setAllState = (apiData) => {
-    const { data, currentPage, perPage, count } = apiData
-    setData(data)
-    setCount(count)
-    setPage(currentPage)
-    setTableRowsPerPage(+perPage)
   }
 
   const handleCloseViewModal = () => setOpenViewModal(false)
 
   const handleOpenViewModal = (data) => {
     setOpenViewModal(true)
-    setViewFormData(data)
+    setViewModalData(data)
   }
 
   useEffect(() => {
-    callApi()
+    callApi(page, rowsPerPage)
   }, [])
 
   const handleChangePage = (event, newPage) => {
-    getHealthDeclaraions({
-      currentPage: +newPage + 1,
-      perPage: +tableRowsPerPage,
-    }).then((rs) => {
-      setAllState(rs.data)
-    })
+    callApi(+newPage + 1, rowsPerPage)
   }
 
   const handleChangeRowsPerPage = (event) => {
-    getHealthDeclaraions({
-      currentPage: +page,
-      perPage: +event.target.value,
-    }).then((rs) => {
-      setAllState(rs.data)
-    })
+    callApi(page, +event.target.value)
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <Modal open={openViewModal} handleClose={handleCloseViewModal}>
-          <ViewForm
-            data={viewFormData}
-            handleClose={handleCloseViewModal}
-            handleOpenViewModal={handleOpenViewModal}
+    <Paper sx={{ width: '100%', mb: 2 }}>
+      {openViewModal && (
+        <ViewModal
+          data={viewModalData}
+          handleClose={handleCloseViewModal}
+          handleOpenRelatedUsersModal={() => setOpenRelatedUsersModal(true)}
+          handleOpenHistoryModal={() => setOpenHistoryModal(true)}
+        />
+      )}
+      {openRelatedUsersModal && (
+        <RelatedUsersModal
+          data={viewModalData}
+          handleClose={() => setOpenRelatedUsersModal(false)}
+          handleOpenViewModal={handleOpenViewModal}
+        />
+      )}
+      {openHistoryModal && (
+        <HistoryModal
+          data={viewModalData}
+          handleClose={() => setOpenHistoryModal(false)}
+        />
+      )}
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          minHeight: '80vh',
+        }}
+      >
+        <Grid item md={12}>
+          <Typography
+            sx={{
+              flex: '1 1 100%',
+              mt: 2,
+              pl: { sm: 2 },
+              pr: { xs: 1, sm: 1 },
+            }}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
+            Lịch sử khai báo y tế
+          </Typography>
+          <NoteBar />
+          <Table
+            headCells={tableHeadCells}
+            bodyCells={data}
+            handleRenderRow={handleRenderTableRow}
+            handleOpenModal={handleOpenViewModal}
+            disabledCheckbox={true}
+            selected={[]}
           />
-        </Modal>
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            minHeight: '80vh',
-          }}
-        >
-          <Grid item md={12}>
-            <Typography
-              sx={{
-                flex: '1 1 100%',
-                mt: 2,
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-              }}
-              variant="h6"
-              id="tableTitle"
-              component="div"
-            >
-              Lịch sử khai báo y tế
-            </Typography>
-            <NoteBar />
-            <Table
-              headCells={tableHeadCells}
-              bodyCells={data}
-              handleRenderRow={handleRenderTableRow}
-              handleOpenModal={handleOpenViewModal}
-              disabledCheckbox={true}
-              selected={[]}
-            />
-            <TablePagination
-              count={count}
-              page={page}
-              rowsPerPage={tableRowsPerPage}
-              handleChangePage={handleChangePage}
-              handleChangeRowsPerPage={handleChangeRowsPerPage}
-            />
-          </Grid>
+          <TablePagination
+            count={count}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+          />
         </Grid>
-      </Paper>
-    </Box>
+      </Grid>
+    </Paper>
   )
 }
 

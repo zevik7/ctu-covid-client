@@ -18,14 +18,18 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import Avatar from '@mui/material/Avatar'
 import Paper from '@mui/material/Paper'
 
 import Modal from '../../components/Modal'
+import ViewModal from './ViewModal'
 
 import { getHealthDeclaraions } from '../../api'
 
-const ChildModal = (props) => {
-  const { open, data, handleClose, handleOpenViewModal } = props
+const RelatedUsersModal = (props) => {
+  const { data, handleClose, handleOpenViewModal } = props
+
+  const [seletedUser, setSelectedUser] = useState(null)
 
   const [timeFilter, setTimeFilter] = useState(1)
 
@@ -43,7 +47,14 @@ const ChildModal = (props) => {
   }, [timeFilter])
 
   return (
-    <Modal open={open} handleClose={handleClose}>
+    <Modal handleClose={handleClose}>
+      {seletedUser && (
+        <ViewModal
+          hideBtns={true}
+          data={seletedUser}
+          handleClose={() => setSelectedUser(null)}
+        />
+      )}
       <Grid container spacing={2}>
         <Grid item md={12}>
           <Typography variant="h6" align="center">
@@ -70,12 +81,15 @@ const ChildModal = (props) => {
           </Box>
         </Grid>
         <Grid item md={12}>
-          <TableContainer>
+          <TableContainer
+            sx={{
+              maxHeight: '60vh',
+            }}
+          >
             <Table size="small">
               <TableHead>
                 <TableRow>
                   <TableCell>Tên</TableCell>
-                  <TableCell>Số điện thoại</TableCell>
                   <TableCell>Thời điểm khai báo</TableCell>
                   <TableCell>Thao tác</TableCell>
                 </TableRow>
@@ -89,7 +103,6 @@ const ChildModal = (props) => {
                     <TableCell component="th" scope="row">
                       {relatedUser.user.name}
                     </TableCell>
-                    <TableCell>{relatedUser.user.phone}</TableCell>
                     <TableCell>
                       {dateFormat(relatedUser.created_at, 'hh:mm dd-mm-yyyy')}
                     </TableCell>
@@ -97,8 +110,7 @@ const ChildModal = (props) => {
                       <Button
                         variant="text"
                         onClick={() => {
-                          handleOpenViewModal(relatedUser)
-                          handleClose()
+                          setSelectedUser(relatedUser)
                         }}
                       >
                         Xem
@@ -130,4 +142,4 @@ const ChildModal = (props) => {
   )
 }
 
-export default ChildModal
+export default RelatedUsersModal

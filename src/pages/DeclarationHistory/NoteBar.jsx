@@ -5,8 +5,6 @@ const NoteBar = () => {
   return (
     <>
       <Box
-        variant="subtitle1"
-        align="right"
         sx={{
           pl: { sm: 2 },
           pr: { xs: 1, sm: 1 },
@@ -15,6 +13,15 @@ const NoteBar = () => {
           alignItems: 'center',
         }}
       >
+        <Typography
+          variant="subtitle2"
+          component="div"
+          sx={{
+            mr: 1,
+          }}
+        >
+          Ghi chú:
+        </Typography>
         <Box
           component="div"
           sx={{
@@ -26,13 +33,13 @@ const NoteBar = () => {
           }}
         ></Box>
         <Typography
-          variant="subtitle1"
+          variant="subtitle2"
           component="div"
           sx={{
             mr: 1,
           }}
         >
-          Có đi tới từ vùng dịch
+          F1
         </Typography>
         <Box
           component="div"
@@ -44,8 +51,8 @@ const NoteBar = () => {
             mr: 1,
           }}
         ></Box>
-        <Typography variant="subtitle1" component="div">
-          Có triệu chứng của bệnh
+        <Typography variant="subtitle2" component="div">
+          Có triệu chứng
         </Typography>
       </Box>
     </>

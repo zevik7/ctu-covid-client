@@ -11,25 +11,19 @@ import Map from '../../components/Map'
 
 import { updateLocation } from '../../api'
 import { Avatar } from '@mui/material'
-import ChildModal from './ChildModal'
+import Modal from '../../components/Modal'
 
-const ViewForm = (props) => {
-  const { data, handleClose, handleOpenViewModal } = props
-
-  const _id = data._id
-
-  const [openChildModal, setOpenChildModal] = useState(false)
-
-  const handleCloseChildModal = () => setOpenChildModal(false)
+const ViewModal = (props) => {
+  const {
+    hideBtns,
+    data,
+    handleClose,
+    handleOpenRelatedUsersModal,
+    handleOpenHistoryModal,
+  } = props
 
   return (
-    <>
-      <ChildModal
-        open={openChildModal}
-        data={data}
-        handleClose={handleCloseChildModal}
-        handleOpenViewModal={handleOpenViewModal}
-      />
+    <Modal handleClose={handleClose}>
       <Grid container spacing={2}>
         <Grid item md={12}>
           <Typography variant="h6">Thông tin chi tiết</Typography>
@@ -71,6 +65,20 @@ const ViewForm = (props) => {
             <Typography variant="subtitle1" component="div" align="center">
               Địa chỉ: {data.user.address}
             </Typography>
+            {!hideBtns && (
+              <Button
+                variant="contained"
+                sx={{
+                  m: '0 auto',
+                }}
+                onClick={() => {
+                  handleClose()
+                  handleOpenHistoryModal()
+                }}
+              >
+                Xem lịch sử khai báo
+              </Button>
+            )}
           </Box>
         </Grid>
         <Grid item md={6}>
@@ -90,9 +98,8 @@ const ViewForm = (props) => {
               width: '100%',
               minHeight: '300px',
             }}
-            zoom={20}
             center={[data.location.position.lat, data.location.position.lng]}
-            makers={[
+            markers={[
               {
                 position: data.location.position,
                 popup: data.location.name,
@@ -110,23 +117,28 @@ const ViewForm = (props) => {
               borderColor: 'grey.500',
             }}
           >
-            <Button
-              variant="text"
-              sx={{
-                mr: 'auto',
-              }}
-              onClick={() => setOpenChildModal(true)}
-            >
-              Những người khai báo địa điểm này
-            </Button>
+            {!hideBtns && (
+              <Button
+                variant="text"
+                sx={{
+                  mr: 'auto',
+                }}
+                onClick={() => {
+                  handleClose()
+                  handleOpenRelatedUsersModal()
+                }}
+              >
+                Những người khai báo liên quan
+              </Button>
+            )}
             <Button variant="text" onClick={handleClose}>
               Đóng
             </Button>
           </Box>
         </Grid>
       </Grid>
-    </>
+    </Modal>
   )
 }
 
-export default ViewForm
+export default ViewModal
