@@ -7,8 +7,7 @@ const Copyright = (props) => {
       variant="body2"
       color="text.secondary"
       align="center"
-      {...props}
-      sx={[...(Array.isArray(props.sx) ? props.sx : [props.sx])]}
+      sx={[{ p: 1 }, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}
     >
       {'Copyright © '}
       {process.env.REACT_APP_WEBSITE_NAME}

@@ -4,8 +4,9 @@ import {
   Marker,
   Popup,
   useMapEvents,
+  useMap,
 } from 'react-leaflet'
-import Leaflet from 'leaflet'
+import Leaflet, { LatLng, latLngBounds, FeatureGroup } from 'leaflet'
 
 import 'leaflet/dist/leaflet.css'
 import icon from 'leaflet/dist/images/marker-icon.png'
@@ -21,20 +22,23 @@ let DefaultIcon = Leaflet.icon({
 
 Leaflet.Marker.prototype.options.icon = DefaultIcon
 
-const Map = ({ center, zoom, style, makers, handleClick }) => {
+const defaultCenter = [10.0312, 105.7709]
+const defaultZoom = 18
+
+const Map = ({ center, zoom, style, markers, handleClick }) => {
   return (
     <MapContainer
-      center={center || [10.0312, 105.7709]}
-      zoom={zoom || 20}
+      center={center || defaultCenter}
+      zoom={zoom || defaultZoom}
       style={style || { width: '100%', height: '100%' }}
-      onClick={handleClick}
     >
+      {markers && markers.length > 1 && <ChangeView markers={markers} />}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {makers &&
-        makers.map((maker, index) => (
+      {markers &&
+        markers.map((maker, index) => (
           <Marker key={index} position={maker.position}>
             <Popup>{maker.popup}</Popup>
           </Marker>
@@ -44,10 +48,26 @@ const Map = ({ center, zoom, style, makers, handleClick }) => {
   )
 }
 
+const ChangeView = ({ markers }) => {
+  const map = useMap()
+
+  // map.setView({ lat: defaultCenter[0], lng: defaultCenter[1] })
+
+  let markerBounds = latLngBounds([])
+
+  markers.forEach((marker) => {
+    markerBounds.extend([marker.position.lat, marker.position.lng])
+  })
+
+  map.fitBounds(markerBounds)
+
+  return null
+}
+
 const MapEvents = ({ handleClick }) => {
   useMapEvents({
     click(e) {
-      handleClick(e)
+      handleClick && handleClick(e)
     },
   })
   return false

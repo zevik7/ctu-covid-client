@@ -152,7 +152,7 @@ const User = () => {
       >
         <Grid item md={6}>
           <Map
-            makers={tableBodyCells.map((location, id) => ({
+            markers={tableBodyCells.map((location, index) => ({
               position: location.position,
               popup: '',
             }))}

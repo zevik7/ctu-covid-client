@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
 import Map from '../../components/Map'
 import Modal from '../../components/Modal'
+import AlertDialog from '../../components/AlertDialog'
 
 import { updateLocation } from '../../api'
 import QRCode from 'qrcode.react'
@@ -29,11 +30,12 @@ const downloadQR = (id) => {
 }
 
 const EditModal = (props) => {
-  const { data, handleClose } = props
+  const { data, handleClose, updateRows } = props
 
   const _id = data._id
 
   const [successAlert, setSuccessAlert] = useState(false)
+  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [form, setForm] = useState({
     name: {
@@ -62,12 +64,15 @@ const EditModal = (props) => {
     )
       .then(() => {
         setSuccessAlert(true)
+        setEnableSubmitBtn(false)
+        updateRows()
       })
       .catch((err) => console.log(err))
   }
 
   const handleMapClick = (e) => {
     setForm({ ...form, position: e.latlng })
+    setEnableSubmitBtn(true)
   }
 
   const handleNameChange = (e) => {
@@ -76,17 +81,21 @@ const EditModal = (props) => {
 
     if (!value) error = true
     setForm({ ...form, name: { value, error } })
+    setEnableSubmitBtn(true)
   }
 
   return (
     <Modal handleClose={handleClose}>
+      {successAlert && (
+        <AlertDialog
+          text={'Lưu thành công'}
+          handleClose={() => setSuccessAlert(false)}
+        />
+      )}
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          <Grid item md={6}>
+          <Grid item md={12}>
             <Typography variant="h6">Thông tin chi tiết</Typography>
-          </Grid>
-          <Grid item md={6}>
-            {successAlert && <Alert severity="success">Lưu thành công</Alert>}
           </Grid>
           <Grid item md={6}>
             <Box
@@ -129,10 +138,9 @@ const EditModal = (props) => {
                 width: '100%',
                 minHeight: '300px',
               }}
-              zoom={20}
               handleClick={handleMapClick}
               center={[form.position.lat, form.position.lng]}
-              makers={[
+              markers={[
                 {
                   position: form.position,
                   popup: form.name,
@@ -177,6 +185,7 @@ const EditModal = (props) => {
                 sx={{
                   mr: 2,
                 }}
+                disabled={!enableSubmitBtn}
               >
                 Lưu
               </Button>

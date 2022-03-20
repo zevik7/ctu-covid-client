@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom'
 import CssBaseline from '@mui/material/CssBaseline'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
+import { useTheme } from '@mui/material/styles'
 
 import AppBar from '../AppBar'
 import Copyright from '../Copyright'
@@ -44,7 +45,7 @@ function AdminLayoutContent() {
       >
         <Toolbar />
         <Outlet />
-        <Copyright sx={{ p: 4 }} />
+        <Copyright />
       </Box>
     </Box>
   )

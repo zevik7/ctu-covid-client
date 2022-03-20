@@ -5,11 +5,11 @@ import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import Alert from '@mui/material/Alert'
 
 import { storeLocation } from '../../api'
 import Map from '../../components/Map'
 import Modal from '../../components/Modal'
+import AlertDialog from '../../components/AlertDialog'
 
 import { useAuth } from '../../context/Auth/Context'
 
@@ -60,14 +60,20 @@ const AddModal = (props) => {
     })
       .then(() => {
         setSuccessAlert(true)
-        updateRows()
         setEnableSubmitBtn(false)
+        updateRows()
       })
       .catch((err) => console.log(err))
   }
 
   return (
     <Modal handleClose={handleClose}>
+      {successAlert && (
+        <AlertDialog
+          text={'Thêm thành công'}
+          handleClose={() => setSuccessAlert(false)}
+        />
+      )}
       <Typography variant="h6" mb={1}>
         Thêm địa điểm khai báo mới
       </Typography>
@@ -95,12 +101,11 @@ const AddModal = (props) => {
                 minWidth: '300px',
                 minHeight: '300px',
               }}
-              zoom={17}
               handleClick={handleMapClick}
-              makers={[
+              markers={[
                 {
                   position: form.position,
-                  popup: form.name,
+                  popup: form.name.value,
                 },
               ]}
             />
@@ -126,32 +131,6 @@ const AddModal = (props) => {
                 Đóng
               </Button>
             </Box>
-            {successAlert && (
-              <Modal
-                open={successAlert}
-                handleClose={() => setSuccessAlert(false)}
-                sx={{
-                  p: 0,
-                }}
-              >
-                <Alert
-                  severity="success"
-                  onClose={() => setSuccessAlert(false)}
-                  sx={{
-                    fontSize: 16,
-                    alignItems: 'center',
-                    '.MuiAlert-action': {
-                      pt: 0,
-                    },
-                    '.MuiAlert-message': {
-                      whiteSpace: 'nowrap',
-                    },
-                  }}
-                >
-                  Lưu thành công
-                </Alert>
-              </Modal>
-            )}
           </Grid>
         </Grid>
       </Box>

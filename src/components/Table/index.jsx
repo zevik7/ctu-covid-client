@@ -117,11 +117,16 @@ export default function EnhancedTable(props) {
 
   return (
     <>
-      <TableContainer>
+      <TableContainer
+        sx={{
+          maxHeight: '70vh',
+        }}
+      >
         <Table
           sx={[...(Array.isArray(props.sx) ? props.sx : [props.sx])]}
           aria-labelledby="tableTitle"
           size={dense ? 'small' : 'medium'}
+          stickyHeader
         >
           <EnhancedTableHead
             headCells={headCells}
