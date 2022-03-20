@@ -18,97 +18,112 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import Avatar from '@mui/material/Avatar'
 import Paper from '@mui/material/Paper'
+import Divider from '@mui/material/Divider'
 
 import Modal from '../../components/Modal'
+import Map from '../../components/Map'
+import ViewModal from './ViewModal'
 
 import { getHealthDeclaraions } from '../../api'
 
 const HistoryModal = (props) => {
-  const { open, data, handleClose, handleOpenViewModal } = props
+  const { data, handleClose } = props
 
-  const [timeFilter, setTimeFilter] = useState(1)
+  const [lessDayFilter, setLessDayFilter] = useState(3)
 
-  const [relatedUsers, setRelatedUsers] = useState([])
+  const [declarations, setDeclaration] = useState([])
 
   useEffect(() => {
-    const filterDate = new Date(data.created_at)
+    const startDate = new Date()
     // Set hour for filter
-    filterDate.setHours(filterDate.getHours() + timeFilter)
+    startDate.setDate(startDate.getDate() - lessDayFilter)
 
     getHealthDeclaraions({
-      'location._id': data.location._id,
-      created_at_lower: filterDate,
-    }).then((rs) => setRelatedUsers(rs.data.data))
-  }, [timeFilter])
+      'user._id': data.user._id,
+      created_at_between: {
+        start: startDate,
+        end: new Date(),
+      },
+    })
+      .then((rs) => {
+        setDeclaration(rs.data.data)
+      })
+      .catch((rs) => console.log(rs.response))
+  }, [lessDayFilter])
 
   return (
-    <Modal open={open} handleClose={handleClose}>
+    <Modal handleClose={handleClose}>
       <Grid container spacing={2}>
         <Grid item md={12}>
           <Typography variant="h6" align="center">
-            Danh sách những người khai báo tại địa điểm này
+            Lịch sử khai báo của người dùng
           </Typography>
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+              mb: 1,
             }}
           >
-            <Typography variant="h6">Trong khoảng thời gian: </Typography>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
+            <Typography variant="subtitle1">Trong khoảng thời gian:</Typography>
+            <FormControl sx={{ ml: 1 }}>
               <Select
-                value={timeFilter}
-                onChange={(e) => setTimeFilter(e.target.value)}
+                value={lessDayFilter}
+                onChange={(e) => setLessDayFilter(e.target.value)}
               >
-                <MenuItem value={1}>1 giờ</MenuItem>
-                <MenuItem value={4}>4 giờ</MenuItem>
-                <MenuItem value={24}>Một ngày</MenuItem>
+                <MenuItem value={1}>1 ngày</MenuItem>
+                <MenuItem value={3}>3 ngày</MenuItem>
+                <MenuItem value={7}>7 ngày</MenuItem>
               </Select>
             </FormControl>
           </Box>
+          <Divider />
         </Grid>
-        <Grid item md={12}>
-          <TableContainer>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Tên</TableCell>
-                  <TableCell>Số điện thoại</TableCell>
-                  <TableCell>Thời điểm khai báo</TableCell>
-                  <TableCell>Thao tác</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {relatedUsers.map((relatedUser, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {relatedUser.user.name}
-                    </TableCell>
-                    <TableCell>{relatedUser.user.phone}</TableCell>
-                    <TableCell>
-                      {dateFormat(relatedUser.created_at, 'hh:mm dd-mm-yyyy')}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="text"
-                        onClick={() => {
-                          handleOpenViewModal(relatedUser)
-                          handleClose()
-                        }}
-                      >
-                        Xem
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+        <Grid
+          item
+          container
+          md={12}
+          spacing={2}
+          sx={{
+            minWidth: '1000px',
+            maxHeight: '60vh',
+            overflow: 'auto',
+          }}
+        >
+          {declarations.map((declaration, index) => (
+            <Grid key={index} item md={4}>
+              <Typography
+                variant="subtitle1"
+                component="div"
+                align="center"
+                color="primary.light"
+              >
+                {dateFormat(declaration.created_at, 'dd/mm/yyyy')}
+              </Typography>
+              <Typography variant="subtitle1" component="div" align="center">
+                {declaration.location.name}
+              </Typography>
+              <Map
+                style={{
+                  width: '100%',
+                  minHeight: '300px',
+                }}
+                center={[
+                  declaration.location.position.lat,
+                  declaration.location.position.lng,
+                ]}
+                markers={[
+                  {
+                    position: declaration.location.position,
+                    popup: declaration.location.name,
+                  },
+                ]}
+              />
+            </Grid>
+          ))}
         </Grid>
         <Grid item md={12}>
           <Box

@@ -36,14 +36,19 @@ const RelatedUsersModal = (props) => {
   const [relatedUsers, setRelatedUsers] = useState([])
 
   useEffect(() => {
-    const filterDate = new Date(data.created_at)
+    const endDate = new Date(data.created_at)
     // Set hour for filter
-    filterDate.setHours(filterDate.getHours() + timeFilter)
+    endDate.setHours(endDate.getHours() + timeFilter)
 
     getHealthDeclaraions({
       'location._id': data.location._id,
-      created_at_lower: filterDate,
-    }).then((rs) => setRelatedUsers(rs.data.data))
+      created_at_between: {
+        start: data.created_at,
+        end: endDate,
+      },
+    })
+      .then((rs) => setRelatedUsers(rs.data.data))
+      .catch((rs) => console.log(rs.response))
   }, [timeFilter])
 
   return (

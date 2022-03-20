@@ -72,7 +72,6 @@ const ViewModal = (props) => {
                   m: '0 auto',
                 }}
                 onClick={() => {
-                  handleClose()
                   handleOpenHistoryModal()
                 }}
               >
@@ -124,7 +123,6 @@ const ViewModal = (props) => {
                   mr: 'auto',
                 }}
                 onClick={() => {
-                  handleClose()
                   handleOpenRelatedUsersModal()
                 }}
               >
