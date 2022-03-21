@@ -7,86 +7,44 @@ import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
+import Alert from '@mui/material/Alert'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-import Menu from '@mui/material/Menu'
-import Alert from '@mui/material/Alert'
 import InputLabel from '@mui/material/InputLabel'
-import FormControl from '@mui/material/FormControl'
-import Autocomplete from '@mui/material/Autocomplete'
 
-import { getVaccineTypes, getUsers, storeInjection } from '../../api'
+import Modal from '../../components/Modal'
+import AlertDialog from '../../components/AlertDialog'
+import { updateInjection, getVaccineTypes } from '../../api'
 
-const AddForm = (props) => {
-  const { handleClose } = props
+const EditModal = (props) => {
+  const { data, updateRows, handleClose } = props
+
+  const _id = data._id
 
   const [successAlert, setSuccessAlert] = useState(false)
-  const [errInputUser, setErrInputUser] = useState(false)
+  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
+
   const [vaccineTypeOptions, setVaccineTypeOptions] = useState()
 
-  const [searchText, setSearchText] = useState('')
-  const [searchSuggestions, setSearchSuggestions] = useState()
-
-  const handleSelectedOption = (option) => {
-    if (!option) {
-      setForm({
-        ...form,
-        ...{
-          user_id: '',
-          user_name: '',
-          user_phone: '',
-          user_email: '',
-        },
-      })
-      setErrInputUser(true)
-      return
-    }
-    setErrInputUser(false)
-    setForm({
-      ...form,
-      ...{
-        user_id: option._id,
-        user_name: option.name,
-        user_phone: option.phone,
-        user_email: option.email,
-      },
-    })
-  }
-
-  useEffect(() => {
-    getUsers({
-      search: searchText,
-    }).then((rs) => {
-      setSearchSuggestions(rs.data.data)
-    })
-  }, [searchText])
-
   const [form, setForm] = useState({
-    user_id: '',
-    user_name: '',
-    user_phone: '',
-    user_email: '',
-    vaccine_type_id: '',
-    vaccine_type_name: '',
-    injection_date: dateFormat(Date.now(), 'yyyy-mm-dd'),
-    images: '',
+    user_name: data.user.name,
+    user_phone: data.user.phone,
+    user_email: data.user.email,
+    vaccine_type_id: data.vaccine_type._id,
+    vaccine_type_name: data.vaccine_type.name,
+    injection_date: data.injection_date,
+    images: data.images,
   })
 
   useEffect(() => {
     getVaccineTypes().then((rs) => {
       setVaccineTypeOptions(rs.data.data)
-      setForm({
-        ...form,
-        vaccine_type_id: rs.data.data[0]._id,
-        vaccine_type_name: rs.data.data[0].name,
-      })
     })
   }, [])
 
   const handleInput = (e) => {
     const name = e.target.name
     const value = e.target.value
-
     let fieldsChange = {
       [name]: value,
     }
@@ -99,20 +57,13 @@ const AddForm = (props) => {
     }
 
     setForm({ ...form, ...fieldsChange })
+    setEnableSubmitBtn(true)
   }
 
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    if (!form.user_id) return
-
     const data = {
-      user: {
-        _id: form.user_id,
-        name: form.user_name,
-        phone: form.user_phone,
-        email: form.user_email,
-      },
       vaccine_type: {
         _id: form.vaccine_type_id,
         name: form.vaccine_type_name,
@@ -120,74 +71,57 @@ const AddForm = (props) => {
       injection_date: form.injection_date,
       images: form.images,
     }
-
-    storeInjection(data)
-      .then(() => setSuccessAlert(true))
+    // Edit action
+    updateInjection(
+      {
+        _id,
+      },
+      data
+    )
+      .then((rs) => {
+        setSuccessAlert(true)
+        setEnableSubmitBtn(false)
+        updateRows()
+      })
       .catch((err) => console.log(err))
   }
 
   return (
-    <>
-      <Typography variant="h5" mb={2}>
-        Thêm thông tin tiêm chủng
-      </Typography>
+    <Modal
+      handleClose={handleClose}
+      sx={{
+        minWidth: 600,
+      }}
+    >
+      {successAlert && (
+        <AlertDialog
+          text={'Cập nhật thành công'}
+          handleClose={() => setSuccessAlert(false)}
+        />
+      )}
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          <Grid item md={12}>
-            {searchSuggestions && (
-              <Autocomplete
-                required
-                fullWidth
-                id="search-field"
-                autoFocus
-                filterOptions={(options, state) => options}
-                onChange={(event, newValue) => {
-                  handleSelectedOption(newValue)
-                }}
-                inputValue={searchText}
-                onInputChange={(event, newInputValue) => {
-                  setSearchText(newInputValue)
-                }}
-                options={searchSuggestions}
-                isOptionEqualToValue={(option, value) =>
-                  option.name === value.name
-                }
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => (
-                  <TextField
-                    error={errInputUser}
-                    helperText="Vui lòng chọn người dùng"
-                    {...params}
-                    label="Tìm người dùng bằng tên, số điện thoại hoặc email"
-                  />
-                )}
-              />
-            )}
+          <Grid item xs={12}>
+            <Typography variant="h6">Cập nhật thông tin tiêm chủng</Typography>
           </Grid>
-          <Grid item md={6}>
-            <Box
+          <Grid item xs={12} md={6}>
+            <TextField
+              required
+              fullWidth
+              disabled
+              id="user_name"
+              label="Họ tên"
+              name="user_name"
+              autoComplete="user_name"
+              autoFocus
+              value={form.user_name}
+              onChange={(e) => handleInput(e)}
               sx={{
-                position: 'relative',
+                marginRight: '10px',
               }}
-            >
-              <TextField
-                required
-                fullWidth
-                disabled
-                id="user_name"
-                label="Họ tên"
-                name="user_name"
-                autoComplete="user_name"
-                autoFocus
-                value={form.user_name}
-                onChange={(e) => handleInput(e)}
-                sx={{
-                  marginRight: '10px',
-                }}
-              />
-            </Box>
+            />
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               fullWidth
@@ -201,7 +135,7 @@ const AddForm = (props) => {
               onChange={(e) => handleInput(e)}
             />
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12}>
             <TextField
               required
               fullWidth
@@ -213,19 +147,26 @@ const AddForm = (props) => {
               onChange={(e) => handleInput(e)}
             />
           </Grid>
-          <Grid item md={6}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">
+          <Grid item xs={12} md={6}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <InputLabel id="select-standard-label" sx={{ mr: 2 }}>
                 Loại vắc-xin
               </InputLabel>
               {vaccineTypeOptions && (
                 <Select
-                  labelId="demo-simple-select-label"
+                  labelId="select-standard-label"
                   id="vaccine_type_id"
                   name="vaccine_type_id"
-                  label="Loại vắc-xin"
                   onChange={(e) => handleInput(e)}
                   value={form.vaccine_type_id}
+                  sx={{
+                    flex: 1,
+                  }}
                 >
                   {vaccineTypeOptions.map((option, index) => (
                     <MenuItem key={index} value={option._id}>
@@ -234,9 +175,9 @@ const AddForm = (props) => {
                   ))}
                 </Select>
               )}
-            </FormControl>
+            </Box>
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               id="injection_date"
@@ -246,14 +187,14 @@ const AddForm = (props) => {
               InputLabelProps={{
                 shrink: true,
               }}
-              value={form.injection_date}
+              value={dateFormat(form.injection_date, 'yyyy-mm-dd')}
               onChange={(e) => handleInput(e)}
             />
           </Grid>
 
           {form.images &&
             form.images.map((image, index) => (
-              <Grid item lg={6} key={index}>
+              <Grid item xs={12} lg={6} key={index}>
                 <Avatar
                   variant="square"
                   sx={{ mr: 2, width: '100%', height: '100%' }}
@@ -275,7 +216,7 @@ const AddForm = (props) => {
                   mr: 'auto',
                 }}
               >
-                Thêm ảnh
+                Thay đổi ảnh
               </Button>
               <Button
                 type="submit"
@@ -283,6 +224,7 @@ const AddForm = (props) => {
                 sx={{
                   mr: 2,
                 }}
+                disabled={!enableSubmitBtn}
               >
                 Lưu
               </Button>
@@ -290,12 +232,17 @@ const AddForm = (props) => {
                 Đóng
               </Button>
             </Box>
-            {successAlert && <Alert severity="success">Lưu thành công</Alert>}
+            {successAlert && (
+              <AlertDialog
+                text={'Lưu thành công'}
+                handleClose={() => setSuccessAlert(false)}
+              />
+            )}
           </Grid>
         </Grid>
       </Box>
-    </>
+    </Modal>
   )
 }
 
-export default AddForm
+export default EditModal

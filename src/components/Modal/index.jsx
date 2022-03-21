@@ -15,7 +15,6 @@ const style = {
   boxShadow: 24,
   p: 4,
   maxHeight: '90vh',
-  maxWidth: '100%',
   overflow: 'auto',
 }
 

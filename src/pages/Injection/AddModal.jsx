@@ -7,40 +7,92 @@ import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import Alert from '@mui/material/Alert'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
+import Alert from '@mui/material/Alert'
 import InputLabel from '@mui/material/InputLabel'
+import FormControl from '@mui/material/FormControl'
+import Autocomplete from '@mui/material/Autocomplete'
 
-import { updateInjection, getVaccineTypes } from '../../api'
+import Modal from '../../components/Modal'
+import AlertDialog from '../../components/AlertDialog'
+import { getVaccineTypes, getUsers, storeInjection } from '../../api'
 
-const EditForm = (props) => {
-  const { data, handleClose } = props
-  const _id = data._id
+const AddForm = (props) => {
+  const { handleClose } = props
 
   const [successAlert, setSuccessAlert] = useState(false)
+  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
-  const [vaccineTypeOptions, setVaccineTypeOptions] = useState()
+  const [errInputUser, setErrInputUser] = useState(false)
+  const [vaccineTypeOptions, setVaccineTypeOptions] = useState([])
+
+  const [searchText, setSearchText] = useState('')
+  const [searchSuggestions, setSearchSuggestions] = useState([])
 
   const [form, setForm] = useState({
-    user_name: data.user.name,
-    user_phone: data.user.phone,
-    user_email: data.user.email,
-    vaccine_type_id: data.vaccine_type._id,
-    vaccine_type_name: data.vaccine_type.name,
-    injection_date: data.injection_date,
-    images: data.images,
+    user_id: '',
+    user_name: '',
+    user_phone: '',
+    user_email: '',
+    vaccine_type_id: '',
+    vaccine_type_name: '',
+    injection_date: dateFormat(Date.now(), 'yyyy-mm-dd'),
+    images: [],
   })
+
+  useEffect(() => {
+    getUsers({
+      search: searchText,
+      currentPage: 1,
+      perPage: 20,
+    }).then((rs) => {
+      setSearchSuggestions(rs.data.data)
+    })
+  }, [searchText])
 
   useEffect(() => {
     getVaccineTypes().then((rs) => {
       setVaccineTypeOptions(rs.data.data)
+      setForm({
+        ...form,
+        vaccine_type_id: rs.data.data[0]._id,
+        vaccine_type_name: rs.data.data[0].name,
+      })
     })
   }, [])
+
+  const handleSelectOption = (option) => {
+    let emptyErr = true
+    let userSelected = {
+      user_id: '',
+      user_name: '',
+      user_phone: '',
+      user_email: '',
+    }
+
+    if (option) {
+      emptyErr = false
+      userSelected = {
+        user_id: option._id,
+        user_name: option.name,
+        user_phone: option.phone,
+        user_email: option.email,
+      }
+    }
+
+    setForm({
+      ...form,
+      ...userSelected,
+    })
+    setErrInputUser(emptyErr)
+    setEnableSubmitBtn(true)
+  }
 
   const handleInput = (e) => {
     const name = e.target.name
     const value = e.target.value
+
     let fieldsChange = {
       [name]: value,
     }
@@ -58,7 +110,15 @@ const EditForm = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault()
 
+    if (!form.user_id) return
+
     const data = {
+      user: {
+        _id: form.user_id,
+        name: form.user_name,
+        phone: form.user_phone,
+        email: form.user_email,
+      },
       vaccine_type: {
         _id: form.vaccine_type_id,
         name: form.vaccine_type_name,
@@ -66,43 +126,81 @@ const EditForm = (props) => {
       injection_date: form.injection_date,
       images: form.images,
     }
-    // Edit action
-    updateInjection(
-      {
-        _id,
-      },
-      data
-    )
-      .then((rs) => {
-        setSuccessAlert(!successAlert)
-        console.log(rs.data)
+
+    storeInjection(data)
+      .then(() => {
+        setSuccessAlert(true)
+        setEnableSubmitBtn(false)
       })
       .catch((err) => console.log(err))
   }
 
   return (
-    <>
-      <Typography variant="h5" mb={2}>
-        Thông tin chi tiết
-      </Typography>
+    <Modal handleClose={handleClose}>
+      {successAlert && (
+        <AlertDialog
+          text={'Thêm thành công'}
+          handleClose={() => setSuccessAlert(false)}
+        />
+      )}
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
+          <Grid item md={12}>
+            <Typography variant="h6">Thêm thông tin tiêm chủng</Typography>
+          </Grid>
+          <Grid item md={12}>
+            {searchSuggestions && (
+              <Autocomplete
+                required
+                fullWidth
+                id="search-field"
+                autoFocus
+                filterOptions={(options, state) => options}
+                onChange={(event, newValue) => {
+                  handleSelectOption(newValue)
+                }}
+                inputValue={searchText}
+                onInputChange={(event, newInputValue) => {
+                  setSearchText(newInputValue)
+                }}
+                options={searchSuggestions}
+                isOptionEqualToValue={(option, value) =>
+                  option.name === value.name
+                }
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField
+                    error={errInputUser}
+                    helperText={errInputUser && 'Vui lòng chọn người dùng'}
+                    {...params}
+                    label="Tìm người dùng bằng tên, số điện thoại hoặc email"
+                  />
+                )}
+              />
+            )}
+          </Grid>
           <Grid item md={6}>
-            <TextField
-              required
-              fullWidth
-              disabled
-              id="user_name"
-              label="Họ tên"
-              name="user_name"
-              autoComplete="user_name"
-              autoFocus
-              value={form.user_name}
-              onChange={(e) => handleInput(e)}
+            <Box
               sx={{
-                marginRight: '10px',
+                position: 'relative',
               }}
-            />
+            >
+              <TextField
+                required
+                fullWidth
+                disabled
+                id="user_name"
+                label="Họ tên"
+                name="user_name"
+                autoComplete="user_name"
+                autoFocus
+                value={form.user_name}
+                onChange={(e) => handleInput(e)}
+                sx={{
+                  marginRight: '10px',
+                }}
+              />
+            </Box>
           </Grid>
           <Grid item md={6}>
             <TextField
@@ -118,7 +216,7 @@ const EditForm = (props) => {
               onChange={(e) => handleInput(e)}
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item md={6}>
             <TextField
               required
               fullWidth
@@ -131,20 +229,16 @@ const EditForm = (props) => {
             />
           </Grid>
           <Grid item md={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <InputLabel id="select-standard-label" sx={{ mr: 2 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">
                 Loại vắc-xin
               </InputLabel>
               {vaccineTypeOptions && (
                 <Select
-                  labelId="select-standard-label"
+                  labelId="demo-simple-select-label"
                   id="vaccine_type_id"
                   name="vaccine_type_id"
+                  label="Loại vắc-xin"
                   onChange={(e) => handleInput(e)}
                   value={form.vaccine_type_id}
                 >
@@ -155,7 +249,7 @@ const EditForm = (props) => {
                   ))}
                 </Select>
               )}
-            </Box>
+            </FormControl>
           </Grid>
           <Grid item md={6}>
             <TextField
@@ -167,7 +261,7 @@ const EditForm = (props) => {
               InputLabelProps={{
                 shrink: true,
               }}
-              value={dateFormat(form.injection_date, 'yyyy-mm-dd')}
+              value={form.injection_date}
               onChange={(e) => handleInput(e)}
             />
           </Grid>
@@ -196,7 +290,7 @@ const EditForm = (props) => {
                   mr: 'auto',
                 }}
               >
-                Thay đổi ảnh
+                Thêm ảnh
               </Button>
               <Button
                 type="submit"
@@ -204,6 +298,7 @@ const EditForm = (props) => {
                 sx={{
                   mr: 2,
                 }}
+                disabled={!enableSubmitBtn}
               >
                 Lưu
               </Button>
@@ -215,8 +310,8 @@ const EditForm = (props) => {
           </Grid>
         </Grid>
       </Box>
-    </>
+    </Modal>
   )
 }
 
-export default EditForm
+export default AddForm

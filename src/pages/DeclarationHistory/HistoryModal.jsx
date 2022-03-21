@@ -92,6 +92,7 @@ const HistoryModal = (props) => {
             maxHeight: '60vh',
             overflow: 'auto',
           }}
+          justifyContent="center"
         >
           {declarations.map((declaration, index) => (
             <Grid key={index} item md={4}>
@@ -124,6 +125,11 @@ const HistoryModal = (props) => {
               />
             </Grid>
           ))}
+          {declarations.length === 0 && (
+            <Typography variant="subtitle1" align="center">
+              Không có dữ liệu
+            </Typography>
+          )}
         </Grid>
         <Grid item md={12}>
           <Box
