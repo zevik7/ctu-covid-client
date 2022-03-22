@@ -9,19 +9,20 @@ import Typography from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
 import { useTheme } from '@mui/material'
 
+import Modal from '../../components/Modal'
+import AlertDialog from '../../components/AlertDialog'
 import { updateVaccineType, storeVaccineType } from '../../api'
 
-import dateFormat from 'dateformat'
-
-const ModalForm = (props) => {
+const MainModal = (props) => {
   const theme = useTheme()
 
-  const { data, handleClose } = props
+  const { data, handleClose, updateRows } = props
 
   // edit or add method
   const _id = data._id
 
   const [successAlert, setSuccessAlert] = useState(false)
+  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [form, setForm] = useState({
     name: { value: data.name || '', error: false, errorTxt: '' },
@@ -41,9 +42,10 @@ const ModalForm = (props) => {
     }
 
     setForm({ ...form, [name]: { value, error, errorTxt } })
+    setEnableSubmitBtn(true)
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
     const isError = Object.keys(form).find((key, index) => form[key].error)
@@ -52,35 +54,31 @@ const ModalForm = (props) => {
 
     const data = new FormData(event.currentTarget)
 
-    // Call api
-    if (_id) {
-      // Edit action
-      updateVaccineType(
-        {
-          _id,
-        },
-        data
-      )
-        .then(() => {
-          setSuccessAlert(!successAlert)
-        })
-        .catch((err) => console.log(err))
-    } else {
-      // Add action
-      storeVaccineType(data)
-        .then((rs) => {
-          setSuccessAlert(!successAlert)
-        })
-        .catch((err) => console.log(err))
+    try {
+      if (_id) {
+        await updateVaccineType({ _id }, data)
+      } else await storeVaccineType(data)
+      setSuccessAlert(true)
+      setEnableSubmitBtn(false)
+      updateRows()
+    } catch (error) {
+      console.log(error)
     }
   }
 
   return (
-    <Box>
-      <Typography variant="h5" mb={2}>
-        Thông tin chi tiết
-      </Typography>
+    <Modal handleClose={handleClose}>
+      {successAlert && (
+        <AlertDialog
+          title="Thông báo"
+          text={(_id ? 'Cập nhật' : 'Thêm') + ' thành công'}
+          handleClose={() => setSuccessAlert(false)}
+        />
+      )}
       <Box component="form" noValidate onSubmit={handleSubmit}>
+        <Typography variant="h6">
+          {(_id && 'Thông tin vắc-xin') || 'Thêm thông tin vắc-xin'}
+        </Typography>
         <Grid container spacing={2}>
           <Grid item sm={6}>
             <TextField
@@ -146,6 +144,7 @@ const ModalForm = (props) => {
                 sx={{
                   mr: 2,
                 }}
+                disabled={!enableSubmitBtn}
               >
                 {_id ? 'Lưu' : 'Thêm'}
               </Button>
@@ -153,12 +152,11 @@ const ModalForm = (props) => {
                 Đóng
               </Button>
             </Box>
-            {successAlert && <Alert severity="success">Lưu thành công</Alert>}
           </Grid>
         </Grid>
       </Box>
-    </Box>
+    </Modal>
   )
 }
 
-export default ModalForm
+export default MainModal
