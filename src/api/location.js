@@ -5,6 +5,8 @@ export const getLocations = (params) =>
     params,
   })
 
+export const getLocation = (_id) => axios.get(`/location/${_id}`)
+
 export const updateLocation = (params, data) =>
   axios.put(`/location`, data, {
     params,

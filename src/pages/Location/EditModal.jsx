@@ -113,7 +113,9 @@ const EditModal = (props) => {
               <QRCode
                 id={_id + 'QR'}
                 renderAs="svg"
-                value={_id}
+                value={
+                  process.env.REACT_APP_WEBSITE_DOMAIN + '/declaration/' + _id
+                }
                 size={200}
                 imageSettings={{
                   src: '/logo.png',

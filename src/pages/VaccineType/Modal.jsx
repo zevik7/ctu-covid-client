@@ -76,10 +76,12 @@ const MainModal = (props) => {
         />
       )}
       <Box component="form" noValidate onSubmit={handleSubmit}>
-        <Typography variant="h6">
-          {(_id && 'Thông tin vắc-xin') || 'Thêm thông tin vắc-xin'}
-        </Typography>
         <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Typography variant="h6">
+              {(_id && 'Thông tin vắc-xin') || 'Thêm thông tin vắc-xin'}
+            </Typography>
+          </Grid>
           <Grid item sm={6}>
             <TextField
               required

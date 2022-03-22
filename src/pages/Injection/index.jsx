@@ -44,7 +44,7 @@ const handleRenderTableRow = (row) => (
   </>
 )
 
-const User = () => {
+const Injection = () => {
   const [tableBodyCells, setTableBodyCells] = useState([])
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
@@ -60,7 +60,6 @@ const User = () => {
       perPage: perPage,
     }).then((rs) => {
       const { data, currentPage, perPage, count } = rs.data
-      console.log(count)
       setTableBodyCells(data)
       setCount(count)
       setPage(currentPage)
@@ -173,4 +172,4 @@ const User = () => {
   )
 }
 
-export default User
+export default Injection

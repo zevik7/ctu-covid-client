@@ -1,8 +1,9 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
-import HomeLayout from './Layout/HomeLayout.jsx'
-import AdminLayout from './Layout/AdminLayout.jsx'
+import HomeLayout from './Layout/Home.jsx'
+import AdminLayout from './Layout/Admin.jsx'
+import DeclarationLayout from './Layout/Declaration.jsx'
 
 import Dashboard from '../pages/Dashboard'
 import User from '../pages/User'
@@ -45,6 +46,10 @@ const RoutesApp = () => {
           </Route>
 
           <Route path="/login" element={<Login />} />
+          <Route
+            path="/declaration/:locationId"
+            element={<DeclarationLayout />}
+          />
           <Route path="*" element={<NoMatch />} />
         </Routes>
       </ThemeProvider>
