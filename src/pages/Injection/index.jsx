@@ -60,6 +60,7 @@ const User = () => {
       perPage: perPage,
     }).then((rs) => {
       const { data, currentPage, perPage, count } = rs.data
+      console.log(count)
       setTableBodyCells(data)
       setCount(count)
       setPage(currentPage)

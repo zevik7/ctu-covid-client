@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import dateFormat from 'dateformat'
 
 import Avatar from '@mui/material/Avatar'
@@ -13,15 +13,21 @@ import Alert from '@mui/material/Alert'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
 import Autocomplete from '@mui/material/Autocomplete'
+import { styled } from '@mui/material/styles'
 
 import Modal from '../../components/Modal'
 import AlertDialog from '../../components/AlertDialog'
 import { getVaccineTypes, getUsers, storeInjection } from '../../api'
 
+const Input = styled('input')({
+  display: 'none',
+})
+
 const AddForm = (props) => {
-  const { handleClose } = props
+  const { updateRows, handleClose } = props
 
   const [successAlert, setSuccessAlert] = useState(false)
+  const [errorAlertText, setErrorAlertText] = useState('')
   const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [errInputUser, setErrInputUser] = useState(false)
@@ -29,6 +35,8 @@ const AddForm = (props) => {
 
   const [searchText, setSearchText] = useState('')
   const [searchSuggestions, setSearchSuggestions] = useState([])
+
+  const autoCompleteRef = useRef(null)
 
   const [form, setForm] = useState({
     user_id: '',
@@ -97,11 +105,28 @@ const AddForm = (props) => {
       [name]: value,
     }
 
+    // Change vaccine type select
     if (name === 'vaccine_type_id') {
       const vaccine_type_name = vaccineTypeOptions.find(
         (option, index) => option._id === value
       ).name
       fieldsChange['vaccine_type_name'] = vaccine_type_name
+    }
+
+    // Add Image
+    if (name === 'images' && e.target.files) {
+      if (e.target.files.length !== 2) {
+        setErrorAlertText('Vui lòng chọn 2 hình ảnh')
+        return
+      }
+
+      const images = [
+        URL.createObjectURL(e.target.files[0]),
+        URL.createObjectURL(e.target.files[1]),
+      ]
+      fieldsChange = {
+        images,
+      }
     }
 
     setForm({ ...form, ...fieldsChange })
@@ -112,45 +137,46 @@ const AddForm = (props) => {
 
     if (!form.user_id) return
 
-    const data = {
-      user: {
-        _id: form.user_id,
-        name: form.user_name,
-        phone: form.user_phone,
-        email: form.user_email,
-      },
-      vaccine_type: {
-        _id: form.vaccine_type_id,
-        name: form.vaccine_type_name,
-      },
-      injection_date: form.injection_date,
-      images: form.images,
-    }
+    const data = new FormData(event.currentTarget)
 
     storeInjection(data)
       .then(() => {
         setSuccessAlert(true)
         setEnableSubmitBtn(false)
+        updateRows()
       })
       .catch((err) => console.log(err))
   }
 
   return (
-    <Modal handleClose={handleClose}>
+    <Modal
+      handleClose={handleClose}
+      sx={{
+        minWidth: 600,
+      }}
+    >
       {successAlert && (
         <AlertDialog
           text={'Thêm thành công'}
           handleClose={() => setSuccessAlert(false)}
         />
       )}
+      {errorAlertText && (
+        <AlertDialog
+          text={errorAlertText}
+          severity="error"
+          handleClose={() => setErrorAlertText(false)}
+        />
+      )}
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <Typography variant="h6">Thêm thông tin tiêm chủng</Typography>
           </Grid>
-          <Grid item md={12}>
-            {searchSuggestions && (
+          <Grid item xs={12}>
+            {searchSuggestions.length > 0 && (
               <Autocomplete
+                ref={autoCompleteRef}
                 required
                 fullWidth
                 id="search-field"
@@ -179,7 +205,16 @@ const AddForm = (props) => {
               />
             )}
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              required
+              fullWidth
+              name="user_id"
+              value={form.user_id}
+              sx={{
+                display: 'none',
+              }}
+            />
             <Box
               sx={{
                 position: 'relative',
@@ -188,47 +223,41 @@ const AddForm = (props) => {
               <TextField
                 required
                 fullWidth
-                disabled
                 id="user_name"
                 label="Họ tên"
                 name="user_name"
                 autoComplete="user_name"
                 autoFocus
                 value={form.user_name}
-                onChange={(e) => handleInput(e)}
                 sx={{
                   marginRight: '10px',
                 }}
               />
             </Box>
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               fullWidth
-              disabled
               id="user_phone"
               label="Số điện thoại"
               name="user_phone"
               autoComplete="user_phone"
               autoFocus
               value={form.user_phone}
-              onChange={(e) => handleInput(e)}
             />
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12}>
             <TextField
               required
               fullWidth
-              disabled
               id="user_email"
               label="Email"
               name="user_email"
               value={form.user_email}
-              onChange={(e) => handleInput(e)}
             />
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} md={6}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">
                 Loại vắc-xin
@@ -239,7 +268,7 @@ const AddForm = (props) => {
                   id="vaccine_type_id"
                   name="vaccine_type_id"
                   label="Loại vắc-xin"
-                  onChange={(e) => handleInput(e)}
+                  onChange={handleInput}
                   value={form.vaccine_type_id}
                 >
                   {vaccineTypeOptions.map((option, index) => (
@@ -250,8 +279,17 @@ const AddForm = (props) => {
                 </Select>
               )}
             </FormControl>
+            <TextField
+              required
+              fullWidth
+              name="vaccine_type_name"
+              value={form.vaccine_type_name}
+              sx={{
+                display: 'none',
+              }}
+            />
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               id="injection_date"
@@ -262,36 +300,52 @@ const AddForm = (props) => {
                 shrink: true,
               }}
               value={form.injection_date}
-              onChange={(e) => handleInput(e)}
+              onChange={handleInput}
             />
           </Grid>
 
-          {form.images &&
-            form.images.map((image, index) => (
-              <Grid item lg={6} key={index}>
-                <Avatar
-                  variant="square"
-                  sx={{ mr: 2, width: '100%', height: '100%' }}
-                  src={process.env.REACT_APP_SERVER + image.url}
-                />
-              </Grid>
-            ))}
+          {form.images.map((image, index) => (
+            <Grid item lg={6} key={index}>
+              <Avatar
+                variant="square"
+                sx={{ mr: 2, width: '100%', height: '100%' }}
+                src={
+                  typeof image === 'string'
+                    ? image
+                    : process.env.REACT_APP_SERVER + image.url
+                }
+              />
+            </Grid>
+          ))}
 
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'flex-end',
               }}
             >
-              <Button
-                variant="outlined"
-                sx={{
-                  mr: 'auto',
+              <label
+                htmlFor="contained-button-file2"
+                style={{
+                  marginRight: 'auto',
                 }}
               >
-                Thêm ảnh
-              </Button>
+                <Input
+                  name="images"
+                  accept="image/*"
+                  id="contained-button-file2"
+                  type="file"
+                  sx={{
+                    display: 'none',
+                  }}
+                  onChange={handleInput}
+                  multiple
+                />
+                <Button variant="outlined" component="span">
+                  Thêm ảnh
+                </Button>
+              </label>
               <Button
                 type="submit"
                 variant="contained"
@@ -306,7 +360,6 @@ const AddForm = (props) => {
                 Đóng
               </Button>
             </Box>
-            {successAlert && <Alert severity="success">Lưu thành công</Alert>}
           </Grid>
         </Grid>
       </Box>

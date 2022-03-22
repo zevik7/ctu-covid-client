@@ -92,7 +92,6 @@ const HistoryModal = (props) => {
             maxHeight: '60vh',
             overflow: 'auto',
           }}
-          justifyContent="center"
         >
           {declarations.map((declaration, index) => (
             <Grid key={index} item md={4}>

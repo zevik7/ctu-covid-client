@@ -7,14 +7,18 @@ import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import Alert from '@mui/material/Alert'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import InputLabel from '@mui/material/InputLabel'
+import { styled } from '@mui/material/styles'
 
 import Modal from '../../components/Modal'
 import AlertDialog from '../../components/AlertDialog'
 import { updateInjection, getVaccineTypes } from '../../api'
+
+const Input = styled('input')({
+  display: 'none',
+})
 
 const EditModal = (props) => {
   const { data, updateRows, handleClose } = props
@@ -22,6 +26,7 @@ const EditModal = (props) => {
   const _id = data._id
 
   const [successAlert, setSuccessAlert] = useState(false)
+  const [errorAlertText, setErrorAlertText] = useState('')
   const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [vaccineTypeOptions, setVaccineTypeOptions] = useState()
@@ -33,7 +38,8 @@ const EditModal = (props) => {
     vaccine_type_id: data.vaccine_type._id,
     vaccine_type_name: data.vaccine_type.name,
     injection_date: data.injection_date,
-    images: data.images,
+    images: data.images || [],
+    time: data.time,
   })
 
   useEffect(() => {
@@ -56,6 +62,22 @@ const EditModal = (props) => {
       fieldsChange['vaccine_type_name'] = vaccine_type_name
     }
 
+    // Edit Image
+    if (name === 'images' && e.target.files) {
+      if (e.target.files.length !== 2) {
+        setErrorAlertText('Vui lòng chọn 2 hình ảnh')
+        return
+      }
+
+      const images = [
+        URL.createObjectURL(e.target.files[0]),
+        URL.createObjectURL(e.target.files[1]),
+      ]
+      fieldsChange = {
+        images,
+      }
+    }
+
     setForm({ ...form, ...fieldsChange })
     setEnableSubmitBtn(true)
   }
@@ -63,14 +85,8 @@ const EditModal = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    const data = {
-      vaccine_type: {
-        _id: form.vaccine_type_id,
-        name: form.vaccine_type_name,
-      },
-      injection_date: form.injection_date,
-      images: form.images,
-    }
+    const data = new FormData(event.currentTarget)
+
     // Edit action
     updateInjection(
       {
@@ -99,6 +115,13 @@ const EditModal = (props) => {
           handleClose={() => setSuccessAlert(false)}
         />
       )}
+      {errorAlertText && (
+        <AlertDialog
+          text={errorAlertText}
+          severity="error"
+          handleClose={() => setErrorAlertText(false)}
+        />
+      )}
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -111,11 +134,9 @@ const EditModal = (props) => {
               disabled
               id="user_name"
               label="Họ tên"
-              name="user_name"
               autoComplete="user_name"
               autoFocus
               value={form.user_name}
-              onChange={(e) => handleInput(e)}
               sx={{
                 marginRight: '10px',
               }}
@@ -128,22 +149,32 @@ const EditModal = (props) => {
               disabled
               id="user_phone"
               label="Số điện thoại"
-              name="user_phone"
               autoComplete="user_phone"
               autoFocus
               value={form.user_phone}
-              onChange={(e) => handleInput(e)}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               fullWidth
               disabled
               id="user_email"
               label="Email"
-              name="user_email"
               value={form.user_email}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              id="injection_date"
+              label="Ngày tiêm"
+              type="date"
+              name="injection_date"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={dateFormat(form.injection_date, 'yyyy-mm-dd')}
               onChange={(e) => handleInput(e)}
             />
           </Grid>
@@ -177,31 +208,32 @@ const EditModal = (props) => {
               )}
             </Box>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
-              id="injection_date"
-              label="Ngày tiêm"
-              type="date"
-              name="injection_date"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              value={dateFormat(form.injection_date, 'yyyy-mm-dd')}
-              onChange={(e) => handleInput(e)}
-            />
+          <Grid
+            item
+            xs={12}
+            md={6}
+            container
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Typography variant="subtitle1" align="center">
+              <strong>Mũi thứ {form.time}</strong>
+            </Typography>
           </Grid>
 
-          {form.images &&
-            form.images.map((image, index) => (
-              <Grid item xs={12} lg={6} key={index}>
-                <Avatar
-                  variant="square"
-                  sx={{ mr: 2, width: '100%', height: '100%' }}
-                  src={process.env.REACT_APP_SERVER + image.url}
-                />
-              </Grid>
-            ))}
+          {form.images.map((image, index) => (
+            <Grid item lg={6} key={index}>
+              <Avatar
+                variant="square"
+                sx={{ mr: 2, width: '100%', height: '100%' }}
+                src={
+                  typeof image === 'string'
+                    ? image
+                    : process.env.REACT_APP_SERVER + image.url
+                }
+              />
+            </Grid>
+          ))}
 
           <Grid item md={12}>
             <Box
@@ -210,14 +242,27 @@ const EditModal = (props) => {
                 justifyContent: 'flex-end',
               }}
             >
-              <Button
-                variant="outlined"
-                sx={{
-                  mr: 'auto',
+              <label
+                htmlFor="contained-button-file2"
+                style={{
+                  marginRight: 'auto',
                 }}
               >
-                Thay đổi ảnh
-              </Button>
+                <Input
+                  name="images"
+                  accept="image/*"
+                  id="contained-button-file2"
+                  type="file"
+                  sx={{
+                    display: 'none',
+                  }}
+                  onChange={handleInput}
+                  multiple
+                />
+                <Button variant="outlined" component="span">
+                  Sửa ảnh
+                </Button>
+              </label>
               <Button
                 type="submit"
                 variant="contained"
@@ -232,12 +277,6 @@ const EditModal = (props) => {
                 Đóng
               </Button>
             </Box>
-            {successAlert && (
-              <AlertDialog
-                text={'Lưu thành công'}
-                handleClose={() => setSuccessAlert(false)}
-              />
-            )}
           </Grid>
         </Grid>
       </Box>
