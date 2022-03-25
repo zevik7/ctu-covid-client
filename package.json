@@ -8,7 +8,7 @@
     "@fontsource/roboto": "^4.5.3",
     "@googlemaps/markerclustererplus": "^1.2.10",
     "@googlemaps/react-wrapper": "^1.1.26",
-    "@mui/icons-material": "^5.4.2",
+    "@mui/icons-material": "^5.5.1",
     "@mui/lab": "^5.0.0-alpha.71",
     "@mui/material": "^5.4.3",
     "@testing-library/jest-dom": "^5.16.1",

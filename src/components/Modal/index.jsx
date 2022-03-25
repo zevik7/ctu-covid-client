@@ -16,6 +16,7 @@ const style = {
   p: 4,
   maxHeight: '90vh',
   overflow: 'auto',
+  borderRadius: 2,
 }
 
 export default function TransitionsModal(props) {
