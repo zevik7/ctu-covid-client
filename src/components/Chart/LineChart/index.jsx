@@ -2,19 +2,20 @@ import Chart from 'react-apexcharts'
 import { useState } from 'react'
 import dateFormat from 'dateformat'
 
-import locationOption from '../localesOption'
+import globalOptions from '../globalOptions'
 
 const LineChart = (props) => {
-  const [lineChart, setLineChart] = useState({
+  // Props: seriesName, data, options, name
+  const lineChart = {
     series: [
       {
-        name: props.seriesName,
+        name: props.name,
         data: props.data,
       },
     ],
     options: {
       chart: {
-        ...locationOption,
+        ...globalOptions,
         type: 'area',
         stacked: false,
         zoom: {
@@ -33,7 +34,7 @@ const LineChart = (props) => {
         size: 0,
       },
       title: {
-        text: 'Biểu đồ số ca nhiễm',
+        text: 'Biểu đồ ' + props.name.toLowerCase(),
         align: 'left',
       },
       fill: {
@@ -43,12 +44,12 @@ const LineChart = (props) => {
           inverseColors: false,
           opacityFrom: 0.9,
           opacityTo: 0,
-          stops: [10, 90, 100],
+          stops: [0, 90, 100],
         },
       },
       yaxis: {
         title: {
-          text: 'Số ca nhiễm',
+          text: props.name,
         },
       },
       xaxis: {
@@ -59,15 +60,14 @@ const LineChart = (props) => {
           },
         },
       },
-      ...props.option,
+      ...props.options,
     },
-  })
+  }
 
   return (
     <Chart
       options={lineChart.options}
       series={lineChart.series}
-      type="area"
       width={props.width}
       height={props.height}
     />

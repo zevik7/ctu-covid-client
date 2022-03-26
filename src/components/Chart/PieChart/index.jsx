@@ -1,31 +1,19 @@
 import { useState } from 'react'
 import Chart from 'react-apexcharts'
+import globalOptions from '../globalOptions'
 
 const PieChart = (props) => {
-  const [pieChart, setPieChart] = useState({
+  const pieChart = {
     series: props.series,
     options: {
       chart: {
-        width: 480,
+        ...globalOptions,
         type: 'pie',
       },
       labels: props.labels,
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 200,
-            },
-            legend: {
-              position: 'bottom',
-            },
-          },
-        },
-      ],
       ...props.option,
     },
-  })
+  }
 
   return (
     <Chart

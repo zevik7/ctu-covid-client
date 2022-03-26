@@ -17,4 +17,6 @@ export * from './location'
 
 export * from './health_declaration'
 
+export * from './positive_declaration'
+
 export * from './userProfile'

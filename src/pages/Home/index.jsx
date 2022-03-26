@@ -35,11 +35,78 @@ import LookupModal from './LookupModal'
 import ArticleModal from './ArticleModal'
 import PositiveDeclarationModal from './PositiveDeclarationModal'
 import RegisterModal from './RegisterModal'
+import Chart from 'react-apexcharts'
+
+import { getStats, getPostitiveDeclarations } from '../../api'
 
 const theme = createTheme()
 
+const pieChart = {
+  series: [98, 87, 61],
+  options: {
+    chart: {
+      height: 390,
+      type: 'radialBar',
+    },
+    plotOptions: {
+      radialBar: {
+        offsetY: 0,
+        startAngle: 0,
+        endAngle: 270,
+        hollow: {
+          margin: 5,
+          size: '30%',
+          background: 'transparent',
+          image: undefined,
+        },
+        dataLabels: {
+          name: {
+            show: false,
+          },
+          value: {
+            show: false,
+          },
+        },
+      },
+    },
+    colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
+    labels: ['Mũi 1', 'Mũi 2', 'Mũi 3'],
+    legend: {
+      show: true,
+      floating: true,
+      fontSize: '16px',
+      position: 'left',
+      offsetX: 160,
+      offsetY: 15,
+      labels: {
+        useSeriesColors: true,
+      },
+      markers: {
+        size: 0,
+      },
+      formatter: function (seriesName, opts) {
+        return seriesName + ':  ' + opts.w.globals.series[opts.seriesIndex]
+      },
+      itemMargin: {
+        vertical: 3,
+      },
+    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          legend: {
+            show: false,
+          },
+        },
+      },
+    ],
+  },
+}
+
 export default function Home() {
   const navigate = useNavigate()
+
   const [areaSeleted, setAreaSelected] = useState('local')
   const [openLookupModal, setOpenLookupModal] = useState(false)
   const [openArticleModal, setOpenArticleModal] = useState(false)
@@ -48,10 +115,19 @@ export default function Home() {
     useState(false)
 
   const [locations, setLocations] = useState([])
+  const [positiveDecla, setPositiveDecla] = useState([])
 
   useEffect(() => {
     getLocations().then((rs) => setLocations(rs.data.data))
+    getStats().then((rs) => {
+      setPositiveDeclaByDates(rs.data.statDates)
+    })
+    getPostitiveDeclarations().then((rs) => {
+      setPositiveDecla(rs.data.data)
+    })
   }, [])
+
+  const [positiveDeclaByDates, setPositiveDeclaByDates] = useState([])
 
   return (
     <>
@@ -146,16 +222,31 @@ export default function Home() {
             <Grid item xs={12}>
               <Typography
                 variant="h4"
-                sx={{ m: '2rem 0', color: 'warning.main' }}
+                sx={{
+                  p: '2rem 0',
+                  color: 'warning.main',
+                  bgcolor: 'rgba(80, 184, 255, 0.11)',
+                  borderRadius: 2,
+                }}
                 align="center"
               >
-                Tổng số ca nhiễm: 321020
+                Tổng số ca nhiễm: 3210
               </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
-              {/* <LineChart width={'100%'} height={'200px'} /> */}
-              {/* <Typography variant="h6">Thống kê tiêm vắc-xin</Typography> */}
-              {/* <PieChart width={'100%'} height={'200px'} /> */}
+              <Typography variant="h6">Thống kê tiêm vắc-xin</Typography>
+              <Chart
+                options={pieChart.options}
+                series={pieChart.series}
+                type="radialBar"
+                height="50%"
+              />
+              <LineChart
+                name="Số ca nhiễm"
+                data={positiveDeclaByDates}
+                type="area"
+                height={'50%'}
+              />
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography variant="h6">Các điểm khai báo y tế</Typography>
@@ -171,6 +262,20 @@ export default function Home() {
             </Grid>
             <Grid item xs={12}>
               <Divider />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h6">
+                Các vị trí xuất hiện ca nhiễm
+              </Typography>
+              <Map
+                style={{
+                  height: '600px',
+                }}
+                markers={positiveDecla.map((el, i) => ({
+                  position: el.location.position,
+                  popup: el.location.name,
+                }))}
+              />
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography

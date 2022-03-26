@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Container, Grid, Paper, Typography, Box } from '@mui/material'
 
 import Chart from 'react-apexcharts'
@@ -6,190 +6,179 @@ import Chart from 'react-apexcharts'
 import Deposits from '../../components/Deposits'
 import Map from '../../components/Map'
 import AlertDialog from '../../components/AlertDialog'
+import LineChart from '../../components/Chart/LineChart'
+import PieChart from '../../components/Chart/PieChart'
 
-const Dashboard = () => {
-  const [pieChart, setPieChart] = useState({
-    series: [990, 31022, 23100],
-    options: {
-      chart: {
-        width: 480,
-        type: 'pie',
-      },
-      labels: ['Mũi một', 'Mũi hai', 'Mũi ba'],
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 200,
-            },
-            legend: {
-              position: 'bottom',
-            },
+import { getStats, getPostitiveDeclarations } from '../../api'
+
+const pieChart = {
+  series: [98, 87, 61],
+  options: {
+    chart: {
+      height: 390,
+      type: 'radialBar',
+    },
+    plotOptions: {
+      radialBar: {
+        offsetY: 0,
+        startAngle: 0,
+        endAngle: 270,
+        hollow: {
+          margin: 5,
+          size: '30%',
+          background: 'transparent',
+          image: undefined,
+        },
+        dataLabels: {
+          name: {
+            show: false,
+          },
+          value: {
+            show: false,
           },
         },
-      ],
+      },
     },
-  })
-
-  const [lineChart, setLineChart] = useState({
-    series: [
-      {
-        name: [
-          '12/03/2022',
-          '13/03/2022',
-          '14/03/2022',
-          '15/03/2022',
-          '16/03/2022',
-          '17/03/2022',
-        ],
-        data: [
-          [1324508400000, 34],
-          [1324594800000, 54],
-          [1326236400000, 43],
-          [1327236400000, 23],
-          [1328236400000, 99],
-          [1329236400000, 78],
-          [1329936400000, 13],
-        ],
-      },
-    ],
-    options: {
-      chart: {
-        type: 'area',
-        stacked: false,
-        height: 350,
-        zoom: {
-          type: 'x',
-          enabled: true,
-          autoScaleYaxis: true,
-        },
-        toolbar: {
-          autoSelected: 'zoom',
-        },
-      },
-      dataLabels: {
-        enabled: false,
+    colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
+    labels: ['Mũi 1', 'Mũi 2', 'Mũi 3'],
+    legend: {
+      show: true,
+      floating: true,
+      fontSize: '16px',
+      position: 'left',
+      offsetX: 160,
+      offsetY: 15,
+      labels: {
+        useSeriesColors: true,
       },
       markers: {
         size: 0,
       },
-      title: {
-        text: 'Khai báo',
-        align: 'left',
+      formatter: function (seriesName, opts) {
+        return seriesName + ':  ' + opts.w.globals.series[opts.seriesIndex]
       },
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shadeIntensity: 1,
-          inverseColors: false,
-          opacityFrom: 0.5,
-          opacityTo: 0,
-          stops: [0, 90, 100],
-        },
-      },
-      yaxis: {
-        labels: {
-          formatter: function (val) {
-            return (val / 1000000).toFixed(0)
-          },
-        },
-        title: {
-          text: 'Lượt',
-        },
-      },
-      xaxis: {
-        type: 'datetime',
-      },
-      tooltip: {
-        shared: false,
-        y: {
-          formatter: function (val) {
-            return (val / 1000000).toFixed(0)
-          },
-        },
+      itemMargin: {
+        vertical: 3,
       },
     },
-  })
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          legend: {
+            show: false,
+          },
+        },
+      },
+    ],
+  },
+}
+
+const Dashboard = () => {
+  const [positiveDeclaByDates, setPositiveDeclaByDates] = useState([])
+  const [positiveDecla, setPositiveDecla] = useState([])
+
+  useEffect(() => {
+    getStats().then((rs) => {
+      setPositiveDeclaByDates(rs.data.statDates)
+    })
+
+    getPostitiveDeclarations().then((rs) => {
+      setPositiveDecla(rs.data.data)
+    })
+  }, [])
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <Grid container spacing={3}>
-          <Grid item md={6}>
-            <Typography
-              sx={{
-                flex: '1 1 100%',
-                mt: 2,
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-              }}
-              variant="h6"
-              id="tableTitle"
-              component="div"
-            >
-              Số lượt khai báo những ngày qua
-            </Typography>
-            <Chart
-              options={lineChart.options}
-              series={lineChart.series}
-              type="area"
-              height={480}
-            />
-          </Grid>
-          <Grid item md={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <Typography
-                sx={{
-                  flex: '1 1 100%',
-                  mt: 2,
-                  pl: { sm: 2 },
-                  pr: { xs: 1, sm: 1 },
-                }}
-                variant="h6"
-                id="tableTitle"
-                component="div"
-              >
-                Thống kê tiêm vắc-xin
-              </Typography>
-              <Chart
-                options={pieChart.options}
-                series={pieChart.series}
-                type="pie"
-                width={480}
-              />
-            </Box>
-          </Grid>
-          <Grid item md={12}>
-            <Typography
-              sx={{
-                flex: '1 1 100%',
-                mt: 2,
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-              }}
-              variant="h6"
-              id="tableTitle"
-              component="div"
-            >
-              Các địa điểm được khai báo nhiều nhất
-            </Typography>
-            <Map
-              style={{
-                height: '300px',
-                padding: '10px',
-              }}
-            />
-          </Grid>
+    <Paper sx={{ width: '100%' }}>
+      <Grid container spacing={2}>
+        <Grid item md={6}>
+          <Typography
+            sx={{
+              flex: '1 1 100%',
+              mt: 2,
+              pl: { sm: 2 },
+              pr: { xs: 1, sm: 1 },
+            }}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
+            Số ca nhiễm những ngày qua
+          </Typography>
+          <LineChart
+            name="Số ca nhiễm"
+            data={positiveDeclaByDates}
+            type="area"
+            height={'50%'}
+          />
+          <Typography
+            sx={{
+              flex: '1 1 100%',
+              mt: 2,
+              pl: { sm: 2 },
+              pr: { xs: 1, sm: 1 },
+            }}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
+            Số lượt khai báo những ngày qua
+          </Typography>
+          <LineChart
+            name="Số lượt khai báo"
+            data={positiveDeclaByDates}
+            type="area"
+            height={'50%'}
+          />
         </Grid>
-      </Paper>
-    </Box>
+
+        <Grid item md={6}>
+          <Typography
+            sx={{
+              flex: '1 1 100%',
+              mt: 2,
+              pl: { sm: 2 },
+              pr: { xs: 1, sm: 1 },
+            }}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
+            Thống kê tiêm vắc-xin
+          </Typography>
+          <Chart
+            options={pieChart.options}
+            series={pieChart.series}
+            type="radialBar"
+            height={500}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Typography
+            sx={{
+              flex: '1 1 100%',
+              mt: 2,
+              pl: { sm: 2 },
+              pr: { xs: 1, sm: 1 },
+            }}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
+            Các vị trí F0 cách ly
+          </Typography>
+          <Map
+            style={{
+              height: '600px',
+            }}
+            markers={positiveDecla.map((el, i) => ({
+              position: el.location.position,
+              popup: el.location.name,
+            }))}
+          />
+        </Grid>
+      </Grid>
+    </Paper>
   )
 }
 

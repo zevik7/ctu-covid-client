@@ -1,4 +1,5 @@
 export default {
+  fontFamily: 'Roboto, Arial, sans-serif',
   defaultLocale: 'en',
   locales: [
     {

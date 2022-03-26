@@ -11,6 +11,7 @@ import VaccinesIcon from '@mui/icons-material/Vaccines'
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety'
 import Box from '@mui/material/Box'
 import NotificationsIcon from '@mui/icons-material/Notifications'
+import CoronavirusIcon from '@mui/icons-material/Coronavirus'
 
 import { Link as RouterLink, useResolvedPath, useMatch } from 'react-router-dom'
 
@@ -44,6 +45,7 @@ export const mainListItems = (
       icon={<PeopleIcon />}
       text="Quản lý người dùng"
     />
+    <LinkItem to="virus" icon={<CoronavirusIcon />} text="Thông tin ca nhiễm" />
     <LinkItem
       to="/admin/location"
       icon={<ShareLocationIcon />}
