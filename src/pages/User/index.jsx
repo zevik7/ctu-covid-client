@@ -13,27 +13,22 @@ import Modal from './Modal'
 const tableHeadCells = [
   {
     id: 'name',
-    numeric: false,
     label: 'Họ tên',
   },
   {
     id: 'gender',
-    numeric: false,
     label: 'Giới tính',
   },
   {
     id: 'birthday',
-    numeric: false,
     label: 'Ngày sinh',
   },
   {
     id: 'email',
-    numeric: false,
     label: 'Email',
   },
   {
     id: 'phone',
-    numeric: false,
     label: 'Số điện thoại',
   },
 ]
@@ -122,33 +117,23 @@ const User = () => {
   }
 
   const handleChangePage = (event, newPage) => {
+    setSelected([])
     callApi(+newPage + 1, rowsPerPage)
   }
 
   const handleChangeRowsPerPage = (event) => {
+    setSelected([])
     callApi(page, +event.target.value)
   }
 
   return (
-    <Paper
-      sx={{
-        position: 'relative',
-      }}
-    >
+    <>
       {openModal && (
         <Modal
           open={openModal}
           handleClose={handleCloseModal}
           data={modalData}
-          updateRows={() => {
-            getUsers({
-              currentPage: page,
-              perPage: rowsPerPage,
-            }).then((rs) => {
-              const { data } = rs.data
-              setTableBodyCells(data)
-            })
-          }}
+          updateRows={() => callApi(page, rowsPerPage)}
         />
       )}
       <TableToolbar
@@ -174,7 +159,7 @@ const User = () => {
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
       />
-    </Paper>
+    </>
   )
 }
 

@@ -101,12 +101,7 @@ const MainModal = (props) => {
       // Call api
       if (_id) {
         // Edit action
-        await updateUser(
-          {
-            _id,
-          },
-          data
-        )
+        await updateUser({ _id }, data)
       } else {
         // Add action
         await storeUser(data)
@@ -114,21 +109,29 @@ const MainModal = (props) => {
       setSuccessAlert(true)
       updateRows()
       setEnableSubmitBtn(false)
-    } catch (rs) {
-      const errors = rs?.response?.data?.errors
+    } catch (errors) {
+      const errorsData = errors?.response?.data
 
-      if (errors) {
-        if (errors.hasOwnProperty('email')) {
+      if (errorsData && errorsData.type === 'validation' && errorsData.errors) {
+        if (errorsData.errors.email) {
           setForm((form) => ({
             ...form,
-            email: { ...form.email, error: true, errorTxt: errors.email },
+            email: {
+              ...form.email,
+              error: true,
+              errorTxt: errorsData.errors.email,
+            },
           }))
         }
 
-        if (errors.hasOwnProperty('phone'))
+        if (errorsData.errors.phone)
           setForm((form) => ({
             ...form,
-            phone: { ...form.phone, error: true, errorTxt: errors.phone },
+            phone: {
+              ...form.phone,
+              error: true,
+              errorTxt: errorsData.errors.phone,
+            },
           }))
       }
     }
@@ -138,6 +141,7 @@ const MainModal = (props) => {
     if (e.target.files && e.target.files[0]) {
       let avatar = e.target.files[0]
       setAvatarUpload(URL.createObjectURL(avatar))
+      setEnableSubmitBtn(true)
     }
   }
 

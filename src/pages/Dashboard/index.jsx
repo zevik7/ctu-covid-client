@@ -94,7 +94,6 @@ const Dashboard = () => {
         <Grid item md={6}>
           <Typography
             sx={{
-              flex: '1 1 100%',
               mt: 2,
               pl: { sm: 2 },
               pr: { xs: 1, sm: 1 },
