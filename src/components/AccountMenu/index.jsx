@@ -12,11 +12,13 @@ import Logout from '@mui/icons-material/Logout'
 import { useAuth } from '../../context/Auth'
 
 import SettingModal from './SettingModal'
+import AlertDialog from '../AlertDialog'
 
 export default function AccountMenu() {
   const { user, onLogout } = useAuth()
   const [anchorEl, setAnchorEl] = useState(null)
   const [openSettingModal, setOpenSettingModal] = useState(false)
+  const [infoAlertTxt, setInfoAlertTxt] = useState('')
 
   const open = Boolean(anchorEl)
 
@@ -34,6 +36,13 @@ export default function AccountMenu() {
 
   return (
     <>
+      {infoAlertTxt && (
+        <AlertDialog
+          text={infoAlertTxt}
+          handleClose={() => setInfoAlertTxt('')}
+          severity="info"
+        />
+      )}
       {openSettingModal && (
         <SettingModal handleClose={handleCloseSettingModal} />
       )}
@@ -90,7 +99,9 @@ export default function AccountMenu() {
           </ListItemIcon>
           Cài đặt tài khoản
         </MenuItem>
-        <MenuItem>
+        <MenuItem
+          onClick={() => setInfoAlertTxt('Vui lòng liên hệ quản trị viên')}
+        >
           <ListItemIcon>
             <PersonAdd fontSize="small" />
           </ListItemIcon>

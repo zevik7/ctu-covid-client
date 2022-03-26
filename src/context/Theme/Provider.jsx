@@ -4,6 +4,7 @@ import createTheme from '@mui/material/styles/createTheme'
 import responsiveFontSizes from '@mui/material/styles/responsiveFontSizes'
 import { viVN } from '@mui/material/locale'
 import { ThemeContext } from './Context'
+import grey from '@mui/material/colors/grey'
 
 const ThemeProvider = (props) => {
   const [mode, setMode] = useState('light')
@@ -27,6 +28,18 @@ const ThemeProvider = (props) => {
               background: {
                 lightBlue: "url('/images/Light-Blue-Wallpapers.jpg')",
               },
+              ...(mode === 'dark'
+                ? {
+                    background: {
+                      default: grey[900],
+                      paper: grey[900],
+                    },
+                  }
+                : {
+                    text: {
+                      primary: 'rgba(0,0,0,0.77)',
+                    },
+                  }),
             },
           },
           viVN

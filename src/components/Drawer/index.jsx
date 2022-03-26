@@ -13,7 +13,7 @@ import { mainListItems, secondaryListItems } from '../DrawerItems'
 import Logo from '../Logo'
 
 const content = (
-  <Box>
+  <>
     <Toolbar
       sx={{
         display: 'flex',
@@ -26,7 +26,7 @@ const content = (
         sx={{
           width: '140px',
         }}
-        textVariant="subtitle1"
+        textVariant="body1"
       />
     </Toolbar>
     <Divider />
@@ -35,7 +35,7 @@ const content = (
       <Divider sx={{ my: 1 }} />
       {secondaryListItems}
     </List>
-  </Box>
+  </>
 )
 
 const MainDrawer = (props) => {
@@ -64,6 +64,7 @@ const MainDrawer = (props) => {
             width: props.drawerWidth,
           },
         }}
+        // PaperProps={{ elevation: 1 }}
       >
         {content}
       </Drawer>
@@ -77,6 +78,7 @@ const MainDrawer = (props) => {
           },
         }}
         open={props.open}
+        // PaperProps={{ elevation: 1 }}
       >
         {content}
       </Drawer>

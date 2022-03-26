@@ -89,7 +89,7 @@ const Dashboard = () => {
   }, [])
 
   return (
-    <Paper sx={{ width: '100%' }}>
+    <Paper>
       <Grid container spacing={2}>
         <Grid item md={6}>
           <Typography
