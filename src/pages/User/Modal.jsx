@@ -11,6 +11,8 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Radio from '@mui/material/Radio'
 import Typography from '@mui/material/Typography'
 import Input from '@mui/material/Input'
+import FormControl from '@mui/material/FormControl'
+import FormLabel from '@mui/material/FormLabel'
 
 import Modal from '../../components/Modal'
 import AlertDialog from '../../components/AlertDialog'
@@ -49,7 +51,7 @@ const validateField = (name, value) => {
 }
 
 const MainModal = (props) => {
-  const { open, data, updateRows, handleClose } = props
+  const { data, updateRows, handleClose } = props
 
   // edit or add method
   const _id = data._id
@@ -146,22 +148,26 @@ const MainModal = (props) => {
   }
 
   return (
-    <Modal open={open} handleClose={handleClose}>
-      <Box
-        component="form"
-        noValidate
-        onSubmit={handleSubmit}
-        sx={{
-          minWidth: 300,
-        }}
-      >
-        <Typography variant="h6">Thông tin cá nhân</Typography>
+    <Modal handleClose={handleClose}>
+      {successAlert && (
+        <AlertDialog
+          title="Thông báo"
+          text={(_id ? 'Cập nhật' : 'Thêm') + ' thành công'}
+          handleClose={() => setSuccessAlert(false)}
+        />
+      )}
+      <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2} justifyContent="center" alignItems="center">
+          <Grid item xs={12}>
+            <Typography variant="h6">
+              {(_id && 'Thông tin người dùng') || 'Thêm người dùng'}
+            </Typography>
+          </Grid>
           <Grid
             container
             item
-            xs={7}
-            lg={4}
+            xs={8}
+            lg={5}
             direction="column"
             justifyContent="center"
             alignItems="center"
@@ -176,6 +182,8 @@ const MainModal = (props) => {
                 width: '100%',
                 height: 'auto',
                 objectFit: 'contain',
+                border: 1,
+                borderColor: 'primary.light',
               }}
               variant="square"
             />
@@ -201,7 +209,7 @@ const MainModal = (props) => {
               </Button>
             </label>
           </Grid>
-          <Grid item ex={12} lg={8}>
+          <Grid item xs={12} lg={7}>
             <TextField
               required
               fullWidth
@@ -216,39 +224,50 @@ const MainModal = (props) => {
               error={form.name.error}
               helperText={form.name.errorTxt}
             />
-            <Box
+            <TextField
+              required
+              fullWidth
+              margin="normal"
+              id="birthday"
+              label="Ngày sinh"
+              type="date"
+              name="birthday"
+              sx={{ minWidth: 150 }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={dateFormat(form.birthday.value, 'yyyy-mm-dd')}
+              onChange={(e) => handleInput(e)}
+              error={form.birthday.error}
+              helperText={form.birthday.errorTxt}
+            />
+            <FormControl
               sx={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
+                flexDirection: 'row',
                 alignItems: 'center',
-                margin: '16px 0 8px 0',
+                justifyContent: 'center',
+                width: '100%',
               }}
             >
-              <TextField
-                id="birthday"
-                label="Ngày sinh"
-                type="date"
-                name="birthday"
-                sx={{ mr: 2, minWidth: 150 }}
-                InputLabelProps={{
-                  shrink: true,
+              <FormLabel
+                id="gender-radio-buttons-group-label"
+                sx={{
+                  mr: 2,
                 }}
-                value={dateFormat(form.birthday.value, 'yyyy-mm-dd')}
-                onChange={(e) => handleInput(e)}
-                error={form.birthday.error}
-                helperText={form.birthday.errorTxt}
-              />
+              >
+                Giới tính
+              </FormLabel>
               <RadioGroup
                 row
                 value={form.gender.value === 'Nam' ? 'Nam' : 'Nữ'}
                 name="gender"
                 onChange={(e) => handleInput(e)}
+                aria-labelledby="gender-radio-buttons-group-label"
               >
                 <FormControlLabel value="Nam" control={<Radio />} label="Nam" />
                 <FormControlLabel value="Nữ" control={<Radio />} label="Nữ" />
               </RadioGroup>
-            </Box>
+            </FormControl>
             <TextField
               required
               fullWidth
@@ -307,13 +326,6 @@ const MainModal = (props) => {
                 Đóng
               </Button>
             </Box>
-            {successAlert && (
-              <AlertDialog
-                title="Thông báo"
-                text={(_id ? 'Cập nhật' : 'Thêm') + ' thành công'}
-                handleClose={() => setSuccessAlert(false)}
-              />
-            )}
           </Grid>
         </Grid>
       </Box>

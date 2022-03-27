@@ -13,38 +13,43 @@ const style = {
   transform: 'translate(-50%, -50%)',
   bgcolor: 'background.paper',
   boxShadow: 24,
-  p: 4,
-  maxHeight: '90vh',
+  maxHeight: '95vh',
   overflow: 'auto',
   borderRadius: 2,
+  p: {
+    xs: 2,
+    md: 4,
+  },
+  width: {
+    xs: '80%',
+    sm: '70%',
+    md: '60%',
+    lg: '50%',
+  },
 }
 
 export default function TransitionsModal(props) {
   return (
-    <div>
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={props.open || true}
-        onClose={props.handleClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-        classes={{ focus: 'border-none' }}
-        sx={{
-          overflow: 'auto',
-        }}
-      >
-        <Fade in={props.open || true}>
-          <Box
-            sx={[style, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}
-          >
-            {props.children}
-          </Box>
-        </Fade>
-      </Modal>
-    </div>
+    <Modal
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
+      open={true}
+      onClose={props.handleClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 500,
+      }}
+      classes={{ focus: 'border-none' }}
+      sx={{
+        overflow: 'auto',
+      }}
+    >
+      <Fade in={true}>
+        <Box sx={[style, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}>
+          {props.children}
+        </Box>
+      </Fade>
+    </Modal>
   )
 }

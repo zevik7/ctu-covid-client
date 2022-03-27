@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import dateFormat from 'dateformat'
+import { useNavigate } from 'react-router-dom'
 
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -11,6 +12,8 @@ import Radio from '@mui/material/Radio'
 import Typography from '@mui/material/Typography'
 import Input from '@mui/material/Input'
 import Avatar from '@mui/material/Avatar'
+import FormControl from '@mui/material/FormControl'
+import FormLabel from '@mui/material/FormLabel'
 
 import Modal from '../../components/Modal'
 import AlertDialog from '../../components/AlertDialog'
@@ -51,6 +54,7 @@ const SettingModal = (props) => {
   const { handleClose } = props
 
   const auth = useAuth()
+  const navigate = useNavigate()
 
   const [successAlert, setSuccessAlert] = useState(false)
   const [avatarUpload, setAvatarUpload] = useState(null)
@@ -68,6 +72,8 @@ const SettingModal = (props) => {
 
   useEffect(() => {
     getUser(auth.user._id).then((rs) => {
+      if (!rs.data.data) navigate('/login')
+
       let authUser = Object.assign({}, rs.data.data)
       let authUserMap = {}
       Object.keys(authUser).map((key) => {
@@ -77,6 +83,7 @@ const SettingModal = (props) => {
           errorTxt: '',
         }
       })
+
       setForm(authUserMap)
     })
   }, [])
@@ -110,24 +117,36 @@ const SettingModal = (props) => {
     )
       .then((rs) => {
         setSuccessAlert(true)
-        auth.handleOnSetUser({ ...auth.user, ...rs.data })
         setEnableSubmitBtn(false)
+        auth.handleOnSetUser({ ...auth.user, ...rs.data })
       })
-      .catch((rs) => {
-        const errors = rs?.response?.data?.errors
+      .catch((errors) => {
+        const errorsData = errors?.response?.data
 
-        if (errors) {
-          if (errors.hasOwnProperty('email')) {
+        if (
+          errorsData &&
+          errorsData.type === 'validation' &&
+          errorsData.errors
+        ) {
+          if (errorsData.errors.email) {
             setForm((form) => ({
               ...form,
-              email: { ...form.email, error: true, errorTxt: errors.email },
+              email: {
+                ...form.email,
+                error: true,
+                errorTxt: errorsData.errors.email,
+              },
             }))
           }
 
-          if (errors.hasOwnProperty('phone'))
+          if (errorsData.errors.phone)
             setForm((form) => ({
               ...form,
-              phone: { ...form.phone, error: true, errorTxt: errors.phone },
+              phone: {
+                ...form.phone,
+                error: true,
+                errorTxt: errorsData.errors.phone,
+              },
             }))
         }
       })
@@ -137,26 +156,28 @@ const SettingModal = (props) => {
     if (e.target.files && e.target.files[0]) {
       let avatar = e.target.files[0]
       setAvatarUpload(URL.createObjectURL(avatar))
+      setEnableSubmitBtn(true)
     }
   }
 
   return (
     <Modal handleClose={handleClose}>
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        noValidate
-        sx={{
-          minWidth: 300,
-        }}
-      >
-        <Typography variant="h6">Thông tin cá nhân</Typography>
+      {successAlert && (
+        <AlertDialog
+          text="Cập nhật thành công"
+          handleClose={() => setSuccessAlert(false)}
+        />
+      )}
+      <Box component="form" onSubmit={handleSubmit} noValidate>
         <Grid container spacing={2} justifyContent="center" alignItems="center">
+          <Grid item xs={12}>
+            <Typography variant="h6">Thông tin cá nhân</Typography>
+          </Grid>
           <Grid
             container
             item
-            xs={7}
-            lg={4}
+            xs={8}
+            lg={5}
             direction="column"
             justifyContent="center"
             alignItems="center"
@@ -171,6 +192,8 @@ const SettingModal = (props) => {
                 width: '100%',
                 height: 'auto',
                 objectFit: 'contain',
+                border: 1,
+                borderColor: 'primary.light',
               }}
               variant="square"
             />
@@ -196,7 +219,7 @@ const SettingModal = (props) => {
               </Button>
             </label>
           </Grid>
-          <Grid item ex={12} lg={8}>
+          <Grid item xs={12} lg={7}>
             <TextField
               required
               fullWidth
@@ -211,39 +234,50 @@ const SettingModal = (props) => {
               error={form.name.error}
               helperText={form.name.errorTxt}
             />
-            <Box
+            <TextField
+              required
+              fullWidth
+              margin="normal"
+              id="birthday"
+              label="Ngày sinh"
+              type="date"
+              name="birthday"
+              sx={{ minWidth: 150 }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={dateFormat(form.birthday.value, 'yyyy-mm-dd')}
+              onChange={(e) => handleInput(e)}
+              error={form.birthday.error}
+              helperText={form.birthday.errorTxt}
+            />
+            <FormControl
               sx={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
+                flexDirection: 'row',
                 alignItems: 'center',
-                margin: '16px 0 8px 0',
+                justifyContent: 'center',
+                width: '100%',
               }}
             >
-              <TextField
-                id="birthday"
-                label="Ngày sinh"
-                type="date"
-                name="birthday"
-                sx={{ mr: 2, minWidth: 150 }}
-                InputLabelProps={{
-                  shrink: true,
+              <FormLabel
+                id="gender-radio-buttons-group-label"
+                sx={{
+                  mr: 2,
                 }}
-                value={dateFormat(form.birthday.value, 'yyyy-mm-dd')}
-                onChange={(e) => handleInput(e)}
-                error={form.birthday.error}
-                helperText={form.birthday.errorTxt}
-              />
+              >
+                Giới tính
+              </FormLabel>
               <RadioGroup
                 row
                 value={form.gender.value === 'Nam' ? 'Nam' : 'Nữ'}
                 name="gender"
                 onChange={(e) => handleInput(e)}
+                aria-labelledby="gender-radio-buttons-group-label"
               >
                 <FormControlLabel value="Nam" control={<Radio />} label="Nam" />
                 <FormControlLabel value="Nữ" control={<Radio />} label="Nữ" />
               </RadioGroup>
-            </Box>
+            </FormControl>
             <TextField
               required
               fullWidth
@@ -302,12 +336,6 @@ const SettingModal = (props) => {
                 Đóng
               </Button>
             </Box>
-            {successAlert && (
-              <AlertDialog
-                text="Cập nhật thành công"
-                handleClose={() => setSuccessAlert(false)}
-              />
-            )}
           </Grid>
         </Grid>
       </Box>
