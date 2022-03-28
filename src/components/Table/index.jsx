@@ -8,6 +8,8 @@ import TableRow from '@mui/material/TableRow'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Switch from '@mui/material/Switch'
+import Paper from '@mui/material/Paper'
+import { Divider } from '@mui/material'
 
 function EnhancedTableHead(props) {
   const {
@@ -132,9 +134,13 @@ export default function EnhancedTable(props) {
           </TableBody>
         </Table>
       </TableContainer>
+      <Divider />
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Xóa khoảng trống"
+        sx={{
+          ml: 1,
+        }}
       />
     </>
   )

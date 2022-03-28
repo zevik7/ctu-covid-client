@@ -16,18 +16,15 @@ import AddModal from './AddModal'
 const tableHeadCells = [
   {
     id: 'name',
-    numeric: false,
     label: 'Địa chỉ',
   },
   {
     id: 'created_by_name',
-    numeric: false,
     label: 'Người tạo',
   },
   {
     id: 'updated_at',
-    numeric: false,
-    label: 'Cập nhật vào',
+    label: 'Cập nhật lần cuối',
   },
 ]
 
@@ -119,18 +116,19 @@ const User = () => {
   }
 
   const handleChangePage = (event, newPage) => {
+    setSelected([])
     callApi(+newPage + 1, rowsPerPage)
   }
 
   const handleChangeRowsPerPage = (event) => {
+    setSelected([])
     callApi(page, +event.target.value)
   }
 
   return (
-    <Paper>
+    <>
       {openEditModal && (
         <EditModal
-          open={openEditModal}
           data={editModalData}
           handleClose={handleCloseEditModal}
           updateRows={() => callApi(page, rowsPerPage)}
@@ -138,7 +136,6 @@ const User = () => {
       )}
       {openAddModal && (
         <AddModal
-          open={openAddModal}
           data={editModalData}
           handleClose={handleCloseAddModal}
           updateRows={() => callApi(page, rowsPerPage)}
@@ -147,53 +144,47 @@ const User = () => {
       <Grid
         container
         sx={{
-          minHeight: '80vh',
+          height: '85vh',
         }}
       >
-        <Grid item md={6}>
+        <Grid item xs={12} lg={6}>
+          <TableToolbar
+            title="Danh sách các địa điểm khai báo"
+            numSelected={selected.length}
+            handleOpenModal={handleOpenAddModal}
+            handleDeleteBtn={handleDeleteTableRows}
+            selected={selected}
+          />
+          <Table
+            headCells={tableHeadCells}
+            bodyCells={tableBodyCells}
+            selected={selected}
+            handleRenderRow={handleRenderTableRow}
+            handleOpenModal={handleOpenEditModal}
+            handleSelectClick={handleTableRowClick}
+            handleSelectAllClick={handleTableRowClickAll}
+          />
+          <TablePagination
+            count={count}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </Grid>
+        <Grid item xs={0} lg={6}>
           <Map
             markers={tableBodyCells.map((location, index) => ({
               position: location.position,
-              popup: '',
+              popup: location.name,
             }))}
+            style={{
+              height: '100%',
+            }}
           />
         </Grid>
-        <Grid item md={6}>
-          <Box
-            sx={{
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-            }}
-          >
-            <TableToolbar
-              title="Danh sách các địa điểm khai báo"
-              numSelected={selected.length}
-              handleOpenModal={handleOpenAddModal}
-              handleDeleteBtn={handleDeleteTableRows}
-              selected={selected}
-            />
-            <Table
-              headCells={tableHeadCells}
-              bodyCells={tableBodyCells}
-              selected={selected}
-              handleRenderRow={handleRenderTableRow}
-              handleOpenModal={handleOpenEditModal}
-              handleSelectClick={handleTableRowClick}
-              handleSelectAllClick={handleTableRowClickAll}
-            />
-            <TablePagination
-              count={count}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              handleChangePage={handleChangePage}
-              handleChangeRowsPerPage={handleChangeRowsPerPage}
-            />
-          </Box>
-        </Grid>
       </Grid>
-    </Paper>
+    </>
   )
 }
 

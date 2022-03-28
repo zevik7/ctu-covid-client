@@ -15,27 +15,22 @@ import NoteBar from './NoteBar'
 const tableHeadCells = [
   {
     id: 'name',
-    numeric: false,
     label: 'Địa chỉ',
   },
   {
     id: 'phone',
-    numeric: false,
     label: 'Số điện thoại',
   },
   {
     id: 'location',
-    numeric: false,
     label: 'Địa điểm',
   },
   {
     id: 'created_at',
-    numeric: false,
     label: 'Ngày',
   },
   {
     id: 'status',
-    numeric: false,
     label: 'Tình trạng',
   },
 ]

@@ -110,7 +110,7 @@ const User = () => {
   const handleDeleteTableRows = (selected) => {
     destroyUsers({
       ids: [...selected],
-    }).then((rs) => {
+    }).then(() => {
       setSelected([])
       callApi(page, rowsPerPage)
     })

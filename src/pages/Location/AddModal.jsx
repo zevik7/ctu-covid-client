@@ -74,12 +74,12 @@ const AddModal = (props) => {
           handleClose={() => setSuccessAlert(false)}
         />
       )}
-      <Typography variant="h6" mb={1}>
-        Thêm địa điểm khai báo mới
-      </Typography>
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          <Grid item md={12}>
+          <Grid item xs={12}>
+            <Typography variant="h6">Thêm địa điểm khai báo mới</Typography>
+          </Grid>
+          <Grid item xs={12}>
             <TextField
               fullWidth
               id="name"
@@ -110,7 +110,7 @@ const AddModal = (props) => {
               ]}
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <Box
               sx={{
                 display: 'flex',

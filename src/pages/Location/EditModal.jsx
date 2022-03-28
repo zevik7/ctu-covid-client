@@ -94,10 +94,10 @@ const EditModal = (props) => {
       )}
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <Typography variant="h6">Thông tin chi tiết</Typography>
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -131,7 +131,7 @@ const EditModal = (props) => {
               </Button>
             </Box>
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} md={6}>
             <Typography variant="subtitle1" component="div" align="center">
               Vị trí trên bản đồ
             </Typography>
@@ -150,7 +150,7 @@ const EditModal = (props) => {
               ]}
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <TextField
               required
               fullWidth
@@ -168,13 +168,13 @@ const EditModal = (props) => {
               helperText={form.name.error && 'Vui lòng nhập trường này'}
             />
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs="auto">
             <Typography>Người tạo: {data.created_by.name}</Typography>
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs="auto">
             <Typography>Email: {data.created_by.email}</Typography>
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <Box
               sx={{
                 display: 'flex',

@@ -23,7 +23,6 @@ export default function Login() {
 
   useEffect(() => {
     if (user.token) navigate('/admin')
-    console.log(user)
   }, [])
 
   const [username, setUserName] = useState('')
