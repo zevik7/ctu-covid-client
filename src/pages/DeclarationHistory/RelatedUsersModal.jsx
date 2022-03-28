@@ -1,25 +1,19 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import dateFormat from 'dateformat'
 
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import Alert from '@mui/material/Alert'
 import Select from '@mui/material/Select'
 import FormControl from '@mui/material/FormControl'
 import MenuItem from '@mui/material/MenuItem'
-import FormHelperText from '@mui/material/FormHelperText'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import Avatar from '@mui/material/Avatar'
-import Paper from '@mui/material/Paper'
 
 import Modal from '../../components/Modal'
 import ViewModal from './ViewModal'
@@ -27,18 +21,18 @@ import ViewModal from './ViewModal'
 import { getHealthDeclaraions } from '../../api'
 
 const RelatedUsersModal = (props) => {
-  const { data, handleClose, handleOpenViewModal } = props
+  const { data, handleClose } = props
 
   const [seletedUser, setSelectedUser] = useState(null)
 
-  const [timeFilter, setTimeFilter] = useState(1)
+  const [timeFilterHour, setTimeFilterHour] = useState(1)
 
   const [relatedUsers, setRelatedUsers] = useState([])
 
   useEffect(() => {
     const endDate = new Date(data.created_at)
     // Set hour for filter
-    endDate.setHours(endDate.getHours() + timeFilter)
+    endDate.setHours(endDate.getHours() + timeFilterHour)
 
     getHealthDeclaraions({
       'location._id': data.location._id,
@@ -48,8 +42,8 @@ const RelatedUsersModal = (props) => {
       },
     })
       .then((rs) => setRelatedUsers(rs.data.data))
-      .catch((rs) => console.log(rs.response))
-  }, [timeFilter])
+      .catch((errors) => console.log(errors))
+  }, [timeFilterHour])
 
   return (
     <Modal handleClose={handleClose}>
@@ -61,9 +55,9 @@ const RelatedUsersModal = (props) => {
         />
       )}
       <Grid container spacing={2}>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Typography variant="h6" align="center">
-            Danh sách những người khai báo tại địa điểm này
+            Danh sách người dùng khai báo tại địa điểm này
           </Typography>
           <Box
             sx={{
@@ -72,11 +66,11 @@ const RelatedUsersModal = (props) => {
               alignItems: 'center',
             }}
           >
-            <Typography variant="h6">Trong khoảng thời gian: </Typography>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
+            <Typography>Trong khoảng thời gian: </Typography>
+            <FormControl sx={{ ml: 1, minWidth: 120 }}>
               <Select
-                value={timeFilter}
-                onChange={(e) => setTimeFilter(e.target.value)}
+                value={timeFilterHour}
+                onChange={(e) => setTimeFilterHour(e.target.value)}
               >
                 <MenuItem value={1}>1 giờ</MenuItem>
                 <MenuItem value={4}>4 giờ</MenuItem>
@@ -85,7 +79,7 @@ const RelatedUsersModal = (props) => {
             </FormControl>
           </Box>
         </Grid>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <TableContainer
             sx={{
               maxHeight: '60vh',
@@ -95,7 +89,7 @@ const RelatedUsersModal = (props) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Tên</TableCell>
-                  <TableCell>Thời điểm khai báo</TableCell>
+                  <TableCell>Vào lúc</TableCell>
                   <TableCell>Thao tác</TableCell>
                 </TableRow>
               </TableHead>
@@ -127,7 +121,14 @@ const RelatedUsersModal = (props) => {
             </Table>
           </TableContainer>
         </Grid>
-        <Grid item md={12}>
+        {!relatedUsers.length && (
+          <Grid item xs={12}>
+            <Typography align="center" sx={{ fontStyle: 'italic' }}>
+              Không có dữ liệu
+            </Typography>
+          </Grid>
+        )}
+        <Grid item xs={12}>
           <Box
             sx={{
               display: 'flex',

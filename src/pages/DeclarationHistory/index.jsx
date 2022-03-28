@@ -7,6 +7,7 @@ import { getHealthDeclaraions, destroyLocations } from '../../api'
 
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
+import TableToolbar from '../../components/TableToolbar'
 import ViewModal from './ViewModal'
 import HistoryModal from './HistoryModal'
 import RelatedUsersModal from './RelatedUsersModal'
@@ -15,7 +16,7 @@ import NoteBar from './NoteBar'
 const tableHeadCells = [
   {
     id: 'name',
-    label: 'Địa chỉ',
+    label: 'Tên',
   },
   {
     id: 'phone',
@@ -27,11 +28,11 @@ const tableHeadCells = [
   },
   {
     id: 'created_at',
-    label: 'Ngày',
+    label: 'Vào lúc',
   },
   {
     id: 'status',
-    label: 'Tình trạng',
+    label: 'Ghi chú',
   },
 ]
 
@@ -41,7 +42,7 @@ const handleRenderTableRow = (row) => {
       <TableCell>{row.user.name}</TableCell>
       <TableCell>{row.user.phone}</TableCell>
       <TableCell>{row.location.name}</TableCell>
-      <TableCell>{dateFormat(row.created_at, 'dd/mm/yyyy')}</TableCell>
+      <TableCell>{dateFormat(row.created_at, 'hh:mm dd-mm-yyyy')}</TableCell>
       <TableCell>
         {row.status.danger_area && (
           <Box
@@ -119,7 +120,7 @@ const DeclarationHistory = () => {
   }
 
   return (
-    <Paper sx={{ width: '100%', mb: 2 }}>
+    <>
       {openViewModal && (
         <ViewModal
           data={viewModalData}
@@ -141,46 +142,29 @@ const DeclarationHistory = () => {
           handleClose={() => setOpenHistoryModal(false)}
         />
       )}
-      <Grid
-        container
-        spacing={2}
-        sx={{
-          minHeight: '80vh',
-        }}
-      >
-        <Grid item md={12}>
-          <Typography
-            sx={{
-              flex: '1 1 100%',
-              mt: 2,
-              pl: { sm: 2 },
-              pr: { xs: 1, sm: 1 },
-            }}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-          >
-            Lịch sử khai báo y tế
-          </Typography>
-          <NoteBar />
-          <Table
-            headCells={tableHeadCells}
-            bodyCells={data}
-            handleRenderRow={handleRenderTableRow}
-            handleOpenModal={handleOpenViewModal}
-            disabledCheckbox={true}
-            selected={[]}
-          />
-          <TablePagination
-            count={count}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            handleChangePage={handleChangePage}
-            handleChangeRowsPerPage={handleChangeRowsPerPage}
-          />
-        </Grid>
-      </Grid>
-    </Paper>
+      <TableToolbar
+        title="Lịch sử khai báo y tế"
+        numSelected={0}
+        selected={[]}
+        disabledAddBtn={true}
+      />
+      <NoteBar />
+      <Table
+        headCells={tableHeadCells}
+        bodyCells={data}
+        handleRenderRow={handleRenderTableRow}
+        handleOpenModal={handleOpenViewModal}
+        disabledCheckbox={true}
+        selected={[]}
+      />
+      <TablePagination
+        count={count}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+      />
+    </>
   )
 }
 

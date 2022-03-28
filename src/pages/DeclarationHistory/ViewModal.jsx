@@ -25,10 +25,10 @@ const ViewModal = (props) => {
   return (
     <Modal handleClose={handleClose}>
       <Grid container spacing={2}>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Typography variant="h6">Thông tin chi tiết</Typography>
         </Grid>
-        <Grid item md={6}>
+        <Grid item xs={12} md={6}>
           <Box
             sx={{
               display: 'flex',
@@ -41,8 +41,10 @@ const ViewModal = (props) => {
             <Typography
               variant="subtitle1"
               component="div"
-              align="center"
-              color="primary.light"
+              color="primary.main"
+              sx={{
+                alignSelf: 'flex-start',
+              }}
             >
               Thông tin người dùng
             </Typography>
@@ -53,18 +55,10 @@ const ViewModal = (props) => {
                 height: '100px',
               }}
             />
-            <Typography variant="subtitle1" component="div" align="center">
-              Tên: {data.user.name}
-            </Typography>
-            <Typography variant="subtitle1" component="div" align="center">
-              Số điện thoại: {data.user.phone}
-            </Typography>
-            <Typography variant="subtitle1" component="div" align="center">
-              Email: {data.user.email}
-            </Typography>
-            <Typography variant="subtitle1" component="div" align="center">
-              Địa chỉ: {data.user.address}
-            </Typography>
+            <Typography>Tên: {data.user.name}</Typography>
+            <Typography>Số điện thoại: {data.user.phone}</Typography>
+            <Typography>Email: {data.user.email}</Typography>
+            <Typography>Địa chỉ: {data.user.address}</Typography>
             {!hideBtns && (
               <Button
                 variant="contained"
@@ -80,16 +74,16 @@ const ViewModal = (props) => {
             )}
           </Box>
         </Grid>
-        <Grid item md={6}>
-          <Typography
-            variant="subtitle1"
-            component="div"
-            align="center"
-            color="primary.light"
-          >
+        <Grid item xs={12} md={6}>
+          <Typography variant="subtitle1" component="div" color="primary.main">
             Vị trí khai báo trên bản đồ
           </Typography>
-          <Typography variant="subtitle1" component="div" align="center">
+          <Typography
+            align="center"
+            sx={{
+              fontStyle: 'italic',
+            }}
+          >
             {data.location.name}
           </Typography>
           <Map
@@ -106,7 +100,7 @@ const ViewModal = (props) => {
             ]}
           />
         </Grid>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Box
             sx={{
               display: 'flex',

@@ -23,7 +23,7 @@ const Input = styled('input')({
   display: 'none',
 })
 
-const AddForm = (props) => {
+const AddModal = (props) => {
   const { updateRows, handleClose } = props
 
   const [successAlert, setSuccessAlert] = useState(false)
@@ -130,6 +130,7 @@ const AddForm = (props) => {
     }
 
     setForm({ ...form, ...fieldsChange })
+    setEnableSubmitBtn(true)
   }
 
   const handleSubmit = (event) => {
@@ -152,7 +153,9 @@ const AddForm = (props) => {
     <Modal
       handleClose={handleClose}
       sx={{
-        minWidth: 600,
+        width: {
+          lg: '60%',
+        },
       }}
     >
       {successAlert && (
@@ -174,7 +177,7 @@ const AddForm = (props) => {
             <Typography variant="h6">Thêm thông tin tiêm chủng</Typography>
           </Grid>
           <Grid item xs={12}>
-            {searchSuggestions.length > 0 && (
+            {searchSuggestions && (
               <Autocomplete
                 ref={autoCompleteRef}
                 required
@@ -204,8 +207,6 @@ const AddForm = (props) => {
                 )}
               />
             )}
-          </Grid>
-          <Grid item xs={12} md={6}>
             <TextField
               required
               fullWidth
@@ -215,30 +216,24 @@ const AddForm = (props) => {
                 display: 'none',
               }}
             />
-            <Box
-              sx={{
-                position: 'relative',
-              }}
-            >
-              <TextField
-                required
-                fullWidth
-                id="user_name"
-                label="Họ tên"
-                name="user_name"
-                autoComplete="user_name"
-                autoFocus
-                value={form.user_name}
-                sx={{
-                  marginRight: '10px',
-                }}
-              />
-            </Box>
+            <TextField
+              required
+              fullWidth
+              disabled
+              margin="normal"
+              id="user_name"
+              label="Họ tên"
+              name="user_name"
+              autoComplete="user_name"
+              autoFocus
+              value={form.user_name}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               required
               fullWidth
+              disabled
               id="user_phone"
               label="Số điện thoại"
               name="user_phone"
@@ -247,10 +242,11 @@ const AddForm = (props) => {
               value={form.user_phone}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               fullWidth
+              disabled
               id="user_email"
               label="Email"
               name="user_email"
@@ -305,10 +301,14 @@ const AddForm = (props) => {
           </Grid>
 
           {form.images.map((image, index) => (
-            <Grid item lg={6} key={index}>
-              <Avatar
-                variant="square"
-                sx={{ mr: 2, width: '100%', height: '100%' }}
+            <Grid item xs={12} lg={6} key={index}>
+              <img
+                img="square"
+                style={{
+                  width: '100%',
+                  maxHeight: '400px',
+                  objectFit: 'contain',
+                }}
                 src={
                   typeof image === 'string'
                     ? image
@@ -367,4 +367,4 @@ const AddForm = (props) => {
   )
 }
 
-export default AddForm
+export default AddModal

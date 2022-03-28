@@ -10,15 +10,19 @@ import Grid from '@mui/material/Grid'
 import RadioGroup from '@mui/material/RadioGroup'
 import Radio from '@mui/material/Radio'
 import Typography from '@mui/material/Typography'
-import Input from '@mui/material/Input'
 import Avatar from '@mui/material/Avatar'
 import FormControl from '@mui/material/FormControl'
 import FormLabel from '@mui/material/FormLabel'
+import { styled } from '@mui/material/styles'
 
 import Modal from '../../components/Modal'
 import AlertDialog from '../../components/AlertDialog'
 import { useAuth } from '../../context/Auth'
 import { getUser, updateUser } from '../../api'
+
+const Input = styled('input')({
+  display: 'none',
+})
 
 const validateField = (name, value) => {
   let error = false
@@ -182,15 +186,15 @@ const SettingModal = (props) => {
             justifyContent="center"
             alignItems="center"
           >
-            <Avatar
+            <img
               src={
                 avatarUpload
                   ? avatarUpload
                   : process.env.REACT_APP_SERVER + form.avatar.value
               }
-              sx={{
+              style={{
                 width: '100%',
-                height: 'auto',
+                maxHeight: '300px',
                 objectFit: 'contain',
                 border: 1,
                 borderColor: 'primary.light',

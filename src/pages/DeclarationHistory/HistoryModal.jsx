@@ -1,44 +1,31 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import dateFormat from 'dateformat'
 
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import Alert from '@mui/material/Alert'
 import Select from '@mui/material/Select'
 import FormControl from '@mui/material/FormControl'
 import MenuItem from '@mui/material/MenuItem'
-import FormHelperText from '@mui/material/FormHelperText'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import Avatar from '@mui/material/Avatar'
-import Paper from '@mui/material/Paper'
 import Divider from '@mui/material/Divider'
 
 import Modal from '../../components/Modal'
 import Map from '../../components/Map'
-import ViewModal from './ViewModal'
 
 import { getHealthDeclaraions } from '../../api'
 
 const HistoryModal = (props) => {
   const { data, handleClose } = props
 
-  const [lessDayFilter, setLessDayFilter] = useState(3)
+  const [dateFilter, setDateFilter] = useState(3)
 
   const [declarations, setDeclaration] = useState([])
 
   useEffect(() => {
     const startDate = new Date()
-    // Set hour for filter
-    startDate.setDate(startDate.getDate() - lessDayFilter)
+    // Set date for filter
+    startDate.setDate(startDate.getDate() - dateFilter)
 
     getHealthDeclaraions({
       'user._id': data.user._id,
@@ -51,12 +38,19 @@ const HistoryModal = (props) => {
         setDeclaration(rs.data.data)
       })
       .catch((rs) => console.log(rs.response))
-  }, [lessDayFilter])
+  }, [dateFilter])
 
   return (
-    <Modal handleClose={handleClose}>
+    <Modal
+      handleClose={handleClose}
+      sx={{
+        width: {
+          lg: '60%',
+        },
+      }}
+    >
       <Grid container spacing={2}>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Typography variant="h6" align="center">
             Lịch sử khai báo của người dùng
           </Typography>
@@ -65,45 +59,42 @@ const HistoryModal = (props) => {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              mb: 1,
+              mb: 2,
             }}
           >
-            <Typography variant="subtitle1">Trong khoảng thời gian:</Typography>
-            <FormControl sx={{ ml: 1 }}>
+            <Typography variant="h6">Trong</Typography>
+            <FormControl sx={{ ml: 1, mr: 1 }}>
               <Select
-                value={lessDayFilter}
-                onChange={(e) => setLessDayFilter(e.target.value)}
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                sx={{ fontSize: 'h6.fontSize' }}
               >
                 <MenuItem value={1}>1 ngày</MenuItem>
                 <MenuItem value={3}>3 ngày</MenuItem>
                 <MenuItem value={7}>7 ngày</MenuItem>
               </Select>
             </FormControl>
+            <Typography variant="h6">gần nhất</Typography>
           </Box>
           <Divider />
         </Grid>
         <Grid
           item
           container
-          md={12}
+          xs={12}
           spacing={2}
           sx={{
-            minWidth: '1000px',
             maxHeight: '60vh',
             overflow: 'auto',
           }}
+          justifyContent={'center'}
         >
           {declarations.map((declaration, index) => (
-            <Grid key={index} item md={4}>
-              <Typography
-                variant="subtitle1"
-                component="div"
-                align="center"
-                color="primary.light"
-              >
-                {dateFormat(declaration.created_at, 'dd/mm/yyyy')}
+            <Grid key={index} item xs={12} md={6} lg={4}>
+              <Typography align="center" color="primary.main">
+                {dateFormat(declaration.created_at, 'hh:mm dd/mm/yyyy')}
               </Typography>
-              <Typography variant="subtitle1" component="div" align="center">
+              <Typography align="center">
                 {declaration.location.name}
               </Typography>
               <Map
@@ -124,20 +115,20 @@ const HistoryModal = (props) => {
               />
             </Grid>
           ))}
-          {declarations.length === 0 && (
-            <Typography variant="subtitle1" align="center">
-              Không có dữ liệu
-            </Typography>
-          )}
+          <Grid item xs={12}>
+            {!declarations.length && (
+              <Typography align="center" sx={{ fontStyle: 'italic' }}>
+                Không có dữ liệu
+              </Typography>
+            )}
+          </Grid>
         </Grid>
-        <Grid item md={12}>
+        <Grid item xs={12}>
+          <Divider />
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'flex-end',
-              pt: 1,
-              borderTop: 1,
-              borderColor: 'grey.500',
             }}
           >
             <Button variant="text" onClick={handleClose}>

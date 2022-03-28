@@ -15,22 +15,22 @@ import AddModal from './AddModal'
 const tableHeadCells = [
   {
     id: 'name',
-    numeric: false,
     label: 'Họ tên',
   },
   {
     id: 'phone',
-    numeric: false,
     label: 'Số điện thoại',
   },
   {
     id: 'vaccine_type_name',
-    numeric: false,
     label: 'Loại vắc-xin',
   },
   {
+    id: 'time',
+    label: 'Mũi thứ',
+  },
+  {
     id: 'injection_date',
-    numeric: false,
     label: 'Ngày tiêm',
   },
 ]
@@ -40,6 +40,7 @@ const handleRenderTableRow = (row) => (
     <TableCell>{row.user.name}</TableCell>
     <TableCell>{row.user.phone}</TableCell>
     <TableCell>{row.vaccine_type.name}</TableCell>
+    <TableCell>{row.time}</TableCell>
     <TableCell>{dateFormat(row.injection_date, 'dd/mm/yyyy')}</TableCell>
   </>
 )
@@ -49,10 +50,11 @@ const Injection = () => {
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(20)
+  const [selected, setSelected] = useState([])
+
   const [openEditModal, setOpenEditModal] = useState(false)
   const [openAddModal, setOpenAddModal] = useState(false)
   const [editModalData, setEditModalData] = useState({})
-  const [selected, setSelected] = useState([])
 
   const callApi = (page, perPage) => {
     getInjections({
@@ -123,10 +125,12 @@ const Injection = () => {
   }, [])
 
   const handleChangePage = (event, newPage) => {
+    setSelected([])
     callApi(+newPage + 1, rowsPerPage)
   }
 
   const handleChangeRowsPerPage = (event) => {
+    setSelected([])
     callApi(page, +event.target.value)
   }
 

@@ -106,7 +106,9 @@ const EditModal = (props) => {
     <Modal
       handleClose={handleClose}
       sx={{
-        minWidth: 600,
+        width: {
+          lg: '60%',
+        },
       }}
     >
       {successAlert && (
@@ -137,9 +139,6 @@ const EditModal = (props) => {
               autoComplete="user_name"
               autoFocus
               value={form.user_name}
-              sx={{
-                marginRight: '10px',
-              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -216,16 +215,20 @@ const EditModal = (props) => {
             alignItems="center"
             justifyContent="center"
           >
-            <Typography variant="subtitle1" align="center">
+            <Typography variant="h6" align="center" color="secondary.main">
               <strong>Mũi thứ {form.time}</strong>
             </Typography>
           </Grid>
 
           {form.images.map((image, index) => (
-            <Grid item lg={6} key={index}>
-              <Avatar
-                variant="square"
-                sx={{ mr: 2, width: '100%', height: '100%' }}
+            <Grid item xs={12} lg={6} key={index}>
+              <img
+                img="square"
+                style={{
+                  width: '100%',
+                  maxHeight: '400px',
+                  objectFit: 'contain',
+                }}
                 src={
                   typeof image === 'string'
                     ? image
@@ -235,7 +238,7 @@ const EditModal = (props) => {
             </Grid>
           ))}
 
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <Box
               sx={{
                 display: 'flex',

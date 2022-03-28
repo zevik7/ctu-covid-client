@@ -14,18 +14,15 @@ import Modal from './Modal'
 const tableHeadCells = [
   {
     id: 'name',
-    numeric: false,
     label: 'Họ tên',
   },
   {
     id: 'country',
-    numeric: false,
     label: 'Nước sản xuất',
   },
   {
-    id: 'description',
-    numeric: false,
-    label: 'Mô tả',
+    id: 'updated_at',
+    label: 'Cập nhật lần cuối',
   },
 ]
 
@@ -33,7 +30,7 @@ const handleRenderTableRow = (row) => (
   <>
     <TableCell>{row.name}</TableCell>
     <TableCell>{row.country}</TableCell>
-    <TableCell>{row.description || 'Chưa có mô tả'}</TableCell>
+    <TableCell>{dateFormat(row.updated_at, 'dd/mm/yyyy')}</TableCell>
   </>
 )
 
@@ -42,6 +39,7 @@ const VaccineType = () => {
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(20)
+
   const [openModal, setOpenModal] = useState(false)
   const [modalData, setModalData] = useState({})
   const [selected, setSelected] = useState([])
@@ -111,15 +109,17 @@ const VaccineType = () => {
   }, [])
 
   const handleChangePage = (event, newPage) => {
+    setSelected([])
     callApi(+newPage + 1, rowsPerPage)
   }
 
   const handleChangeRowsPerPage = (event) => {
+    setSelected([])
     callApi(page, +event.target.value)
   }
 
   return (
-    <Paper>
+    <>
       {openModal && (
         <Modal
           data={modalData}
@@ -150,7 +150,7 @@ const VaccineType = () => {
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
       />
-    </Paper>
+    </>
   )
 }
 

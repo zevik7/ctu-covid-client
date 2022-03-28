@@ -13,7 +13,8 @@ import { Button } from '@mui/material'
 import AlertDialog from '../AlertDialog'
 
 const TableToolbar = (props) => {
-  const { title, handleOpenModal, handleDeleteBtn, selected } = props
+  const { title, handleOpenModal, handleDeleteBtn, selected, disabledAddBtn } =
+    props
 
   const [openModal, setOpenModal] = useState(false)
 
@@ -84,9 +85,11 @@ const TableToolbar = (props) => {
           }}
         />
       )}
-      <Button variant="contained" onClick={() => handleOpenModal({})}>
-        Thêm
-      </Button>
+      {!disabledAddBtn && (
+        <Button variant="contained" onClick={() => handleOpenModal({})}>
+          Thêm
+        </Button>
+      )}
     </Toolbar>
   )
 }

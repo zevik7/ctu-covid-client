@@ -48,7 +48,9 @@ const MainModal = (props) => {
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(form).find((key, index) => form[key].error)
+    const isError = Object.keys(form).find(
+      (key, index) => form[key].error || !form[key].value
+    )
 
     if (isError) return
 
@@ -82,7 +84,7 @@ const MainModal = (props) => {
               {(_id && 'Thông tin vắc-xin') || 'Thêm thông tin vắc-xin'}
             </Typography>
           </Grid>
-          <Grid item sm={6}>
+          <Grid item xs={6}>
             <TextField
               required
               fullWidth
@@ -91,16 +93,13 @@ const MainModal = (props) => {
               name="name"
               autoComplete="name"
               autoFocus
-              sx={{
-                mb: '8px',
-              }}
               value={form.name.value}
               onChange={(e) => handleInput(e)}
               error={form.name.error}
               helperText={form.name.errorTxt}
             />
           </Grid>
-          <Grid item sm={6}>
+          <Grid item xs={6}>
             <TextField
               required
               fullWidth
@@ -109,31 +108,26 @@ const MainModal = (props) => {
               name="country"
               autoComplete="country"
               autoFocus
-              sx={{
-                mb: '8px',
-              }}
               value={form.country.value}
               onChange={(e) => handleInput(e)}
               error={form.country.error}
               helperText={form.country.errorTxt}
             />
           </Grid>
-          <Grid item sm={12}>
-            <TextareaAutosize
-              aria-label="minimum height"
-              minRows={6}
-              placeholder="Mô tả..."
+          <Grid item xs={12}>
+            <TextField
+              label="Mô tả"
+              placeholder="Nhập mô tả..."
               name="description"
-              style={{
-                padding: '10px',
-                width: '100%',
-                outlineColor: theme.palette.primary.main,
-              }}
+              d
+              fullWidth
+              multiline
+              rows={6}
               value={form.description.value}
               onChange={(e) => handleInput(e)}
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item xs={12}>
             <Box
               sx={{
                 display: 'flex',
