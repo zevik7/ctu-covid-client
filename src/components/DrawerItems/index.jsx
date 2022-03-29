@@ -38,7 +38,7 @@ const LinkItem = (props) => {
 }
 
 export const mainListItems = (
-  <Box>
+  <>
     <LinkItem to="/admin" icon={<DashboardIcon />} text="Trang chủ" />
     <LinkItem
       to="/admin/user"
@@ -71,7 +71,7 @@ export const mainListItems = (
       icon={<NotificationsIcon />}
       text="Quản lý thông báo"
     />
-  </Box>
+  </>
 )
 
 export const secondaryListItems = (

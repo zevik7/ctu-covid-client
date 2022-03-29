@@ -66,8 +66,8 @@ const MainAppBar = (props) => {
     <AppBar
       sx={{
         position: 'fixed',
-        width: { sm: `calc(100% - ${props.drawerWidth}px)` },
-        ml: { sm: `${props.drawerWidth}px` },
+        width: { md: `calc(100% - ${props.drawerWidth}px)` },
+        // ml: { md: `${props.drawerWidth}px` },
       }}
     >
       <Toolbar
@@ -80,7 +80,7 @@ const MainAppBar = (props) => {
           aria-label="open drawer"
           edge="start"
           onClick={props.handleDrawerToggle}
-          sx={{ mr: 2, display: { sm: 'none' } }}
+          sx={{ mr: 2, display: { md: 'none' } }}
         >
           <MenuIcon />
         </IconButton>

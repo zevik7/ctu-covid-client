@@ -75,21 +75,25 @@ const SettingModal = (props) => {
   })
 
   useEffect(() => {
-    getUser(auth.user._id).then((rs) => {
-      if (!rs.data.data) navigate('/login')
+    getUser(auth.user._id)
+      .then((rs) => {
+        if (!rs.data.data) navigate('/login')
 
-      let authUser = Object.assign({}, rs.data.data)
-      let authUserMap = {}
-      Object.keys(authUser).map((key) => {
-        authUserMap[key] = {
-          value: authUser[key],
-          error: false,
-          errorTxt: '',
-        }
+        let authUser = Object.assign({}, rs.data.data)
+        let authUserMap = {}
+        Object.keys(authUser).map((key) => {
+          authUserMap[key] = {
+            value: authUser[key],
+            error: false,
+            errorTxt: '',
+          }
+        })
+
+        setForm(authUserMap)
       })
-
-      setForm(authUserMap)
-    })
+      .catch((err) => {
+        navigate('/login')
+      })
   }, [])
 
   const handleInput = (e) => {

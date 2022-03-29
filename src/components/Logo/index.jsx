@@ -8,7 +8,6 @@ const Logo = (props) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '50%',
         },
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
       ]}
@@ -23,8 +22,8 @@ const Logo = (props) => {
       />
       <Typography
         color="text.secondary"
-        variant={props.textVariant}
-        sx={{ width: '60%' }}
+        variant={props.textVariant || 'h6'}
+        sx={{ width: '60%', whiteSpace: 'nowrap' }}
       >
         CTU-Covid
       </Typography>

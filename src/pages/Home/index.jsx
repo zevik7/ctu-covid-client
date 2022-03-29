@@ -14,8 +14,11 @@ import List from '@mui/material/List'
 import ListItemText from '@mui/material/ListItemText'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import Avatar from '@mui/material/Avatar'
+import Drawer from '@mui/material/Drawer'
 import SearchIcon from '@mui/icons-material/Search'
 import ImageIcon from '@mui/icons-material/Image'
+import IconButton from '@mui/material/IconButton'
+import MenuIcon from '@mui/icons-material/Menu'
 
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
@@ -38,6 +41,8 @@ import RegisterModal from './RegisterModal'
 import Chart from 'react-apexcharts'
 
 import { getStats, getPostitiveDeclarations } from '../../api'
+
+import MenuDrawer from './MenuDrawer'
 
 const theme = createTheme()
 
@@ -107,6 +112,7 @@ const pieChart = {
 export default function Home() {
   const navigate = useNavigate()
 
+  const [openDrawer, setOpenDrawer] = useState(false)
   const [areaSeleted, setAreaSelected] = useState('local')
   const [openLookupModal, setOpenLookupModal] = useState(false)
   const [openArticleModal, setOpenArticleModal] = useState(false)
@@ -116,6 +122,14 @@ export default function Home() {
 
   const [locations, setLocations] = useState([])
   const [positiveDecla, setPositiveDecla] = useState([])
+
+  const toggleDrawer = (e) => {
+    if (e.type === 'keydown' && (e.key === 'Tab' || e.key === 'Shift')) {
+      return
+    }
+
+    setOpenDrawer(!openDrawer)
+  }
 
   useEffect(() => {
     getLocations().then((rs) => setLocations(rs.data.data))
@@ -128,6 +142,32 @@ export default function Home() {
   }, [])
 
   const [positiveDeclaByDates, setPositiveDeclaByDates] = useState([])
+
+  const MenuItems = (props) => (
+    <Box sx={props.sx} {...props}>
+      <Button
+        variant="outlined"
+        onClick={() => setOpenRegisterModal(true)}
+        sx={{ mr: 1 }}
+      >
+        Tạo thông tin
+      </Button>
+      <Button
+        variant="outlined"
+        onClick={() => setOpenLookupModal(true)}
+        sx={{ mr: 1 }}
+      >
+        Tra cứu <SearchIcon sx={{ ml: 1 }} />
+      </Button>
+      <Button
+        variant="contained"
+        onClick={() => setOpenPositiveDeclarationModal(true)}
+        sx={{ mr: 1 }}
+      >
+        Khai báo F0 <MedicalInformationIcon sx={{ ml: 1 }} />
+      </Button>
+    </Box>
+  )
 
   return (
     <>
@@ -145,94 +185,105 @@ export default function Home() {
           handleClose={() => setOpenPositiveDeclarationModal(false)}
         />
       )}
-      <CssBaseline />
       <Container maxWidth="xl">
-        <Box sx={{ p: 2 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
+        <Grid
+          container
+          spacing={2}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Grid item xs={'auto'}>
             <Logo
               sx={{
-                width: '170px',
+                width: {
+                  xs: 140,
+                  md: 170,
+                },
               }}
-              textVariant="h6"
             />
-            <Box>
-              <Button
-                variant="text"
-                onClick={() => setOpenRegisterModal(true)}
-                sx={{ mr: 1 }}
-              >
-                Tạo thông tin
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() => setOpenLookupModal(true)}
-                sx={{ mr: 1 }}
-              >
-                Tra cứu <SearchIcon sx={{ ml: 1 }} />
-              </Button>
-              <Button
-                variant="contained"
-                onClick={() => setOpenPositiveDeclarationModal(true)}
-                sx={{ mr: 1 }}
-              >
-                Khai báo F0 <MedicalInformationIcon sx={{ ml: 1, mb: '2px' }} />
-              </Button>
-            </Box>
-          </Box>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Divider />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              container
-              alignItems="center"
-              justifyContent={'center'}
+          </Grid>
+          <Grid item xs={'auto'}>
+            <MenuItems
+              sx={{
+                display: {
+                  xs: 'none',
+                  md: 'block',
+                },
+              }}
+            />
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={toggleDrawer}
+              sx={{ display: { md: 'none' } }}
             >
-              <Typography
-                variant="subtitle1"
-                sx={{ mr: 1, color: 'text.secondary' }}
-              >
-                Số liệu tại
-              </Typography>
-              <ToggleButtonGroup
-                color="primary"
-                value={areaSeleted}
-                exclusive
-                onChange={(e) => setAreaSelected(e.target.value)}
-                sx={{
-                  '.MuiButtonBase-root': {
-                    pt: 0,
-                    pb: 0,
-                  },
-                }}
-              >
-                <ToggleButton value="local">Khu vực</ToggleButton>
-                <ToggleButton value="vietnam">Việt Nam</ToggleButton>
-                <ToggleButton value="world">Thế giới</ToggleButton>
-              </ToggleButtonGroup>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography
-                variant="h4"
-                sx={{
-                  p: '2rem 0',
-                  color: 'warning.main',
-                  bgcolor: 'rgba(80, 184, 255, 0.11)',
-                  borderRadius: 2,
-                }}
-                align="center"
-              >
-                Tổng số ca nhiễm: 3210
-              </Typography>
-            </Grid>
+              <MenuIcon />
+            </IconButton>
+            <Drawer anchor={'right'} open={openDrawer} onClose={toggleDrawer}>
+              <Box sx={{ p: 2 }}>
+                <Typography variant="h6" align="center" color="text.secondary">
+                  Danh sách thao tác
+                </Typography>
+                <Divider />
+                <MenuItems
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    width: 230,
+                    height: 140,
+                    p: 1,
+                  }}
+                  onClick={toggleDrawer}
+                  onKeyDown={toggleDrawer}
+                />
+              </Box>
+            </Drawer>
+          </Grid>
+
+          <Grid
+            item
+            xs={12}
+            container
+            alignItems="center"
+            justifyContent={'center'}
+          >
+            <Typography variant="h6" sx={{ mr: 1, color: 'text.secondary' }}>
+              Số liệu tại
+            </Typography>
+            <ToggleButtonGroup
+              color="primary"
+              value={areaSeleted}
+              exclusive
+              onChange={(e) => setAreaSelected(e.target.value)}
+              sx={{
+                '.MuiButtonBase-root': {
+                  pt: 0,
+                  pb: 0,
+                },
+              }}
+            >
+              <ToggleButton value="local">Khu vực</ToggleButton>
+              <ToggleButton value="vietnam">Việt Nam</ToggleButton>
+              <ToggleButton value="world">Thế giới</ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography
+              variant="h4"
+              sx={{
+                p: '2rem 0',
+                color: 'warning.main',
+                bgcolor: 'rgba(80, 184, 255, 0.11)',
+                borderRadius: 2,
+              }}
+              align="center"
+            >
+              Tổng số ca nhiễm: 3210
+            </Typography>
+          </Grid>
+          <Grid container item spacing={2}>
             <Grid item xs={12} md={6}>
               <Typography variant="h6">Thống kê tiêm vắc-xin</Typography>
               <Chart
@@ -335,8 +386,8 @@ export default function Home() {
               </List>
             </Grid>
           </Grid>
-          <Copyright />
-        </Box>
+        </Grid>
+        <Copyright />
       </Container>
     </>
   )

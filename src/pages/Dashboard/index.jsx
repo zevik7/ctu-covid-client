@@ -89,95 +89,93 @@ const Dashboard = () => {
   }, [])
 
   return (
-    <Paper>
-      <Grid container spacing={2}>
-        <Grid item md={6}>
-          <Typography
-            sx={{
-              mt: 2,
-              pl: { sm: 2 },
-              pr: { xs: 1, sm: 1 },
-            }}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-          >
-            Số ca nhiễm những ngày qua
-          </Typography>
-          <LineChart
-            name="Số ca nhiễm"
-            data={positiveDeclaByDates}
-            type="area"
-            height={'50%'}
-          />
-          <Typography
-            sx={{
-              flex: '1 1 100%',
-              mt: 2,
-              pl: { sm: 2 },
-              pr: { xs: 1, sm: 1 },
-            }}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-          >
-            Số lượt khai báo những ngày qua
-          </Typography>
-          <LineChart
-            name="Số lượt khai báo"
-            data={positiveDeclaByDates}
-            type="area"
-            height={'50%'}
-          />
-        </Grid>
-
-        <Grid item md={6}>
-          <Typography
-            sx={{
-              flex: '1 1 100%',
-              mt: 2,
-              pl: { sm: 2 },
-              pr: { xs: 1, sm: 1 },
-            }}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-          >
-            Thống kê tiêm vắc-xin
-          </Typography>
-          <Chart
-            options={pieChart.options}
-            series={pieChart.series}
-            type="radialBar"
-            height={500}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Typography
-            sx={{
-              flex: '1 1 100%',
-              mt: 2,
-              pl: { sm: 2 },
-              pr: { xs: 1, sm: 1 },
-            }}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-          >
-            Các vị trí F0 cách ly
-          </Typography>
-          <Map
-            style={{
-              height: '600px',
-            }}
-            markers={positiveDecla.map((el, i) => ({
-              position: el.location.position,
-              popup: el.location.name,
-            }))}
-          />
-        </Grid>
+    <Grid container spacing={2}>
+      <Grid item md={6}>
+        <Typography
+          sx={{
+            mt: 2,
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 },
+          }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Số ca nhiễm những ngày qua
+        </Typography>
+        <LineChart
+          name="Số ca nhiễm"
+          data={positiveDeclaByDates}
+          type="area"
+          height={'50%'}
+        />
+        <Typography
+          sx={{
+            flex: '1 1 100%',
+            mt: 2,
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 },
+          }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Số lượt khai báo những ngày qua
+        </Typography>
+        <LineChart
+          name="Số lượt khai báo"
+          data={positiveDeclaByDates}
+          type="area"
+          height={'50%'}
+        />
       </Grid>
-    </Paper>
+
+      <Grid item md={6}>
+        <Typography
+          sx={{
+            flex: '1 1 100%',
+            mt: 2,
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 },
+          }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Thống kê tiêm vắc-xin
+        </Typography>
+        <Chart
+          options={pieChart.options}
+          series={pieChart.series}
+          type="radialBar"
+          height={500}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <Typography
+          sx={{
+            flex: '1 1 100%',
+            mt: 2,
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 },
+          }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Các vị trí F0 cách ly
+        </Typography>
+        <Map
+          style={{
+            height: '600px',
+          }}
+          markers={positiveDecla.map((el, i) => ({
+            position: el.location.position,
+            popup: el.location.name,
+          }))}
+        />
+      </Grid>
+    </Grid>
   )
 }
 
