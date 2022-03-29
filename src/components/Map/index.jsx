@@ -11,6 +11,7 @@ import Leaflet, { LatLng, latLngBounds, FeatureGroup } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
+import RedDotIcon from './RedDotIcon'
 
 // Setup default icons for makers
 let DefaultIcon = Leaflet.icon({
@@ -23,9 +24,9 @@ let DefaultIcon = Leaflet.icon({
 Leaflet.Marker.prototype.options.icon = DefaultIcon
 
 const defaultCenter = [10.0312, 105.7709]
-const defaultZoom = 18
+const defaultZoom = 20
 
-const Map = ({ center, zoom, style, markers, handleClick }) => {
+const Map = ({ center, zoom, style, markers, handleClick, useRedDotIcon }) => {
   return (
     <MapContainer
       center={center || defaultCenter}
@@ -39,7 +40,11 @@ const Map = ({ center, zoom, style, markers, handleClick }) => {
       />
       {markers &&
         markers.map((maker, index) => (
-          <Marker key={index} position={maker.position}>
+          <Marker
+            key={index}
+            position={maker.position}
+            icon={(useRedDotIcon && RedDotIcon) || DefaultIcon}
+          >
             <Popup>{maker.popup}</Popup>
           </Marker>
         ))}
@@ -50,8 +55,6 @@ const Map = ({ center, zoom, style, markers, handleClick }) => {
 
 const ChangeView = ({ markers }) => {
   const map = useMap()
-
-  // map.setView({ lat: defaultCenter[0], lng: defaultCenter[1] })
 
   let markerBounds = latLngBounds([])
 

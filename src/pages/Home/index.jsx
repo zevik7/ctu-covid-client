@@ -316,7 +316,7 @@ export default function Home() {
             </Grid>
             <Grid item xs={12}>
               <Typography variant="h6">
-                Các vị trí xuất hiện ca nhiễm
+                Các vị trí xuất hiện ca nhiễm{' '}
               </Typography>
               <Map
                 style={{
@@ -326,6 +326,7 @@ export default function Home() {
                   position: el.location.position,
                   popup: el.location.name,
                 }))}
+                useRedDotIcon={true}
               />
             </Grid>
             <Grid item xs={12} md={6}>
