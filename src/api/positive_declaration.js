@@ -17,4 +17,5 @@ export const getPostitiveDeclarations = (params) =>
 //     params: data,
 //   })
 
-export const getStats = () => axios.get(`/positive_declaration/statistics`)
+export const getPDStatByDates = () =>
+  axios.get(`/positive_declaration/statByDates`)

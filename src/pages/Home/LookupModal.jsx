@@ -44,37 +44,36 @@ const LookupModal = (props) => {
       )}
 
       <Box component="form" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={1}>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography variant="h6" align="center">
               Tra cứu lịch sử khai báo và thông tin tiêm chủng
             </Typography>
           </Grid>
-          <Grid item xs={12} container>
-            <TextField
-              label="Nhấp số điện thoại hoặc email"
-              name="identity"
-              autoComplete="identity"
-              autoFocus
-              value={identityInput}
-              onChange={handleIdentityInputChange}
-              error={identityInputErr && true}
-              helperText={identityInputErr && 'Vui lòng nhập trường này'}
-              sx={{
-                flex: 1,
-                mr: 1,
-              }}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={!enableSubmitBtn}
-              sx={{
-                maxHeight: '50px',
-              }}
-            >
-              Tra cứu
-            </Button>
+          <Grid item xs={12}>
+            <Box sx={{ display: 'flex' }}>
+              <TextField
+                label="Nhấp số điện thoại hoặc email"
+                name="identity"
+                autoComplete="identity"
+                autoFocus
+                value={identityInput}
+                onChange={handleIdentityInputChange}
+                error={identityInputErr && true}
+                helperText={identityInputErr && 'Vui lòng nhập trường này'}
+                sx={{
+                  flex: 1,
+                  mr: 1,
+                }}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={!enableSubmitBtn}
+              >
+                Tra cứu
+              </Button>
+            </Box>
           </Grid>
         </Grid>
       </Box>

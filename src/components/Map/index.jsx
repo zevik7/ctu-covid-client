@@ -24,7 +24,7 @@ let DefaultIcon = Leaflet.icon({
 Leaflet.Marker.prototype.options.icon = DefaultIcon
 
 const defaultCenter = [10.0312, 105.7709]
-const defaultZoom = 20
+const defaultZoom = 16
 
 const Map = ({ center, zoom, style, markers, handleClick, useRedDotIcon }) => {
   return (

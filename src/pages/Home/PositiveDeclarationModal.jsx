@@ -33,17 +33,25 @@ const PositiveDeclarationModal = (props) => {
   const [selected, setSelected] = useState('positive')
 
   return (
-    <Modal
-      handleClose={handleClose}
-      sx={{
-        minWidth: '400px',
-      }}
-    >
+    <Modal handleClose={handleClose}>
+      {successAlert && (
+        <AlertDialog
+          title="Thông báo"
+          text={'Khai báo thành thành công'}
+          handleClose={() => setSuccessAlert(false)}
+        />
+      )}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography variant="h6">Khai báo thông tin F0</Typography>
         </Grid>
-        <Grid item xs={12} container justifyContent={'center'}>
+        <Grid
+          item
+          xs={12}
+          container
+          justifyContent={'center'}
+          alignItems="center"
+        >
           <ToggleButtonGroup
             value={selected}
             exclusive
@@ -63,7 +71,7 @@ const PositiveDeclarationModal = (props) => {
             </ToggleButton>
           </ToggleButtonGroup>
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} sm={8}>
           <TextField
             required
             fullWidth
@@ -78,13 +86,13 @@ const PositiveDeclarationModal = (props) => {
             // helperText={form.name.errorTxt}
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} sm={4}>
           <TextField
+            fullWidth
             id="birthday"
             label="Ngày dương tính"
             type="date"
             name="birthday"
-            sx={{ width: '100%', minWidth: 170 }}
             InputLabelProps={{
               shrink: true,
             }}
@@ -96,15 +104,17 @@ const PositiveDeclarationModal = (props) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <FormControl margin="normal">
-            <FormLabel id="demo-row-radio-buttons-group-label">
+          <FormControl>
+            <FormLabel id="seriousCase">
               Bạn có xuất hiện các triệu chứng nặng ? (Khó thở, đau ngực, đau
               đầu...)
             </FormLabel>
             <RadioGroup
               row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              name="row-radio-buttons-group"
+              aria-labelledby="seriousCase"
+              name="serious_case_radio"
+              defaultValue={false}
+              sx={{ justifyContent: 'center' }}
             >
               <FormControlLabel
                 value={false}
@@ -116,9 +126,7 @@ const PositiveDeclarationModal = (props) => {
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="subtitle1">
-            Chọn vị trí cách ly trên bản đồ
-          </Typography>
+          <Typography>Chọn vị trí cách ly trên bản đồ</Typography>
           <Map
             style={{
               width: '100%',
@@ -128,22 +136,13 @@ const PositiveDeclarationModal = (props) => {
             //   declaration.location.position.lat,
             //   declaration.location.position.lng,
             // ]}
-            // markers={[
-            //   {
-            //     position: declaration.location.position,
-            //     popup: declaration.location.name,
-            //   },
-            // ]}
           />
         </Grid>
-        <Grid item md={12}>
+        <Grid item xs={12}>
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'flex-end',
-              pt: 1,
-              borderTop: 1,
-              borderColor: 'grey.500',
             }}
           >
             <Button variant="contained" onClick={handleClose}>

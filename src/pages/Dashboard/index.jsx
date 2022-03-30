@@ -6,80 +6,15 @@ import Chart from 'react-apexcharts'
 import Deposits from '../../components/Deposits'
 import Map from '../../components/Map'
 import AlertDialog from '../../components/AlertDialog'
-import LineChart from '../../components/Chart/LineChart'
-import PieChart from '../../components/Chart/PieChart'
 
-import { getStats, getPostitiveDeclarations } from '../../api'
-
-const pieChart = {
-  series: [98, 87, 61],
-  options: {
-    chart: {
-      height: 390,
-      type: 'radialBar',
-    },
-    plotOptions: {
-      radialBar: {
-        offsetY: 0,
-        startAngle: 0,
-        endAngle: 270,
-        hollow: {
-          margin: 5,
-          size: '30%',
-          background: 'transparent',
-          image: undefined,
-        },
-        dataLabels: {
-          name: {
-            show: false,
-          },
-          value: {
-            show: false,
-          },
-        },
-      },
-    },
-    colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
-    labels: ['Mũi 1', 'Mũi 2', 'Mũi 3'],
-    legend: {
-      show: true,
-      floating: true,
-      fontSize: '16px',
-      position: 'left',
-      offsetX: 160,
-      offsetY: 15,
-      labels: {
-        useSeriesColors: true,
-      },
-      markers: {
-        size: 0,
-      },
-      formatter: function (seriesName, opts) {
-        return seriesName + ':  ' + opts.w.globals.series[opts.seriesIndex]
-      },
-      itemMargin: {
-        vertical: 3,
-      },
-    },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          legend: {
-            show: false,
-          },
-        },
-      },
-    ],
-  },
-}
+import { getPDStatByDates, getPostitiveDeclarations } from '../../api'
 
 const Dashboard = () => {
   const [positiveDeclaByDates, setPositiveDeclaByDates] = useState([])
   const [positiveDecla, setPositiveDecla] = useState([])
 
   useEffect(() => {
-    getStats().then((rs) => {
+    getPDStatByDates().then((rs) => {
       setPositiveDeclaByDates(rs.data.statDates)
     })
 
@@ -103,12 +38,7 @@ const Dashboard = () => {
         >
           Số ca nhiễm những ngày qua
         </Typography>
-        <LineChart
-          name="Số ca nhiễm"
-          data={positiveDeclaByDates}
-          type="area"
-          height={'50%'}
-        />
+
         <Typography
           sx={{
             flex: '1 1 100%',
@@ -122,12 +52,6 @@ const Dashboard = () => {
         >
           Số lượt khai báo những ngày qua
         </Typography>
-        <LineChart
-          name="Số lượt khai báo"
-          data={positiveDeclaByDates}
-          type="area"
-          height={'50%'}
-        />
       </Grid>
 
       <Grid item md={6}>
@@ -144,12 +68,6 @@ const Dashboard = () => {
         >
           Thống kê tiêm vắc-xin
         </Typography>
-        <Chart
-          options={pieChart.options}
-          series={pieChart.series}
-          type="radialBar"
-          height={500}
-        />
       </Grid>
       <Grid item xs={12}>
         <Typography

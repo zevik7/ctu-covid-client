@@ -1,117 +1,47 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import Chart from 'react-apexcharts'
+import dateFormat from 'dateformat'
 
-import CssBaseline from '@mui/material/CssBaseline'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { Divider, ListItemButton } from '@mui/material'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Button from '@mui/material/Button'
 import List from '@mui/material/List'
 import ListItemText from '@mui/material/ListItemText'
-import ListItemAvatar from '@mui/material/ListItemAvatar'
-import Avatar from '@mui/material/Avatar'
 import Drawer from '@mui/material/Drawer'
+import Chip from '@mui/material/Chip'
 import SearchIcon from '@mui/icons-material/Search'
-import ImageIcon from '@mui/icons-material/Image'
 import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
+import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined'
+import VaccinesOutlinedIcon from '@mui/icons-material/VaccinesOutlined'
 
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation'
-import MenuBookIcon from '@mui/icons-material/MenuBook'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
+import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined'
 
 import Map from '../../components/Map'
-
 import Copyright from '../../components/Copyright'
 import Logo from '../../components/Logo'
+import {
+  LineWithLabelsPositiveCase,
+  PieChartInjection,
+} from '../../components/ChartOptions'
 
-import { getLocations, destroyLocations } from '../../api'
-import { Divider, ListItemButton } from '@mui/material'
+import { getLocations } from '../../api'
 
-import LineChart from '../../components/Chart/LineChart'
-import PieChart from '../../components/Chart/PieChart'
 import LookupModal from './LookupModal'
 import ArticleModal from './ArticleModal'
 import PositiveDeclarationModal from './PositiveDeclarationModal'
 import RegisterModal from './RegisterModal'
-import Chart from 'react-apexcharts'
 
-import { getStats, getPostitiveDeclarations } from '../../api'
-
-import MenuDrawer from './MenuDrawer'
-
-const theme = createTheme()
-
-const pieChart = {
-  series: [98, 87, 61],
-  options: {
-    chart: {
-      height: 390,
-      type: 'radialBar',
-    },
-    plotOptions: {
-      radialBar: {
-        offsetY: 0,
-        startAngle: 0,
-        endAngle: 270,
-        hollow: {
-          margin: 5,
-          size: '30%',
-          background: 'transparent',
-          image: undefined,
-        },
-        dataLabels: {
-          name: {
-            show: false,
-          },
-          value: {
-            show: false,
-          },
-        },
-      },
-    },
-    colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
-    labels: ['Mũi 1', 'Mũi 2', 'Mũi 3'],
-    legend: {
-      show: true,
-      floating: true,
-      fontSize: '16px',
-      position: 'left',
-      offsetX: 160,
-      offsetY: 15,
-      labels: {
-        useSeriesColors: true,
-      },
-      markers: {
-        size: 0,
-      },
-      formatter: function (seriesName, opts) {
-        return seriesName + ':  ' + opts.w.globals.series[opts.seriesIndex]
-      },
-      itemMargin: {
-        vertical: 3,
-      },
-    },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          legend: {
-            show: false,
-          },
-        },
-      },
-    ],
-  },
-}
+import { getPDStatByDates, getPostitiveDeclarations } from '../../api'
 
 export default function Home() {
-  const navigate = useNavigate()
-
   const [openDrawer, setOpenDrawer] = useState(false)
   const [areaSeleted, setAreaSelected] = useState('local')
   const [openLookupModal, setOpenLookupModal] = useState(false)
@@ -122,6 +52,7 @@ export default function Home() {
 
   const [locations, setLocations] = useState([])
   const [positiveDecla, setPositiveDecla] = useState([])
+  const [pdStatByDates, setPDStatByDates] = useState()
 
   const toggleDrawer = (e) => {
     if (e.type === 'keydown' && (e.key === 'Tab' || e.key === 'Shift')) {
@@ -132,16 +63,20 @@ export default function Home() {
   }
 
   useEffect(() => {
-    getLocations().then((rs) => setLocations(rs.data.data))
-    getStats().then((rs) => {
-      setPositiveDeclaByDates(rs.data.statDates)
-    })
+    getLocations()
+      .then((rs) => setLocations(rs.data.data))
+      .catch((err) => console.log(err))
+
+    getPDStatByDates()
+      .then((rs) => {
+        setPDStatByDates(rs.data)
+      })
+      .catch((err) => console.log(err))
+
     getPostitiveDeclarations().then((rs) => {
       setPositiveDecla(rs.data.data)
     })
   }, [])
-
-  const [positiveDeclaByDates, setPositiveDeclaByDates] = useState([])
 
   const MenuItems = (props) => (
     <Box sx={props.sx} {...props}>
@@ -241,7 +176,6 @@ export default function Home() {
               </Box>
             </Drawer>
           </Grid>
-
           <Grid
             item
             xs={12}
@@ -275,7 +209,7 @@ export default function Home() {
               sx={{
                 p: '2rem 0',
                 color: 'warning.main',
-                bgcolor: 'rgba(80, 184, 255, 0.11)',
+                bgcolor: '#e3f2fd',
                 borderRadius: 2,
               }}
               align="center"
@@ -284,27 +218,91 @@ export default function Home() {
             </Typography>
           </Grid>
           <Grid container item spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6">Thống kê tiêm vắc-xin</Typography>
-              <Chart
-                options={pieChart.options}
-                series={pieChart.series}
-                type="radialBar"
-                height="50%"
-              />
-              <LineChart
-                name="Số ca nhiễm"
-                data={positiveDeclaByDates}
-                type="area"
-                height={'50%'}
-              />
+            <Grid item xs={12} md={6} container>
+              <Grid item xs={12}>
+                <Chip
+                  icon={<VaccinesOutlinedIcon />}
+                  variant="outlined"
+                  label={<Typography>Thống kê tiêm vắc-xin</Typography>}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                container
+                alignItems={'center'}
+                justifyContent="center"
+              >
+                <Typography
+                  variant="h5"
+                  align="center"
+                  color={'success.main'}
+                  sx={{
+                    mt: 1,
+                  }}
+                >
+                  Tổng người đã tiêm:{' '}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Chart
+                  options={{
+                    ...PieChartInjection,
+                  }}
+                  series={[76, 61, 90]}
+                  type="radialBar"
+                  width={'100%'}
+                  height={200}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Chip
+                  icon={<VaccinesOutlinedIcon />}
+                  variant="outlined"
+                  label={<Typography>Biểu đồ số ca nhiễm</Typography>}
+                  sx={{ mb: 1 }}
+                />
+                {pdStatByDates && (
+                  <Chart
+                    options={{
+                      ...LineWithLabelsPositiveCase,
+                      xaxis: {
+                        categories: pdStatByDates.dates,
+                        labels: {
+                          formatter: function (value) {
+                            return dateFormat(value, 'dd/mm/yy')
+                          },
+                        },
+                      },
+                    }}
+                    series={[
+                      {
+                        name: 'Số ca nhiễm',
+                        data: pdStatByDates.positive_case,
+                      },
+                      {
+                        name: 'Triệu chứng nặng',
+                        data: pdStatByDates.serious_case,
+                      },
+                    ]}
+                    width="100%"
+                    height={200}
+                  />
+                )}
+              </Grid>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography variant="h6">Các điểm khai báo y tế</Typography>
+              <Chip
+                icon={<QuizOutlinedIcon />}
+                label={<Typography>Các điểm khai báo y tế</Typography>}
+                variant="outlined"
+                sx={{ mb: 1 }}
+              />
               <Map
                 markers={locations.map((location, index) => ({
                   position: location.position,
-                  popup: '',
+                  popup: location.name,
                 }))}
                 style={{
                   height: '400px',
@@ -315,9 +313,12 @@ export default function Home() {
               <Divider />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="h6">
-                Các vị trí xuất hiện ca nhiễm{' '}
-              </Typography>
+              <Chip
+                icon={<CoronavirusOutlinedIcon />}
+                label={<Typography>Những vị trí xuất hiện ca nhiễm</Typography>}
+                variant="outlined"
+                sx={{ mb: 1 }}
+              />
               <Map
                 style={{
                   height: '600px',
@@ -330,19 +331,12 @@ export default function Home() {
               />
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography
-                variant="h6"
-                sx={{ display: 'flex', alignItems: 'center' }}
-                color="primary.main"
-              >
-                Hướng dẫn y tế <MenuBookIcon sx={{ ml: 1 }} />
-              </Typography>
-              <List
-                sx={{
-                  width: '100%',
-                  bgcolor: 'background.paper',
-                }}
-              >
+              <Chip
+                icon={<QuizOutlinedIcon />}
+                color="primary"
+                label={<Typography>Hướng dẫn y tế</Typography>}
+              />
+              <List>
                 <ListItemButton onClick={() => setOpenArticleModal(true)}>
                   <ListItemText
                     primary="Hướng dẫn gói chăm sóc sức khỏe tại nhà cho người F0, Hướng dẫn gói chăm sóc sức khỏe tại nhà cho người F0"
@@ -359,19 +353,12 @@ export default function Home() {
               </List>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography
-                variant="h6"
-                sx={{ display: 'flex', alignItems: 'center' }}
-                color="primary.main"
-              >
-                Thông báo <NotificationsNoneIcon />
-              </Typography>
-              <List
-                sx={{
-                  width: '100%',
-                  bgcolor: 'background.paper',
-                }}
-              >
+              <Chip
+                icon={<NotificationsNoneIcon />}
+                color="primary"
+                label={<Typography> Thông báo</Typography>}
+              />
+              <List>
                 <ListItemButton>
                   <ListItemText
                     primary="Thônng báo về tình hình dịch bệnh tại khu vực ngày 24/03"
