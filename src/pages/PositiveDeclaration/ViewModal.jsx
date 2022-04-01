@@ -14,13 +14,7 @@ import { Avatar } from '@mui/material'
 import Modal from '../../components/Modal'
 
 const ViewModal = (props) => {
-  const {
-    hideBtns,
-    data,
-    handleClose,
-    handleOpenRelatedUsersModal,
-    handleOpenHistoryModal,
-  } = props
+  const { hideBtns, data, handleClose } = props
 
   return (
     <Modal handleClose={handleClose}>
@@ -59,7 +53,7 @@ const ViewModal = (props) => {
             <Typography>Số điện thoại: {data.user.phone}</Typography>
             <Typography>Email: {data.user.email}</Typography>
             <Typography>Địa chỉ: {data.user.address}</Typography>
-            {!hideBtns && (
+            {/* {!hideBtns && (
               <Button
                 variant="contained"
                 sx={{
@@ -71,7 +65,7 @@ const ViewModal = (props) => {
               >
                 Xem lịch sử khai báo
               </Button>
-            )}
+            )} */}
           </Box>
         </Grid>
         <Grid item xs={12} md={6}>
@@ -84,7 +78,7 @@ const ViewModal = (props) => {
               fontStyle: 'italic',
             }}
           >
-            {data.location.name}
+            {/* {data.location.name} */}
           </Typography>
           <Map
             style={{
@@ -110,7 +104,7 @@ const ViewModal = (props) => {
               borderColor: 'grey.500',
             }}
           >
-            {!hideBtns && (
+            {/* {!hideBtns && (
               <Button
                 variant="text"
                 sx={{
@@ -122,7 +116,7 @@ const ViewModal = (props) => {
               >
                 Những người khai báo liên quan
               </Button>
-            )}
+            )} */}
             <Button variant="text" onClick={handleClose}>
               Đóng
             </Button>

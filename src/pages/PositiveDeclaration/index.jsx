@@ -9,14 +9,19 @@ import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
 import TableToolbar from '../../components/TableToolbar'
 import ViewModal from './ViewModal'
-import HistoryModal from './HistoryModal'
-import RelatedUsersModal from './RelatedUsersModal'
 import NoteBar from './NoteBar'
+import PositiveDeclarationModal from './PositiveDeclarationModal'
+import NegativeDeclarationModal from './NegativeDeclarationModal'
+
+import {
+  getPostitiveDeclarations,
+  destroyPostitiveDeclaration,
+} from '../../api'
 
 const tableHeadCells = [
   {
     id: 'name',
-    label: 'Tên',
+    label: 'Họ tên',
   },
   {
     id: 'phone',
@@ -24,11 +29,11 @@ const tableHeadCells = [
   },
   {
     id: 'location',
-    label: 'Địa điểm',
+    label: 'Địa chỉ',
   },
   {
     id: 'created_at',
-    label: 'Vào lúc',
+    label: 'Thời điểm khai báo',
   },
   {
     id: 'status',
@@ -44,12 +49,12 @@ const handleRenderTableRow = (row) => {
       <TableCell>{row.location.name}</TableCell>
       <TableCell>{dateFormat(row.created_at, 'hh:mm dd-mm-yyyy')}</TableCell>
       <TableCell>
-        {row.status.danger_area && (
+        {row.severe_symptoms && (
           <Box
             component="div"
             sx={{
               display: 'inline-block',
-              bgcolor: 'warning.light',
+              bgcolor: 'error.light',
               width: '20px',
               height: '20px',
               borderRadius: '50%',
@@ -57,12 +62,12 @@ const handleRenderTableRow = (row) => {
             }}
           ></Box>
         )}
-        {row.status.symptom && (
+        {row.end_date && (
           <Box
             component="div"
             sx={{
               display: 'inline-block',
-              bgcolor: 'error.light',
+              bgcolor: 'success.light',
               width: '20px',
               height: '20px',
               borderRadius: '50%',
@@ -80,15 +85,18 @@ const DeclarationHistory = () => {
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(20)
+  const [selected, setSelected] = useState([])
 
   const [openViewModal, setOpenViewModal] = useState(false)
   const [viewModalData, setViewModalData] = useState({})
 
-  const [openHistoryModal, setOpenHistoryModal] = useState(false)
-  const [openRelatedUsersModal, setOpenRelatedUsersModal] = useState(false)
+  const [openPositiveDeclarationModal, setOpenPositiveDeclarationModal] =
+    useState(false)
+  const [openNegativeDeclarationModal, setOpenNegativeDeclarationModal] =
+    useState(false)
 
   const callApi = (page, perPage) => {
-    getHealthDeclaraions({
+    getPostitiveDeclarations({
       currentPage: page,
       perPage: perPage,
     }).then((rs) => {
@@ -98,6 +106,10 @@ const DeclarationHistory = () => {
       setPage(currentPage)
       setRowsPerPage(perPage)
     })
+  }
+
+  const handleOpenAddModal = () => {
+    setOpenPositiveDeclarationModal(true)
   }
 
   const handleCloseViewModal = () => setOpenViewModal(false)
@@ -112,41 +124,84 @@ const DeclarationHistory = () => {
   }, [])
 
   const handleChangePage = (event, newPage) => {
+    setSelected([])
     callApi(+newPage + 1, rowsPerPage)
   }
 
   const handleChangeRowsPerPage = (event) => {
+    setSelected([])
     callApi(page, +event.target.value)
+  }
+
+  const handleTableRowClick = (event, _id) => {
+    event.stopPropagation()
+
+    const selectedIndex = selected.indexOf(_id)
+    let newSelected = []
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, _id)
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1))
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1))
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      )
+    }
+
+    setSelected(newSelected)
+  }
+
+  const handleTableRowClickAll = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = data.map((n) => n._id)
+      setSelected(newSelecteds)
+      return
+    }
+    setSelected([])
+  }
+
+  const handleDeleteTableRows = (selected) => {
+    destroyPostitiveDeclaration({
+      ids: [...selected],
+    }).then(() => {
+      setSelected([])
+      callApi(page, rowsPerPage)
+    })
   }
 
   return (
     <>
       {openViewModal && (
-        <ViewModal
-          data={viewModalData}
-          handleClose={handleCloseViewModal}
-          handleOpenRelatedUsersModal={() => setOpenRelatedUsersModal(true)}
-          handleOpenHistoryModal={() => setOpenHistoryModal(true)}
+        <ViewModal data={viewModalData} handleClose={handleCloseViewModal} />
+      )}
+      {openPositiveDeclarationModal && (
+        <PositiveDeclarationModal
+          handleClose={() => setOpenPositiveDeclarationModal(false)}
+          handleOpenNegativeModal={() => {
+            setOpenPositiveDeclarationModal(false)
+            setOpenNegativeDeclarationModal(true)
+          }}
         />
       )}
-      {openRelatedUsersModal && (
-        <RelatedUsersModal
-          data={viewModalData}
-          handleClose={() => setOpenRelatedUsersModal(false)}
-          handleOpenViewModal={handleOpenViewModal}
-        />
-      )}
-      {openHistoryModal && (
-        <HistoryModal
-          data={viewModalData}
-          handleClose={() => setOpenHistoryModal(false)}
+      {openNegativeDeclarationModal && (
+        <NegativeDeclarationModal
+          handleClose={() => setOpenNegativeDeclarationModal(false)}
+          handleOpenPositiveModal={() => {
+            setOpenNegativeDeclarationModal(false)
+            setOpenPositiveDeclarationModal(true)
+          }}
         />
       )}
       <TableToolbar
         title="Danh sách các ca nhiễm"
-        numSelected={0}
-        selected={[]}
-        disabledAddBtn={true}
+        numSelected={selected.length}
+        handleOpenModal={handleOpenAddModal}
+        handleDeleteBtn={handleDeleteTableRows}
+        selected={selected}
       />
       <NoteBar />
       <Table
@@ -154,8 +209,9 @@ const DeclarationHistory = () => {
         bodyCells={data}
         handleRenderRow={handleRenderTableRow}
         handleOpenModal={handleOpenViewModal}
-        disabledCheckbox={true}
-        selected={[]}
+        selected={selected}
+        handleSelectClick={handleTableRowClick}
+        handleSelectAllClick={handleTableRowClickAll}
       />
       <TablePagination
         count={count}
