@@ -5,12 +5,11 @@ export const getPostitiveDeclarations = (params) =>
     params,
   })
 
-// export const updateDeclaration = (params, data) =>
-//   axios.put(`/heath_declaration`, data, {
-//     params,
-//   })
+export const updatePostitiveDeclaration = (data) =>
+  axios.put(`/positive_declaration`, data)
 
-// export const storeDeclaration = (data) => axios.post(`/heath_declaration`, data)
+export const storePostitiveDeclaration = (data) =>
+  axios.post(`/positive_declaration`, data)
 
 // export const destroyDeclarations = (data) =>
 //   axios.delete(`/heath_declaration`, {

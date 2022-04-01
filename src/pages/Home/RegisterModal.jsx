@@ -58,6 +58,7 @@ const RegisterModal = (props) => {
   const { handleClose } = props
 
   const [successAlert, setSuccessAlert] = useState(false)
+  const [errAlertTxt, setErrAlertTxt] = useState('')
   const [avatarUpload, setAvatarUpload] = useState(null)
   const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
@@ -92,11 +93,12 @@ const RegisterModal = (props) => {
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(form).find(
-      (key, index) => form[key].error || !form[key].value
-    )
+    const isEmpty = Object.keys(form).find((key, index) => !form[key].value)
 
-    if (isError) return
+    if (isEmpty) {
+      setErrAlertTxt('Vui lòng nhập tất cả các trường')
+      return
+    }
 
     const data = new FormData(event.currentTarget)
 
@@ -146,6 +148,14 @@ const RegisterModal = (props) => {
           title="Thông báo"
           text={'Tạo thông tin thành công'}
           handleClose={() => setSuccessAlert(false)}
+        />
+      )}
+      {errAlertTxt && (
+        <AlertDialog
+          title="Thông báo"
+          text={errAlertTxt}
+          severity="error"
+          handleClose={() => setErrAlertTxt(false)}
         />
       )}
       <Box component="form" noValidate onSubmit={handleSubmit}>

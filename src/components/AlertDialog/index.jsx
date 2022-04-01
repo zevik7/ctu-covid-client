@@ -19,6 +19,7 @@ const alertStyle = {
   '.MuiAlert-icon': {
     fontSize: 30,
   },
+  textAlign: 'center',
 }
 
 export default function AlertDialogSlide(props) {

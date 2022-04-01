@@ -1,28 +1,22 @@
 import { useState } from 'react'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import FormControlLabel from '@mui/material/FormControlLabel'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import RadioGroup from '@mui/material/RadioGroup'
-import Radio from '@mui/material/Radio'
 import Typography from '@mui/material/Typography'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import ToggleButton from '@mui/material/ToggleButton'
-import FormControl from '@mui/material/FormControl'
-import FormLabel from '@mui/material/FormLabel'
 
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
 
 import Modal from '../../components/Modal'
 import AlertDialog from '../../components/AlertDialog'
-import { storePostitiveDeclaration } from '../../api'
-import Map from '../../components/Map'
+import { updatePostitiveDeclaration } from '../../api'
 
 import dateFormat from 'dateformat'
 
-const PositiveDeclarationModal = (props) => {
-  const { handleClose, handleOpenRegisterModal, handleOpenNegativeModal } =
+const NegativeDeclarationModal = (props) => {
+  const { handleClose, handleOpenRegisterModal, handleOpenPositiveModal } =
     props
 
   const [successAlert, setSuccessAlert] = useState(false)
@@ -34,15 +28,10 @@ const PositiveDeclarationModal = (props) => {
       value: '',
       errTxt: '',
     },
-    start_date: {
+    end_date: {
       value: new Date(),
       errTxt: '',
     },
-    severe_symptoms: false,
-    location: {
-      position: { lat: '', lng: '' },
-    },
-    end_date: new Date(),
   })
 
   const handleInput = (e) => {
@@ -53,8 +42,8 @@ const PositiveDeclarationModal = (props) => {
     if (!value) {
       errTxt = 'Vui lòng nhập trường này'
     } else {
-      if (name === 'start_date' && new Date(value) > new Date()) {
-        errTxt = 'Ngày nhiễm không được vượt quá ngày hiện tại'
+      if (name === 'end_date' && new Date(value) > new Date()) {
+        errTxt = 'Ngày khỏi không được vượt quá ngày hiện tại'
       }
     }
 
@@ -62,23 +51,9 @@ const PositiveDeclarationModal = (props) => {
     setEnableSubmitBtn(errTxt ? false : true)
   }
 
-  const handleMapClick = (e) => {
-    setForm({
-      ...form,
-      location: {
-        position: e.latlng,
-      },
-    })
-    setEnableSubmitBtn(true)
-  }
-
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    if (!form.location.position.lat) {
-      setErrorAlertTxt('Vui lòng chọn vị trí trên bản đồ')
-      return
-    }
     if (!form.user_identity.value) {
       setForm({
         ...form,
@@ -87,14 +62,9 @@ const PositiveDeclarationModal = (props) => {
       return
     }
 
-    storePostitiveDeclaration({
+    updatePostitiveDeclaration({
       user_identity: form.user_identity.value,
-      location: {
-        name: '',
-        position: form.location.position,
-      },
-      severe_symptoms: form.severe_symptoms,
-      start_date: form.start_date.value,
+      end_date: form.end_date.value,
     })
       .then(() => {
         setSuccessAlert(true)
@@ -108,17 +78,21 @@ const PositiveDeclarationModal = (props) => {
           errorsData.type === 'validation' &&
           errorsData.errors
         ) {
-          if (errorsData.errors.user_identity) {
+          const { user_identity, exist_record, end_date } = errorsData.errors
+          if (user_identity) {
             setForm((form) => ({
               ...form,
               user_identity: {
                 ...form.user_identity,
-                errTxt: errorsData.errors.user_identity,
+                errTxt: user_identity,
               },
             }))
           }
-          if (errorsData.errors.exist_record) {
-            setErrorAlertTxt(errorsData.errors.exist_record)
+          if (exist_record) {
+            setErrorAlertTxt(exist_record)
+          }
+          if (end_date) {
+            setErrorAlertTxt(end_date)
           }
         }
       })
@@ -129,7 +103,7 @@ const PositiveDeclarationModal = (props) => {
       {successAlert && (
         <AlertDialog
           title="Thông báo"
-          text={'Khai báo thành công'}
+          text={'Khai báo khỏi bệnh thành thành công'}
           handleClose={() => setSuccessAlert(false)}
         />
       )}
@@ -170,7 +144,7 @@ const PositiveDeclarationModal = (props) => {
             alignItems="center"
           >
             <ToggleButtonGroup
-              value={'positive'}
+              value={'negative'}
               exclusive
               sx={{
                 '.MuiButtonBase-root': {
@@ -179,14 +153,14 @@ const PositiveDeclarationModal = (props) => {
                 },
               }}
             >
-              <ToggleButton value="positive" color="error">
+              <ToggleButton
+                value="positive"
+                color="error"
+                onClick={handleOpenPositiveModal}
+              >
                 Đang nhiễm
               </ToggleButton>
-              <ToggleButton
-                value="negative"
-                color="success"
-                onClick={handleOpenNegativeModal}
-              >
+              <ToggleButton value="negative" color="success">
                 Đã khỏi
               </ToggleButton>
             </ToggleButtonGroup>
@@ -209,57 +183,17 @@ const PositiveDeclarationModal = (props) => {
           <Grid item xs={12} sm={4}>
             <TextField
               fullWidth
-              id="start_date"
-              label="Ngày dương tính"
+              id="end_date"
+              label="Ngày khỏi"
               type="date"
-              name="start_date"
+              name="end_date"
               InputLabelProps={{
                 shrink: true,
               }}
-              value={dateFormat(form.start_date.value, 'yyyy-mm-dd')}
+              value={dateFormat(form.end_date.value, 'yyyy-mm-dd')}
               onChange={(e) => handleInput(e)}
-              error={form.start_date.errTxt ? true : false}
-              helperText={form.start_date.errTxt}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <FormControl fullWidth>
-              <FormLabel id="severe_symptoms">
-                Bạn có xuất hiện các triệu chứng nặng ? (Khó thở, đau ngực, đau
-                đầu...)
-              </FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="severe_symptoms"
-                name="severe_symptoms"
-                sx={{ justifyContent: 'center' }}
-                value={form.severe_symptoms}
-                onChange={(e) => handleInput(e)}
-              >
-                <FormControlLabel
-                  value={false}
-                  control={<Radio />}
-                  label="Không"
-                />
-                <FormControlLabel value={true} control={<Radio />} label="Có" />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography>Chọn vị trí cách ly trên bản đồ</Typography>
-            <Map
-              style={{
-                width: '100%',
-                minHeight: '300px',
-              }}
-              useRedDotIcon={true}
-              markers={[
-                {
-                  position: form.location.position,
-                  popup: '',
-                },
-              ]}
-              handleClick={handleMapClick}
+              error={form.end_date.errTxt ? true : false}
+              helperText={form.end_date.errTxt}
             />
           </Grid>
           <Grid item xs={12}>
@@ -287,4 +221,4 @@ const PositiveDeclarationModal = (props) => {
   )
 }
 
-export default PositiveDeclarationModal
+export default NegativeDeclarationModal

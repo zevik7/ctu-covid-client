@@ -19,6 +19,9 @@ import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
 import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined'
 import VaccinesOutlinedIcon from '@mui/icons-material/VaccinesOutlined'
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
+import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined'
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined'
 
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
@@ -37,6 +40,7 @@ import { getLocations } from '../../api'
 import LookupModal from './LookupModal'
 import ArticleModal from './ArticleModal'
 import PositiveDeclarationModal from './PositiveDeclarationModal'
+import NegativeDeclarationModal from './NegativeDeclarationModal'
 import RegisterModal from './RegisterModal'
 
 import { getPDStatByDates, getPostitiveDeclarations } from '../../api'
@@ -48,6 +52,8 @@ export default function Home() {
   const [openArticleModal, setOpenArticleModal] = useState(false)
   const [openRegisterModal, setOpenRegisterModal] = useState(false)
   const [openPositiveDeclarationModal, setOpenPositiveDeclarationModal] =
+    useState(false)
+  const [openNegativeDeclarationModal, setOpenNegativeDeclarationModal] =
     useState(false)
 
   const [locations, setLocations] = useState([])
@@ -83,6 +89,7 @@ export default function Home() {
       <Button
         variant="outlined"
         onClick={() => setOpenRegisterModal(true)}
+        endIcon={<AccountCircleOutlinedIcon />}
         sx={{ mr: 1 }}
       >
         Tạo thông tin
@@ -90,16 +97,18 @@ export default function Home() {
       <Button
         variant="outlined"
         onClick={() => setOpenLookupModal(true)}
+        endIcon={<SearchIcon />}
         sx={{ mr: 1 }}
       >
-        Tra cứu <SearchIcon sx={{ ml: 1 }} />
+        Tra cứu
       </Button>
       <Button
         variant="contained"
         onClick={() => setOpenPositiveDeclarationModal(true)}
+        endIcon={<MedicalInformationIcon />}
         sx={{ mr: 1 }}
       >
-        Khai báo F0 <MedicalInformationIcon sx={{ ml: 1 }} />
+        Khai báo F0
       </Button>
     </Box>
   )
@@ -118,6 +127,21 @@ export default function Home() {
       {openPositiveDeclarationModal && (
         <PositiveDeclarationModal
           handleClose={() => setOpenPositiveDeclarationModal(false)}
+          handleOpenRegisterModal={() => setOpenRegisterModal(true)}
+          handleOpenNegativeModal={() => {
+            setOpenPositiveDeclarationModal(false)
+            setOpenNegativeDeclarationModal(true)
+          }}
+        />
+      )}
+      {openNegativeDeclarationModal && (
+        <NegativeDeclarationModal
+          handleClose={() => setOpenNegativeDeclarationModal(false)}
+          handleOpenRegisterModal={() => setOpenRegisterModal(true)}
+          handleOpenPositiveModal={() => {
+            setOpenNegativeDeclarationModal(false)
+            setOpenPositiveDeclarationModal(true)
+          }}
         />
       )}
       <Container maxWidth="xl">
@@ -258,7 +282,7 @@ export default function Home() {
               </Grid>
               <Grid item xs={12}>
                 <Chip
-                  icon={<VaccinesOutlinedIcon />}
+                  icon={<BarChartOutlinedIcon />}
                   variant="outlined"
                   label={<Typography>Biểu đồ số ca nhiễm</Typography>}
                   sx={{ mb: 1 }}

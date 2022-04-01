@@ -8,6 +8,7 @@ import DeclarationLayout from './Layout/Declaration.jsx'
 import Dashboard from '../pages/Dashboard'
 import User from '../pages/User'
 import Location from '../pages/Location'
+import PositiveDeclaration from '../pages/PositiveDeclaration'
 import DeclarationHistory from '../pages/DeclarationHistory'
 import Injection from '../pages/Injection'
 import VaccineType from '../pages/VaccineType'
@@ -39,6 +40,10 @@ const RoutesApp = () => {
             <Route path="user" element={<User />} />
             <Route path="location" element={<Location />} />
             <Route path="declaration" element={<DeclarationHistory />} />
+            <Route
+              path="positive_declaration"
+              element={<PositiveDeclaration />}
+            />
             <Route path="injection" element={<Injection />} />
             <Route path="vaccine-type" element={<VaccineType />} />
             <Route path="profile" element={<Profile />} />

@@ -45,7 +45,11 @@ export const mainListItems = (
       icon={<PeopleIcon />}
       text="Quản lý người dùng"
     />
-    <LinkItem to="virus" icon={<CoronavirusIcon />} text="Thông tin ca nhiễm" />
+    <LinkItem
+      to="/admin/positive_declaration"
+      icon={<CoronavirusIcon />}
+      text="Thông tin ca nhiễm"
+    />
     <LinkItem
       to="/admin/location"
       icon={<ShareLocationIcon />}

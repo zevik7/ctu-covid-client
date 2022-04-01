@@ -45,7 +45,7 @@ const AddModal = (props) => {
     user_email: '',
     vaccine_type_id: '',
     vaccine_type_name: '',
-    injection_date: dateFormat(Date.now(), 'yyyy-mm-dd'),
+    injection_date: new Date(),
     images: [],
   })
 
@@ -295,7 +295,7 @@ const AddModal = (props) => {
               InputLabelProps={{
                 shrink: true,
               }}
-              value={form.injection_date}
+              value={dateFormat(form.injection_date, 'yyyy-mm-dd')}
               onChange={handleInput}
             />
           </Grid>
