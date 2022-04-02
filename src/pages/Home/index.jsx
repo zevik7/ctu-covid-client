@@ -30,6 +30,7 @@ import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined'
 import Map from '../../components/Map'
 import Copyright from '../../components/Copyright'
 import Logo from '../../components/Logo'
+import Card from '../../components/Card'
 import {
   LineWithLabelsPositiveCase,
   PieChartInjection,
@@ -43,7 +44,11 @@ import PositiveDeclarationModal from './PositiveDeclarationModal'
 import NegativeDeclarationModal from './NegativeDeclarationModal'
 import RegisterModal from './RegisterModal'
 
-import { getPDStatByDates, getPostitiveDeclarations } from '../../api'
+import {
+  getPDGeneralStat,
+  getPostitiveDeclarations,
+  getInjectionGeneralStat,
+} from '../../api'
 
 export default function Home() {
   const [openDrawer, setOpenDrawer] = useState(false)
@@ -57,8 +62,9 @@ export default function Home() {
     useState(false)
 
   const [locations, setLocations] = useState([])
-  const [positiveDecla, setPositiveDecla] = useState([])
-  const [pdStatByDates, setPDStatByDates] = useState()
+  const [positiveDecla, setPositiveDecla] = useState([]) // For map
+  const [pdStat, setPDStat] = useState({})
+  const [injectionStat, setInjectionStat] = useState({})
 
   const toggleDrawer = (e) => {
     if (e.type === 'keydown' && (e.key === 'Tab' || e.key === 'Shift')) {
@@ -73,14 +79,18 @@ export default function Home() {
       .then((rs) => setLocations(rs.data.data))
       .catch((err) => console.log(err))
 
-    getPDStatByDates()
+    getPDGeneralStat()
       .then((rs) => {
-        setPDStatByDates(rs.data)
+        setPDStat(rs.data)
       })
       .catch((err) => console.log(err))
 
     getPostitiveDeclarations().then((rs) => {
       setPositiveDecla(rs.data.data)
+    })
+
+    getInjectionGeneralStat().then((rs) => {
+      setInjectionStat(rs.data)
     })
   }, [])
 
@@ -227,19 +237,39 @@ export default function Home() {
               <ToggleButton value="world">Thế giới</ToggleButton>
             </ToggleButtonGroup>
           </Grid>
-          <Grid item xs={12}>
-            <Typography
-              variant="h4"
-              sx={{
-                p: '2rem 0',
-                color: 'warning.main',
-                bgcolor: '#e3f2fd',
-                borderRadius: 2,
-              }}
-              align="center"
-            >
-              Tổng số ca nhiễm: 3210
-            </Typography>
+          <Grid item xs={12} container justifyContent={'center'} spacing={2}>
+            <Grid item xs={4}>
+              <Card
+                title={'Số ca nhiễm'}
+                text={pdStat.total}
+                type="warning.main"
+                subText={'Tăng 10% so với hôm qua'}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <Card
+                title={'Số ca nặng'}
+                text={pdStat.total_serious_case}
+                type="error.main"
+                subText={
+                  'Chiếm ' +
+                  Math.floor((pdStat.total_serious_case * 100) / pdStat.total) +
+                  '%'
+                }
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <Card
+                title={'Số ca khỏi'}
+                text={pdStat.total_recovered}
+                type="success.main"
+                subText={
+                  'Chiếm ' +
+                  Math.floor((pdStat.total_recovered * 100) / pdStat.total) +
+                  '%'
+                }
+              />
+            </Grid>
           </Grid>
           <Grid container item spacing={2}>
             <Grid item xs={12} md={6} container>
@@ -266,19 +296,35 @@ export default function Home() {
                     mt: 1,
                   }}
                 >
-                  Tổng người đã tiêm:{' '}
+                  Tổng người đã tiêm: {injectionStat.total}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Chart
-                  options={{
-                    ...PieChartInjection,
-                  }}
-                  series={[76, 61, 90]}
-                  type="radialBar"
-                  width={'100%'}
-                  height={200}
-                />
+                {injectionStat.by_time && (
+                  <Chart
+                    options={{
+                      ...PieChartInjection,
+                      legend: {
+                        ...PieChartInjection.legend,
+                        formatter: function (seriesName, opts) {
+                          return (
+                            seriesName +
+                            ' ' +
+                            Math.floor(
+                              (opts.w.globals.series[opts.seriesIndex] * 100) /
+                                injectionStat.total
+                            ) +
+                            ' %'
+                          )
+                        },
+                      },
+                    }}
+                    series={injectionStat.by_time.time}
+                    type="radialBar"
+                    width={'100%'}
+                    height={200}
+                  />
+                )}
               </Grid>
               <Grid item xs={12}>
                 <Chip
@@ -287,12 +333,12 @@ export default function Home() {
                   label={<Typography>Biểu đồ số ca nhiễm</Typography>}
                   sx={{ mb: 1 }}
                 />
-                {pdStatByDates && (
+                {pdStat.by_date && (
                   <Chart
                     options={{
                       ...LineWithLabelsPositiveCase,
                       xaxis: {
-                        categories: pdStatByDates.dates,
+                        categories: pdStat.by_date.dates,
                         labels: {
                           formatter: function (value) {
                             return dateFormat(value, 'dd/mm/yy')
@@ -303,11 +349,11 @@ export default function Home() {
                     series={[
                       {
                         name: 'Số ca nhiễm',
-                        data: pdStatByDates.positive_case,
+                        data: pdStat.by_date.positive_case,
                       },
                       {
                         name: 'Triệu chứng nặng',
-                        data: pdStatByDates.serious_case,
+                        data: pdStat.by_date.serious_case,
                       },
                     ]}
                     width="100%"

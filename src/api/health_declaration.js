@@ -1,10 +1,12 @@
 import axios from 'axios'
 
+// Public
 export const getHealthDeclaraions = (params) =>
   axios.get(`/heath_declaration`, {
     params,
   })
 
+// Require auth
 export const updateDeclaration = (params, data) =>
   axios.put(`/heath_declaration`, data, {
     params,

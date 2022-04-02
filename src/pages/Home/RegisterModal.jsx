@@ -16,7 +16,7 @@ import { styled } from '@mui/material/styles'
 
 import Modal from '../../components/Modal'
 import AlertDialog from '../../components/AlertDialog'
-import { storeUserRegister } from '../../api'
+import { storeUser } from '../../api'
 
 import dateFormat from 'dateformat'
 
@@ -103,7 +103,7 @@ const RegisterModal = (props) => {
     const data = new FormData(event.currentTarget)
 
     try {
-      await storeUserRegister(data)
+      await storeUser(data)
       setSuccessAlert(true)
       setEnableSubmitBtn(false)
     } catch (errors) {

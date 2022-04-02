@@ -1,10 +1,15 @@
 import axios from 'axios'
 
+// Public
 export const getPostitiveDeclarations = (params) =>
   axios.get(`/positive_declaration`, {
     params,
   })
 
+export const getPDGeneralStat = () =>
+  axios.get(`/positive_declaration/general_stat`)
+
+// Require auth
 export const updatePostitiveDeclaration = (data) =>
   axios.put(`/positive_declaration`, data)
 
@@ -15,6 +20,3 @@ export const destroyPostitiveDeclaration = (data) =>
   axios.delete(`/positive_declaration`, {
     params: data,
   })
-
-export const getPDStatByDates = () =>
-  axios.get(`/positive_declaration/statByDates`)

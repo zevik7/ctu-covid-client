@@ -106,7 +106,7 @@ export const PieChartInjection = {
       size: 0,
     },
     formatter: function (seriesName, opts) {
-      return seriesName + ' ' + opts.w.globals.series[opts.seriesIndex] + '%'
+      return seriesName + ' ' + opts.w.globals.series[opts.seriesIndex]
     },
     itemMargin: {
       vertical: 3,

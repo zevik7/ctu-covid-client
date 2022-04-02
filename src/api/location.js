@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+// Public
 export const getLocations = (params) =>
   axios.get(`/location`, {
     params,
@@ -7,6 +8,7 @@ export const getLocations = (params) =>
 
 export const getLocation = (_id) => axios.get(`/location/${_id}`)
 
+// Require auth
 export const updateLocation = (params, data) =>
   axios.put(`/location`, data, {
     params,
