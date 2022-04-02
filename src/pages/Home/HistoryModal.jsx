@@ -16,7 +16,7 @@ import Map from '../../components/Map'
 import { getHealthDeclaraions } from '../../api'
 
 const HistoryModal = (props) => {
-  const { data, handleClose } = props
+  const { user, handleClose } = props
 
   const [dateFilter, setDateFilter] = useState(3)
 
@@ -28,7 +28,7 @@ const HistoryModal = (props) => {
     startDate.setDate(startDate.getDate() - dateFilter)
 
     getHealthDeclaraions({
-      'user._id': data.user._id,
+      'user._id': user._id,
       created_at_between: {
         start: startDate,
         end: new Date(),
