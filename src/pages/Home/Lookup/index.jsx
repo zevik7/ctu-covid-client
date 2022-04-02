@@ -11,11 +11,11 @@ import VaccinesOutlinedIcon from '@mui/icons-material/VaccinesOutlined'
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined'
 import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined'
 
-import Map from '../../components/Map'
-import Modal from '../../components/Modal'
-import AlertDialog from '../../components/AlertDialog'
+import Map from '../../../components/Map'
+import Modal from '../../../components/Modal'
+import AlertDialog from '../../../components/AlertDialog'
 
-import { lookupUser } from '../../api/lookup'
+import { lookupUser } from '../../../api/lookup'
 
 import HistoryModal from './HistoryModal'
 import InjectionModal from './InjectionModal'

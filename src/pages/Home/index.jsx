@@ -37,7 +37,7 @@ import {
 
 import { getLocations } from '../../api'
 
-import LookupModal from './LookupModal'
+import LookupModal from './Lookup'
 import ArticleModal from './ArticleModal'
 import PositiveDeclarationModal from './PositiveDeclarationModal'
 import NegativeDeclarationModal from './NegativeDeclarationModal'
@@ -324,10 +324,13 @@ export default function Home() {
                 sx={{ mb: 1 }}
               />
               <Map
-                markers={locations.map((location, index) => ({
-                  position: location.position,
-                  popup: location.name,
-                }))}
+                markers={
+                  locations &&
+                  locations.map((location, index) => ({
+                    position: location.position,
+                    popup: location.name,
+                  }))
+                }
                 style={{
                   height: '400px',
                 }}

@@ -10,10 +10,10 @@ import FormControl from '@mui/material/FormControl'
 import MenuItem from '@mui/material/MenuItem'
 import Divider from '@mui/material/Divider'
 
-import Modal from '../../components/Modal'
-import Map from '../../components/Map'
+import Modal from '../../../components/Modal'
+import Map from '../../../components/Map'
 
-import { getHealthDeclaraions } from '../../api'
+import { lookupHealthDeclaration } from '../../../api'
 
 const HistoryModal = (props) => {
   const { user, handleClose } = props
@@ -27,7 +27,7 @@ const HistoryModal = (props) => {
     // Set date for filter
     startDate.setDate(startDate.getDate() - dateFilter)
 
-    getHealthDeclaraions({
+    lookupHealthDeclaration({
       'user._id': user._id,
       created_at_between: {
         start: startDate,

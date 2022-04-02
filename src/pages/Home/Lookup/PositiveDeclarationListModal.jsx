@@ -5,30 +5,23 @@ import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import Select from '@mui/material/Select'
-import FormControl from '@mui/material/FormControl'
-import MenuItem from '@mui/material/MenuItem'
 import Divider from '@mui/material/Divider'
 
-import DoneOutlineIcon from '@mui/icons-material/DoneOutline'
+import Modal from '../../../components/Modal'
 
-import Modal from '../../components/Modal'
-import Map from '../../components/Map'
+import { lookupPositiveDeclaration } from '../../../api'
 
-import { getInjections } from '../../api'
-import { Alert } from '@mui/material'
-
-const InjectionModal = (props) => {
+const PositiveDeclarationListModal = (props) => {
   const { user, handleClose } = props
 
-  const [injections, setInjections] = useState([])
+  const [posDecla, setPosDecla] = useState([])
 
   useEffect(() => {
-    getInjections({
+    lookupPositiveDeclaration({
       'user._id': user._id,
     })
       .then((rs) => {
-        setInjections(rs.data.data)
+        setPosDecla(rs.data.data)
       })
       .catch((error) => console.log(error.response))
   }, [])
@@ -45,42 +38,16 @@ const InjectionModal = (props) => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography variant="h6" align="center">
-            Thông tin tiêm chủng người dùng
+            Thông tin khai báo ca nhiễm
           </Typography>
           <Divider />
         </Grid>
-
         <Grid item xs={12}>
-          {(injections.length > 1 && (
-            <Alert
-              severity="success"
-              icon={<DoneOutlineIcon />}
-              variant="filled"
-              children={
-                <Typography align="center" variant="h6">
-                  Bạn đã tiêm đủ liều
-                </Typography>
-              }
-              sx={{ alignItems: 'center', justifyContent: 'center' }}
-            />
-          )) || (
-            <Alert
-              severity="warning"
-              variant="filled"
-              children={
-                <Typography align="center" variant="h6">
-                  Bạn chưa tiêm đủ liều
-                </Typography>
-              }
-              sx={{ alignItems: 'center', justifyContent: 'center' }}
-            />
-          )}
+          <Typography fontStyle="italic">Danh sách các lần khai báo</Typography>
         </Grid>
-        <Grid item xs={12}>
-          <Typography fontStyle="italic">Danh sách các lần tiêm</Typography>
-        </Grid>
-        {injections.map((injection, i) => (
+        {posDecla.map((pos, i) => (
           <Grid
+            key={i}
             item
             xs={12}
             container
@@ -92,18 +59,23 @@ const InjectionModal = (props) => {
             </Grid>
             <Grid item xs="auto">
               <Typography>
-                Loại vắc-xin: {injection.vaccine_type.name}
+                Ngày dương tính: {dateFormat(pos.start_date, 'dd/mm/yy')}
               </Typography>
             </Grid>
             <Grid item xs="auto">
               <Typography>
-                Ngày tiêm: {dateFormat(injection.injection_date, 'dd/mm/yy')}
+                Ngày khỏi: {dateFormat(pos.end_date, 'dd/mm/yy') || '---'}
+              </Typography>
+            </Grid>
+            <Grid item xs="auto">
+              <Typography>
+                Ngày khai báo: {dateFormat(pos.created_at, 'dd/mm/yy')}
               </Typography>
             </Grid>
           </Grid>
         ))}
 
-        {!injections.length && (
+        {!posDecla.length && (
           <Grid item xs={12}>
             <Typography align="center" sx={{ fontStyle: 'italic' }}>
               Không có dữ liệu
@@ -128,4 +100,4 @@ const InjectionModal = (props) => {
   )
 }
 
-export default InjectionModal
+export default PositiveDeclarationListModal
