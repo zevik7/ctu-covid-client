@@ -3,11 +3,11 @@ import dateFormat from 'dateformat'
 
 import { Box, Paper, Grid, TableCell, Typography } from '@mui/material'
 
-import { getHealthDeclaraions, destroyLocations } from '../../api'
-
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
 import TableToolbar from '../../components/TableToolbar'
+import SearchBar from '../../components/SearchBar'
+
 import ViewModal from './ViewModal'
 import NoteBar from './NoteBar'
 import PositiveDeclarationModal from './PositiveDeclarationModal'
@@ -81,11 +81,12 @@ const handleRenderTableRow = (row) => {
 }
 
 const DeclarationHistory = () => {
-  const [data, setData] = useState([])
+  const [tableBodyCells, setTableBodyCells] = useState([])
   const [count, setCount] = useState(0)
-  const [page, setPage] = useState(1)
-  const [rowsPerPage, setRowsPerPage] = useState(20)
+  const [currentPage, setCurrentpage] = useState(1)
+  const [perPage, setPerPage] = useState(20)
   const [selected, setSelected] = useState([])
+  const [searchText, setSearchText] = useState('')
 
   const [openViewModal, setOpenViewModal] = useState(false)
   const [viewModalData, setViewModalData] = useState({})
@@ -95,16 +96,17 @@ const DeclarationHistory = () => {
   const [openNegativeDeclarationModal, setOpenNegativeDeclarationModal] =
     useState(false)
 
-  const callApi = (page, perPage) => {
+  const callApi = (currentPage, perPage, searchText) => {
     getPostitiveDeclarations({
-      currentPage: page,
-      perPage: perPage,
+      currentPage,
+      perPage,
+      searchText,
     }).then((rs) => {
       const { data, currentPage, perPage, count } = rs.data
-      setData(data)
+      setCurrentpage(currentPage) // Order is important
+      setPerPage(perPage)
       setCount(count)
-      setPage(currentPage)
-      setRowsPerPage(perPage)
+      setTableBodyCells(data)
     })
   }
 
@@ -120,17 +122,17 @@ const DeclarationHistory = () => {
   }
 
   useEffect(() => {
-    callApi(page, rowsPerPage)
+    callApi(currentPage, perPage, searchText)
   }, [])
 
   const handleChangePage = (event, newPage) => {
     setSelected([])
-    callApi(+newPage + 1, rowsPerPage)
+    callApi(+newPage + 1, perPage)
   }
 
   const handleChangeRowsPerPage = (event) => {
     setSelected([])
-    callApi(page, +event.target.value)
+    callApi(currentPage, +event.target.value)
   }
 
   const handleTableRowClick = (event, _id) => {
@@ -157,7 +159,7 @@ const DeclarationHistory = () => {
 
   const handleTableRowClickAll = (event) => {
     if (event.target.checked) {
-      const newSelecteds = data.map((n) => n._id)
+      const newSelecteds = tableBodyCells.map((n) => n._id)
       setSelected(newSelecteds)
       return
     }
@@ -169,8 +171,13 @@ const DeclarationHistory = () => {
       ids: [...selected],
     }).then(() => {
       setSelected([])
-      callApi(page, rowsPerPage)
+      callApi(currentPage, perPage, searchText)
     })
+  }
+
+  const handleOnSearchChange = (e) => {
+    setSearchText(e.target.value)
+    callApi(1, perPage, e.target.value)
   }
 
   return (
@@ -196,6 +203,11 @@ const DeclarationHistory = () => {
           }}
         />
       )}
+      <SearchBar
+        popoverContent="Có thể tìm kiếm người dùng bằng tên, số điện thoại, email, địa chỉ"
+        handleOnChange={handleOnSearchChange}
+        value={searchText}
+      />
       <TableToolbar
         title="Danh sách các ca nhiễm"
         numSelected={selected.length}
@@ -206,7 +218,7 @@ const DeclarationHistory = () => {
       <NoteBar />
       <Table
         headCells={tableHeadCells}
-        bodyCells={data}
+        bodyCells={tableBodyCells}
         handleRenderRow={handleRenderTableRow}
         handleOpenModal={handleOpenViewModal}
         selected={selected}
@@ -215,8 +227,8 @@ const DeclarationHistory = () => {
       />
       <TablePagination
         count={count}
-        page={page}
-        rowsPerPage={rowsPerPage}
+        page={currentPage}
+        rowsPerPage={perPage}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
       />

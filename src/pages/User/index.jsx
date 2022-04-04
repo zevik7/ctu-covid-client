@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import dateFormat from 'dateformat'
-
-import { Paper } from '@mui/material'
-import TableCell from '@mui/material/TableCell'
+import { Container, TableCell } from '@mui/material'
 
 import TableToolbar from '../../components/TableToolbar'
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
+
 import { getUsers, destroyUsers } from '../../api'
 import Modal from './Modal'
+import SearchBar from '../../components/SearchBar'
 
 const tableHeadCells = [
   {
@@ -46,26 +46,28 @@ const handleRenderTableRow = (row) => (
 const User = () => {
   const [tableBodyCells, setTableBodyCells] = useState([])
   const [count, setCount] = useState(0)
-  const [page, setPage] = useState(1)
-  const [rowsPerPage, setRowsPerPage] = useState(20)
+  const [currentPage, setCurrentpage] = useState(1)
+  const [perPage, setPerPage] = useState(20)
   const [openModal, setOpenModal] = useState(false)
   const [modalData, setModalData] = useState({})
   const [selected, setSelected] = useState([])
+  const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
-    callApi(page, rowsPerPage)
+    callApi(currentPage, perPage)
   }, [])
 
-  const callApi = (page, perPage) => {
+  const callApi = (currentPage, perPage, searchText) => {
     getUsers({
-      currentPage: page,
-      perPage: perPage,
+      currentPage,
+      perPage,
+      searchText,
     }).then((rs) => {
       const { data, currentPage, perPage, count } = rs.data
-      setTableBodyCells(data)
+      setCurrentpage(currentPage) // Order is important
+      setPerPage(perPage)
       setCount(count)
-      setPage(currentPage)
-      setRowsPerPage(perPage)
+      setTableBodyCells(data)
     })
   }
 
@@ -112,18 +114,23 @@ const User = () => {
       ids: [...selected],
     }).then(() => {
       setSelected([])
-      callApi(page, rowsPerPage)
+      callApi(currentPage, perPage, searchText)
     })
   }
 
   const handleChangePage = (event, newPage) => {
     setSelected([])
-    callApi(+newPage + 1, rowsPerPage)
+    callApi(+newPage + 1, perPage, searchText)
   }
 
   const handleChangeRowsPerPage = (event) => {
     setSelected([])
-    callApi(page, +event.target.value)
+    callApi(currentPage, +event.target.value, searchText)
+  }
+
+  const handleOnSearchChange = (e) => {
+    setSearchText(e.target.value)
+    callApi(1, perPage, e.target.value)
   }
 
   return (
@@ -133,9 +140,14 @@ const User = () => {
           open={openModal}
           handleClose={handleCloseModal}
           data={modalData}
-          updateRows={() => callApi(page, rowsPerPage)}
+          updateRows={() => callApi(currentPage, perPage)}
         />
       )}
+      <SearchBar
+        popoverContent="Có thể tìm kiếm bằng tên, số điện thoại, email, địa chỉ của người dùng"
+        handleOnChange={handleOnSearchChange}
+        value={searchText}
+      />
       <TableToolbar
         title="Danh sách người dùng"
         numSelected={selected.length}
@@ -154,8 +166,8 @@ const User = () => {
       />
       <TablePagination
         count={count}
-        page={page}
-        rowsPerPage={rowsPerPage}
+        page={currentPage}
+        rowsPerPage={perPage}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
       />

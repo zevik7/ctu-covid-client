@@ -8,6 +8,8 @@ import { getHealthDeclaraions, destroyLocations } from '../../api'
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
 import TableToolbar from '../../components/TableToolbar'
+import SearchBar from '../../components/SearchBar'
+
 import ViewModal from './ViewModal'
 import HistoryModal from './HistoryModal'
 import RelatedUsersModal from './RelatedUsersModal'
@@ -76,27 +78,29 @@ const handleRenderTableRow = (row) => {
 }
 
 const DeclarationHistory = () => {
-  const [data, setData] = useState([])
+  const [tableBodyCells, setTableBodyCells] = useState([])
   const [count, setCount] = useState(0)
-  const [page, setPage] = useState(1)
-  const [rowsPerPage, setRowsPerPage] = useState(20)
+  const [currentPage, setCurrentpage] = useState(1)
+  const [perPage, setPerPage] = useState(20)
 
   const [openViewModal, setOpenViewModal] = useState(false)
   const [viewModalData, setViewModalData] = useState({})
 
   const [openHistoryModal, setOpenHistoryModal] = useState(false)
   const [openRelatedUsersModal, setOpenRelatedUsersModal] = useState(false)
+  const [searchText, setSearchText] = useState('')
 
-  const callApi = (page, perPage) => {
+  const callApi = (currentPage, perPage, searchText) => {
     getHealthDeclaraions({
-      currentPage: page,
-      perPage: perPage,
+      currentPage,
+      perPage,
+      searchText,
     }).then((rs) => {
       const { data, currentPage, perPage, count } = rs.data
-      setData(data)
+      setCurrentpage(currentPage) // Order is important
+      setPerPage(perPage)
       setCount(count)
-      setPage(currentPage)
-      setRowsPerPage(perPage)
+      setTableBodyCells(data)
     })
   }
 
@@ -108,15 +112,20 @@ const DeclarationHistory = () => {
   }
 
   useEffect(() => {
-    callApi(page, rowsPerPage)
+    callApi(currentPage, perPage)
   }, [])
 
   const handleChangePage = (event, newPage) => {
-    callApi(+newPage + 1, rowsPerPage)
+    callApi(+newPage + 1, perPage)
   }
 
   const handleChangeRowsPerPage = (event) => {
-    callApi(page, +event.target.value)
+    callApi(currentPage, +event.target.value)
+  }
+
+  const handleOnSearchChange = (e) => {
+    setSearchText(e.target.value)
+    callApi(1, perPage, e.target.value)
   }
 
   return (
@@ -142,6 +151,17 @@ const DeclarationHistory = () => {
           handleClose={() => setOpenHistoryModal(false)}
         />
       )}
+      <SearchBar
+        popoverContent={
+          <>
+            Tìm kiếm người dùng bằng tên, số điện thoại, email
+            <br />
+            Tìm kiếm bằng địa điểm, thời gian khai báo
+          </>
+        }
+        handleOnChange={handleOnSearchChange}
+        value={searchText}
+      />
       <TableToolbar
         title="Lịch sử khai báo y tế"
         numSelected={0}
@@ -151,7 +171,7 @@ const DeclarationHistory = () => {
       <NoteBar />
       <Table
         headCells={tableHeadCells}
-        bodyCells={data}
+        bodyCells={tableBodyCells}
         handleRenderRow={handleRenderTableRow}
         handleOpenModal={handleOpenViewModal}
         disabledCheckbox={true}
@@ -159,8 +179,8 @@ const DeclarationHistory = () => {
       />
       <TablePagination
         count={count}
-        page={page}
-        rowsPerPage={rowsPerPage}
+        page={currentPage}
+        rowsPerPage={perPage}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
       />

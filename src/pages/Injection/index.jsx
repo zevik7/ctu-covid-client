@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import dateFormat from 'dateformat'
-
 import { Box, Paper } from '@mui/material'
 import TableCell from '@mui/material/TableCell'
 
 import TableToolbar from '../../components/TableToolbar'
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
+import SearchBar from '../../components/SearchBar'
+
 import { getInjections, destroyInjections } from '../../api'
 
 import EditModal from './EditModal'
@@ -48,24 +49,26 @@ const handleRenderTableRow = (row) => (
 const Injection = () => {
   const [tableBodyCells, setTableBodyCells] = useState([])
   const [count, setCount] = useState(0)
-  const [page, setPage] = useState(1)
-  const [rowsPerPage, setRowsPerPage] = useState(20)
+  const [currentPage, setCurrentpage] = useState(1)
+  const [perPage, setPerPage] = useState(20)
   const [selected, setSelected] = useState([])
+  const [searchText, setSearchText] = useState('')
 
   const [openEditModal, setOpenEditModal] = useState(false)
   const [openAddModal, setOpenAddModal] = useState(false)
   const [editModalData, setEditModalData] = useState({})
 
-  const callApi = (page, perPage) => {
+  const callApi = (currentPage, perPage, searchText) => {
     getInjections({
-      currentPage: page,
-      perPage: perPage,
+      currentPage,
+      perPage,
+      searchText,
     }).then((rs) => {
       const { data, currentPage, perPage, count } = rs.data
-      setTableBodyCells(data)
+      setCurrentpage(currentPage) // Order is important
+      setPerPage(perPage)
       setCount(count)
-      setPage(currentPage)
-      setRowsPerPage(perPage)
+      setTableBodyCells(data)
     })
   }
 
@@ -116,22 +119,27 @@ const Injection = () => {
       ids: [...selected],
     }).then((rs) => {
       setSelected([])
-      callApi(page, rowsPerPage)
+      callApi(currentPage, perPage, searchText)
     })
   }
 
   useEffect(() => {
-    callApi(page, rowsPerPage)
+    callApi(currentPage, perPage, searchText)
   }, [])
 
   const handleChangePage = (event, newPage) => {
     setSelected([])
-    callApi(+newPage + 1, rowsPerPage)
+    callApi(+newPage + 1, perPage, searchText)
   }
 
   const handleChangeRowsPerPage = (event) => {
     setSelected([])
-    callApi(page, +event.target.value)
+    callApi(currentPage, +event.target.value, searchText)
+  }
+
+  const handleOnSearchChange = (e) => {
+    setSearchText(e.target.value)
+    callApi(1, perPage, e.target.value)
   }
 
   return (
@@ -140,15 +148,27 @@ const Injection = () => {
         <EditModal
           data={editModalData}
           handleClose={handleCloseEditModal}
-          updateRows={() => callApi(page, rowsPerPage)}
+          updateRows={() => callApi(currentPage, perPage, searchText)}
         />
       )}
       {openAddModal && (
         <AddModal
           handleClose={handleCloseAddModal}
-          updateRows={() => callApi(page, rowsPerPage)}
+          updateRows={() => callApi(currentPage, perPage, searchText)}
         />
       )}
+      <SearchBar
+        popoverContent={
+          <>
+            Có thể tìm kiếm bằng tên, số điện thoại, email, địa chỉ của người
+            dùng
+            <br />
+            Có thể tìm kiếm bằng tên vắc-xin, ngày tiêm
+          </>
+        }
+        handleOnChange={handleOnSearchChange}
+        value={searchText}
+      />
       <TableToolbar
         title="Danh sách tiêm chủng"
         numSelected={selected.length}
@@ -167,8 +187,8 @@ const Injection = () => {
       />
       <TablePagination
         count={count}
-        page={page}
-        rowsPerPage={rowsPerPage}
+        page={currentPage}
+        rowsPerPage={perPage}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
       />
