@@ -26,8 +26,8 @@ const MainModal = (props) => {
 
   const [form, setForm] = useState({
     name: { value: data.name || '', error: false, errorTxt: '' },
-    description: { value: data.description || '', error: false, errorTxt: '' },
     country: { value: data.country || '', error: false, errorTxt: '' },
+    description: { value: data.description || '', error: false, errorTxt: '' },
   })
 
   const handleInput = (e) => {
@@ -42,15 +42,13 @@ const MainModal = (props) => {
     }
 
     setForm({ ...form, [name]: { value, error, errorTxt } })
-    setEnableSubmitBtn(true)
+    setEnableSubmitBtn(!error ? true : false)
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(form).find(
-      (key, index) => form[key].error || !form[key].value
-    )
+    const isError = Object.keys(form).find((key, index) => form[key].error)
 
     if (isError) return
 
@@ -58,8 +56,11 @@ const MainModal = (props) => {
 
     try {
       if (_id) {
+        console.log('r')
         await updateVaccineType({ _id }, data)
-      } else await storeVaccineType(data)
+      } else {
+        await storeVaccineType(data)
+      }
       setSuccessAlert(true)
       setEnableSubmitBtn(false)
       updateRows()

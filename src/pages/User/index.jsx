@@ -140,7 +140,7 @@ const User = () => {
           open={openModal}
           handleClose={handleCloseModal}
           data={modalData}
-          updateRows={() => callApi(currentPage, perPage)}
+          updateRows={() => callApi(currentPage, perPage, searchText)}
         />
       )}
       <SearchBar

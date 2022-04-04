@@ -49,6 +49,7 @@ export default function Home() {
   const [positiveDecla, setPositiveDecla] = useState([]) // For map
   const [pdStat, setPDStat] = useState({})
   const [injectionStat, setInjectionStat] = useState({})
+  const [positiveCaseDiffSubTxt, setPositiveCaseDiffSubTxt] = useState('')
 
   useEffect(() => {
     getLocations()
@@ -58,6 +59,7 @@ export default function Home() {
     getPDGeneralStat()
       .then((rs) => {
         setPDStat(rs.data)
+        calTotalCaseSubText(rs.data.by_date.positive_case)
       })
       .catch((err) => console.log(err))
 
@@ -69,6 +71,17 @@ export default function Home() {
       setInjectionStat(rs.data)
     })
   }, [])
+
+  const calTotalCaseSubText = (posCase) => {
+    if (!posCase) return
+
+    let status = ''
+    let diff = posCase[posCase.length - 1] - posCase[posCase.length - 2]
+    status =
+      (diff >= 0 ? 'Tăng ' : 'Giảm ') + Math.abs(diff) + ' ca so với hôm qua'
+
+    setPositiveCaseDiffSubTxt(status)
+  }
 
   return (
     <>
@@ -85,7 +98,7 @@ export default function Home() {
               title={'Số ca nhiễm'}
               text={pdStat.total}
               type="warning.main"
-              subText={'Tăng 10% so với hôm qua'}
+              subText={positiveCaseDiffSubTxt}
             />
           </Grid>
           <Grid item xs={4}>
@@ -125,7 +138,7 @@ export default function Home() {
             <Grid
               item
               xs={12}
-              sm={6}
+              sm={5}
               container
               alignItems={'center'}
               justifyContent="center"
@@ -141,7 +154,7 @@ export default function Home() {
                 Tổng người đã tiêm: {injectionStat.total}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={7}>
               {injectionStat.by_time && (
                 <Chart
                   options={{
