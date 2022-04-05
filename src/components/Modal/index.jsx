@@ -21,7 +21,7 @@ const style = {
     md: 4,
   },
   width: {
-    xs: '85%',
+    xs: '90%',
     sm: '75%',
     md: '65%',
     lg: '55%',

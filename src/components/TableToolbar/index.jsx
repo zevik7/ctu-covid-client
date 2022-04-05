@@ -72,8 +72,11 @@ const TableToolbar = (props) => {
           title="Cảnh báo"
           text={
             <>
-              Xóa những mục đã chọn <br />{' '}
-              <strong>Điều này sẽ không thể khôi phục</strong>
+              Xóa những mục đã chọn <br />
+              <strong>
+                Bao gồm xóa các thông tin liên quan, <br />
+                điều này sẽ không thể khôi phục
+              </strong>
             </>
           }
           severity="warning"

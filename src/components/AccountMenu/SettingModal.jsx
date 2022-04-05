@@ -10,15 +10,18 @@ import Grid from '@mui/material/Grid'
 import RadioGroup from '@mui/material/RadioGroup'
 import Radio from '@mui/material/Radio'
 import Typography from '@mui/material/Typography'
-import Avatar from '@mui/material/Avatar'
 import FormControl from '@mui/material/FormControl'
 import FormLabel from '@mui/material/FormLabel'
 import { styled } from '@mui/material/styles'
 
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+
 import Modal from '../../components/Modal'
 import AlertDialog from '../../components/AlertDialog'
 import { useAuth } from '../../context/Auth'
-import { getUser, updateUser } from '../../api'
+import { getAdmin, updateAdmin } from '../../api'
+
+import PassModal from './PassModal'
 
 const Input = styled('input')({
   display: 'none',
@@ -63,6 +66,7 @@ const SettingModal = (props) => {
   const [successAlert, setSuccessAlert] = useState(false)
   const [avatarUpload, setAvatarUpload] = useState(null)
   const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
+  const [openPassModal, setOpenPassModal] = useState(false)
 
   const [form, setForm] = useState({
     name: { value: '', error: false, errorTxt: '' },
@@ -75,10 +79,9 @@ const SettingModal = (props) => {
   })
 
   useEffect(() => {
-    getUser(auth.user._id)
+    getAdmin(auth.user._id)
       .then((rs) => {
         if (!rs.data.data) navigate('/login')
-
         let authUser = Object.assign({}, rs.data.data)
         let authUserMap = {}
         Object.keys(authUser).map((key) => {
@@ -103,7 +106,7 @@ const SettingModal = (props) => {
     const { error, errorTxt } = validateField(name, value)
 
     setForm({ ...form, [name]: { value, error, errorTxt } })
-    setEnableSubmitBtn(true)
+    setEnableSubmitBtn(!error ? true : false)
   }
 
   const handleSubmit = (event) => {
@@ -117,7 +120,7 @@ const SettingModal = (props) => {
 
     const data = new FormData(event.currentTarget)
 
-    updateUser(
+    updateAdmin(
       {
         _id: auth.user._id,
       },
@@ -170,6 +173,12 @@ const SettingModal = (props) => {
 
   return (
     <Modal handleClose={handleClose}>
+      {openPassModal && (
+        <PassModal
+          userId={auth.user._id}
+          handleClose={() => setOpenPassModal(false)}
+        />
+      )}
       {successAlert && (
         <AlertDialog
           text="Cập nhật thành công"
@@ -331,10 +340,20 @@ const SettingModal = (props) => {
               }}
             >
               <Button
+                startIcon={<LockOutlinedIcon />}
+                variant="text"
+                sx={{
+                  mr: 'auto',
+                }}
+                onClick={() => setOpenPassModal(true)}
+              >
+                Đổi mật khẩu
+              </Button>
+              <Button
                 type="submit"
                 variant="contained"
                 sx={{
-                  mr: 2,
+                  mr: 1,
                 }}
                 disabled={!enableSubmitBtn}
               >
