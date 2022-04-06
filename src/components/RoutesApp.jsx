@@ -14,6 +14,7 @@ import Injection from '../pages/Injection'
 import VaccineType from '../pages/VaccineType'
 import Login from '../pages/Login'
 import Profile from '../pages/Setting/Profile'
+import Article from '../pages/Article'
 
 import NoMatch from './NoMatch'
 
@@ -47,7 +48,7 @@ const RoutesApp = () => {
             <Route path="injection" element={<Injection />} />
             <Route path="vaccine-type" element={<VaccineType />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="notification" element={<Profile />} />
+            <Route path="article" element={<Article />} />
           </Route>
 
           <Route path="/login" element={<Login />} />

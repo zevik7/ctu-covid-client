@@ -20,6 +20,21 @@ import ViewModal from './ViewModal'
 
 import { getHealthDeclaraions } from '../../api'
 
+// import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer'
+
+// Create styles
+// const styles = StyleSheet.create({
+//   page: {
+//     flexDirection: 'row',
+//     backgroundColor: '#E4E4E4',
+//   },
+//   section: {
+//     margin: 10,
+//     padding: 10,
+//     flexGrow: 1,
+//   },
+// })
+
 const RelatedUsersModal = (props) => {
   const { data, handleClose } = props
 
@@ -45,8 +60,29 @@ const RelatedUsersModal = (props) => {
       .catch((errors) => console.log(errors))
   }, [timeFilterHour])
 
+  // Create Document Component
+  // const MyDocument = () => (
+  //   <Document>
+  //     <Page size="A4" style={styles.page}>
+  //       <View style={styles.section}>
+  //         <Text>Section #1</Text>
+  //       </View>
+  //       <View style={styles.section}>
+  //         <Text>Section #2</Text>
+  //       </View>
+  //     </Page>
+  //   </Document>
+  // )
+
   return (
-    <Modal handleClose={handleClose}>
+    <Modal
+      handleClose={handleClose}
+      sx={{
+        width: {
+          xl: '60%',
+        },
+      }}
+    >
       {seletedUser && (
         <ViewModal
           hideBtns={true}
@@ -89,6 +125,8 @@ const RelatedUsersModal = (props) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Tên</TableCell>
+                  <TableCell>Số điện thoại</TableCell>
+                  <TableCell>Địa chỉ</TableCell>
                   <TableCell>Vào lúc</TableCell>
                   <TableCell>Thao tác</TableCell>
                 </TableRow>
@@ -102,6 +140,8 @@ const RelatedUsersModal = (props) => {
                     <TableCell component="th" scope="row">
                       {relatedUser.user.name}
                     </TableCell>
+                    <TableCell>{relatedUser.user.phone}</TableCell>
+                    <TableCell>{relatedUser.user.address}</TableCell>
                     <TableCell>
                       {dateFormat(relatedUser.created_at, 'hh:mm dd-mm-yyyy')}
                     </TableCell>
@@ -138,6 +178,11 @@ const RelatedUsersModal = (props) => {
               borderColor: 'grey.500',
             }}
           >
+            {/* <PDFDownloadLink document={<MyDocument />} fileName="somename.pdf">
+              {({ blob, url, loading, error }) =>
+                loading ? 'Loading document...' : 'Download now!'
+              }
+            </PDFDownloadLink> */}
             <Button variant="text" onClick={handleClose}>
               Đóng
             </Button>

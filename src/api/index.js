@@ -22,3 +22,5 @@ export * from './positive_declaration'
 export * from './lookup'
 
 export * from './admin'
+
+export * from './article'

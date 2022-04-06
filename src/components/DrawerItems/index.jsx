@@ -10,12 +10,10 @@ import HistoryEduIcon from '@mui/icons-material/HistoryEdu'
 import VaccinesIcon from '@mui/icons-material/Vaccines'
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety'
 import Box from '@mui/material/Box'
-import NotificationsIcon from '@mui/icons-material/Notifications'
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
 import CoronavirusIcon from '@mui/icons-material/Coronavirus'
 
 import { Link as RouterLink, useResolvedPath, useMatch } from 'react-router-dom'
-
-import './style.module.scss'
 
 const LinkItem = (props) => {
   let resolved = useResolvedPath(props.to)
@@ -71,9 +69,9 @@ export const mainListItems = (
       text="Thông tin vắc-xin"
     />
     <LinkItem
-      to="/admin/notification"
-      icon={<NotificationsIcon />}
-      text="Quản lý thông báo"
+      to="/admin/article"
+      icon={<DescriptionOutlinedIcon />}
+      text="Quản lý bài viết"
     />
   </>
 )

@@ -10,7 +10,6 @@ import { Divider, ListItemButton } from '@mui/material'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Button from '@mui/material/Button'
-import List from '@mui/material/List'
 import ListItemText from '@mui/material/ListItemText'
 import Drawer from '@mui/material/Drawer'
 import Chip from '@mui/material/Chip'
@@ -21,10 +20,9 @@ import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined'
 import VaccinesOutlinedIcon from '@mui/icons-material/VaccinesOutlined'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined'
-import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined'
+import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined'
 
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation'
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined'
 
 import Map from '../../components/Map'
@@ -48,11 +46,12 @@ import {
   getPDGeneralStat,
   getPostitiveDeclarations,
   getInjectionGeneralStat,
+  getArticles,
 } from '../../api'
 
 export default function Home() {
-  const [openDrawer, setOpenDrawer] = useState(false)
   const [areaSeleted, setAreaSelected] = useState('local')
+  const [openDrawer, setOpenDrawer] = useState(false)
   const [openLookupModal, setOpenLookupModal] = useState(false)
   const [openArticleModal, setOpenArticleModal] = useState(false)
   const [openRegisterModal, setOpenRegisterModal] = useState(false)
@@ -66,6 +65,8 @@ export default function Home() {
   const [pdStat, setPDStat] = useState({})
   const [injectionStat, setInjectionStat] = useState({})
   const [positiveCaseDiffSubTxt, setPositiveCaseDiffSubTxt] = useState('')
+  const [articles, setArticles] = useState([])
+  const [articleModalData, setArticleModalData] = useState({})
 
   const toggleDrawer = (e) => {
     if (e.type === 'keydown' && (e.key === 'Tab' || e.key === 'Shift')) {
@@ -94,6 +95,8 @@ export default function Home() {
     getInjectionGeneralStat().then((rs) => {
       setInjectionStat(rs.data)
     })
+
+    getArticles().then((rs) => setArticles(rs.data.data))
   }, [])
 
   const calTotalCaseSubText = (posCase) => {
@@ -136,13 +139,21 @@ export default function Home() {
     </Box>
   )
 
+  const handleSelectArticle = (data) => {
+    setArticleModalData(data)
+    setOpenArticleModal(true)
+  }
+
   return (
     <>
       {openLookupModal && (
         <LookupModal handleClose={() => setOpenLookupModal(false)} />
       )}
       {openArticleModal && (
-        <ArticleModal handleClose={() => setOpenArticleModal(false)} />
+        <ArticleModal
+          handleClose={() => setOpenArticleModal(false)}
+          data={articleModalData}
+        />
       )}
       {openRegisterModal && (
         <RegisterModal handleClose={() => setOpenRegisterModal(false)} />
@@ -403,8 +414,9 @@ export default function Home() {
                 icon={<CoronavirusOutlinedIcon />}
                 label={<Typography>Những vị trí xuất hiện ca nhiễm</Typography>}
                 variant="outlined"
-                sx={{ mb: 1 }}
               />
+            </Grid>
+            <Grid item xs={12}>
               <Map
                 style={{
                   height: '600px',
@@ -416,48 +428,50 @@ export default function Home() {
                 useRedDotIcon={true}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12}>
               <Chip
                 icon={<QuizOutlinedIcon />}
-                color="primary"
-                label={<Typography>Hướng dẫn y tế</Typography>}
+                variant="outlined"
+                label={<Typography>Các bài viết liên quan</Typography>}
               />
-              <List>
-                <ListItemButton onClick={() => setOpenArticleModal(true)}>
-                  <ListItemText
-                    primary="Hướng dẫn gói chăm sóc sức khỏe tại nhà cho người F0, Hướng dẫn gói chăm sóc sức khỏe tại nhà cho người F0"
-                    secondary="Cập nhật lần cuối 24/03/2022"
-                    sx={{
-                      '.MuiTypography-root': {
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                      },
-                    }}
-                  />
-                </ListItemButton>
-              </List>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Chip
-                icon={<NotificationsNoneIcon />}
-                color="primary"
-                label={<Typography> Thông báo</Typography>}
-              />
-              <List>
-                <ListItemButton>
-                  <ListItemText
-                    primary="Thônng báo về tình hình dịch bệnh tại khu vực ngày 24/03"
+            <Grid
+              item
+              xs={12}
+              container
+              spacing={2}
+              sx={{
+                pb: 2,
+                maxHeight: '35vh',
+                overflow: 'auto',
+              }}
+            >
+              {articles.map((article, i) => (
+                <Grid key={i} item xs={12} md={6}>
+                  <ListItemButton
+                    onClick={() => handleSelectArticle(article)}
                     sx={{
-                      '.MuiTypography-root': {
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                      },
+                      boxShadow: 4,
                     }}
-                  />
-                </ListItemButton>
-              </List>
+                  >
+                    <ListItemText
+                      primary={article.title}
+                      secondary={
+                        'Cập nhật lần cuối ' +
+                        dateFormat(article.updated_at, 'dd/mm/yy')
+                      }
+                      sx={{
+                        '.MuiTypography-root': {
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                        },
+                      }}
+                    />
+                    {article.pinned && <PushPinOutlinedIcon />}
+                  </ListItemButton>
+                </Grid>
+              ))}
             </Grid>
           </Grid>
         </Grid>
