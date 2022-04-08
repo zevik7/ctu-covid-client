@@ -141,7 +141,10 @@ const RelatedUsersModal = (props) => {
                     <TableCell>{relatedUser.user.phone}</TableCell>
                     <TableCell>{relatedUser.user.address}</TableCell>
                     <TableCell>
-                      {dateFormat(relatedUser.created_at, 'hh:mm dd-mm-yyyy')}
+                      {dateFormat(
+                        relatedUser.created_at,
+                        'HH:MM TT dd-mm-yyyy'
+                      )}
                     </TableCell>
                     <TableCell>
                       <Button

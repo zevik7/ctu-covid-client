@@ -47,7 +47,7 @@ const handleRenderTableRow = (row) => {
       <TableCell>{row.user.name}</TableCell>
       <TableCell>{row.user.phone}</TableCell>
       <TableCell>{row.location.name}</TableCell>
-      <TableCell>{dateFormat(row.created_at, 'hh:mm dd-mm-yyyy')}</TableCell>
+      <TableCell>{dateFormat(row.created_at, 'HH:MM TT dd-mm-yyyy')}</TableCell>
       <TableCell>
         {row.severe_symptoms && (
           <Box

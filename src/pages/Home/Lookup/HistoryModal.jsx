@@ -92,7 +92,7 @@ const HistoryModal = (props) => {
           {declarations.map((declaration, index) => (
             <Grid key={index} item xs={12} md={6} lg={4}>
               <Typography align="center" color="primary.main">
-                {dateFormat(declaration.created_at, 'hh:mm dd/mm/yyyy')}
+                {dateFormat(declaration.created_at, 'HH:MM TT dd/mm/yyyy')}
               </Typography>
               <Typography align="center">
                 {declaration.location.name}
