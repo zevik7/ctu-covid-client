@@ -20,8 +20,6 @@ import ViewModal from './ViewModal'
 
 import { getHealthDeclaraions } from '../../api'
 
-// import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer'
-
 // Create styles
 // const styles = StyleSheet.create({
 //   page: {

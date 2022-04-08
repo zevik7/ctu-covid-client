@@ -41,6 +41,7 @@ import ArticleModal from './ArticleModal'
 import PositiveDeclarationModal from './PositiveDeclarationModal'
 import NegativeDeclarationModal from './NegativeDeclarationModal'
 import RegisterModal from './RegisterModal'
+import WorldStat from './WorldStat'
 
 import {
   getPDGeneralStat,
@@ -184,6 +185,7 @@ export default function Home() {
           spacing={2}
           justifyContent="space-between"
           alignItems="center"
+          sx={{ mb: 1 }}
         >
           <Grid item xs={'auto'}>
             <Logo
@@ -257,20 +259,29 @@ export default function Home() {
               }}
             >
               <ToggleButton value="local">Khu vực</ToggleButton>
-              <ToggleButton value="vietnam">Việt Nam</ToggleButton>
               <ToggleButton value="world">Thế giới</ToggleButton>
             </ToggleButtonGroup>
           </Grid>
-          <Grid item xs={12} container justifyContent={'center'} spacing={2}>
-            <Grid item xs={4}>
+        </Grid>
+        {areaSeleted === 'local' && (
+          <Grid
+            container
+            spacing={2}
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={12} sm={4}>
               <Card
                 title={'Số ca nhiễm'}
                 text={pdStat.total}
                 type="warning.main"
                 subText={positiveCaseDiffSubTxt}
+                sx={{
+                  textAlign: 'center',
+                }}
               />
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={12} sm={4}>
               <Card
                 title={'Số ca nặng'}
                 text={pdStat.total_serious_case}
@@ -280,9 +291,12 @@ export default function Home() {
                   Math.floor((pdStat.total_serious_case * 100) / pdStat.total) +
                   '%'
                 }
+                sx={{
+                  textAlign: 'center',
+                }}
               />
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={12} sm={4}>
               <Card
                 title={'Số ca khỏi'}
                 text={pdStat.total_recovered}
@@ -292,10 +306,11 @@ export default function Home() {
                   Math.floor((pdStat.total_recovered * 100) / pdStat.total) +
                   '%'
                 }
+                sx={{
+                  textAlign: 'center',
+                }}
               />
             </Grid>
-          </Grid>
-          <Grid container item spacing={2}>
             <Grid item xs={12} md={6} container>
               <Grid item xs={12}>
                 <Chip
@@ -357,6 +372,8 @@ export default function Home() {
                   label={<Typography>Biểu đồ số ca nhiễm</Typography>}
                   sx={{ mb: 1 }}
                 />
+              </Grid>
+              <Grid item xs={12}>
                 {pdStat.by_date && (
                   <Chart
                     options={{
@@ -379,6 +396,10 @@ export default function Home() {
                         name: 'Triệu chứng nặng',
                         data: pdStat.by_date.serious_case,
                       },
+                      {
+                        name: 'Số ca khỏi',
+                        data: pdStat.by_date.recovered_case,
+                      },
                     ]}
                     width="100%"
                     height={200}
@@ -391,7 +412,7 @@ export default function Home() {
                 icon={<QuizOutlinedIcon />}
                 label={<Typography>Các điểm khai báo y tế</Typography>}
                 variant="outlined"
-                sx={{ mb: 1 }}
+                sx={{ mb: 2 }}
               />
               <Map
                 markers={
@@ -405,9 +426,6 @@ export default function Home() {
                   height: '400px',
                 }}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <Divider />
             </Grid>
             <Grid item xs={12}>
               <Chip
@@ -474,7 +492,8 @@ export default function Home() {
               ))}
             </Grid>
           </Grid>
-        </Grid>
+        )}
+        {areaSeleted === 'world' && <WorldStat />}
         <Copyright />
       </Container>
     </>

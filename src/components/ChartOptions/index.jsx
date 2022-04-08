@@ -18,7 +18,7 @@ export const LineWithLabelsPositiveCase = {
       show: false,
     },
   },
-  colors: ['#ed6c02', '#ef5350'],
+  colors: ['#ed6c02', '#ef5350', '#00e676'],
   dataLabels: {
     enabled: true,
   },
@@ -58,6 +58,50 @@ export const LineWithLabelsPositiveCase = {
     title: {
       text: 'Số ca nhiễm',
     },
+  },
+}
+
+export const ZoomableTimePositiveCase = {
+  chart: {
+    ...globalOptions,
+    type: 'area',
+    stacked: false,
+    height: 500,
+    zoom: {
+      type: 'x',
+      enabled: true,
+      autoScaleYaxis: true,
+    },
+    toolbar: {
+      autoSelected: 'zoom',
+    },
+  },
+  colors: ['#ed6c02', '#ef5350', '#00e676'],
+  dataLabels: {
+    enabled: false,
+  },
+  markers: {
+    size: 0,
+  },
+  title: {
+    text: 'Biểu đồ số ca nhiễm',
+    align: 'left',
+  },
+  yaxis: {
+    title: {
+      text: 'Số ca',
+    },
+  },
+  xaxis: {
+    type: 'datetime',
+    labels: {
+      formatter: function (value) {
+        return dateFormat(value, 'dd/mm/yy')
+      },
+    },
+  },
+  tooltip: {
+    shared: false,
   },
 }
 
