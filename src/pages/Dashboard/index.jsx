@@ -165,10 +165,7 @@ export default function Home() {
                         return (
                           seriesName +
                           ' ' +
-                          Math.floor(
-                            (opts.w.globals.series[opts.seriesIndex] * 100) /
-                              injectionStat.total
-                          ) +
+                          opts.w.globals.series[opts.seriesIndex] +
                           ' %'
                         )
                       },
@@ -209,6 +206,10 @@ export default function Home() {
                     {
                       name: 'Triệu chứng nặng',
                       data: pdStat.by_date.serious_case,
+                    },
+                    {
+                      name: 'Số ca khỏi',
+                      data: pdStat.by_date.recovered_case,
                     },
                   ]}
                   width="100%"

@@ -95,6 +95,7 @@ export default function Home() {
 
     getInjectionGeneralStat().then((rs) => {
       setInjectionStat(rs.data)
+      console.log(rs.data)
     })
 
     getArticles().then((rs) => setArticles(rs.data.data))
@@ -349,11 +350,8 @@ export default function Home() {
                           return (
                             seriesName +
                             ' ' +
-                            Math.floor(
-                              (opts.w.globals.series[opts.seriesIndex] * 100) /
-                                injectionStat.total
-                            ) +
-                            ' %'
+                            opts.w.globals.series[opts.seriesIndex] +
+                            '%'
                           )
                         },
                       },
