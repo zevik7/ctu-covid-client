@@ -38,7 +38,10 @@ const PositiveDeclarationModal = (props) => {
       value: new Date(),
       errTxt: '',
     },
-    severe_symptoms: false,
+    severe_symptoms: {
+      value: false,
+      errTxt: '',
+    },
     location: {
       position: { lat: '', lng: '' },
     },
@@ -48,6 +51,7 @@ const PositiveDeclarationModal = (props) => {
   const handleInput = (e) => {
     const name = e.target.name
     const value = e.target.value
+
     let errTxt = ''
 
     if (!value) {
@@ -233,7 +237,7 @@ const PositiveDeclarationModal = (props) => {
                 aria-labelledby="severe_symptoms"
                 name="severe_symptoms"
                 sx={{ justifyContent: 'center' }}
-                value={form.severe_symptoms}
+                value={form.severe_symptoms.value}
                 onChange={(e) => handleInput(e)}
               >
                 <FormControlLabel

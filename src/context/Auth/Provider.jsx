@@ -4,13 +4,13 @@ import { AuthContext } from './Context'
 import { setTokenApi } from '../../api'
 
 const getStorageUser = () => {
-  const userString = localStorage.getItem('user')
+  const userString = localStorage.getItem('ctu-covid-user')
   const user = JSON.parse(userString)
   return user
 }
 
 const setStorageUser = (user) => {
-  localStorage.setItem('user', JSON.stringify(user))
+  localStorage.setItem('ctu-covid-user', JSON.stringify(user))
 }
 
 const AuthProvider = ({ children }) => {

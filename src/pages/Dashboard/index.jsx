@@ -34,6 +34,7 @@ import Card from '../../components/Card'
 import {
   LineWithLabelsPositiveCase,
   PieChartInjection,
+  ZoomableTimeHealthDeclaCount,
 } from '../../components/ChartOptions'
 
 import { getLocations } from '../../api'
@@ -42,20 +43,17 @@ import {
   getPDGeneralStat,
   getPostitiveDeclarations,
   getInjectionGeneralStat,
+  getHDGeneralStat,
 } from '../../api'
 
 export default function Home() {
-  const [locations, setLocations] = useState([])
   const [positiveDecla, setPositiveDecla] = useState([]) // For map
   const [pdStat, setPDStat] = useState({})
   const [injectionStat, setInjectionStat] = useState({})
   const [positiveCaseDiffSubTxt, setPositiveCaseDiffSubTxt] = useState('')
+  const [hdStat, setHdStat] = useState('')
 
   useEffect(() => {
-    getLocations()
-      .then((rs) => setLocations(rs.data.data))
-      .catch((err) => console.log(err))
-
     getPDGeneralStat()
       .then((rs) => {
         setPDStat(rs.data)
@@ -69,6 +67,10 @@ export default function Home() {
 
     getInjectionGeneralStat().then((rs) => {
       setInjectionStat(rs.data)
+    })
+
+    getHDGeneralStat().then((rs) => {
+      setHdStat(rs.data)
     })
   }, [])
 
@@ -129,11 +131,17 @@ export default function Home() {
         <Grid container item spacing={2}>
           <Grid item xs={12} md={6} container>
             <Grid item xs={12}>
-              <Chip
-                icon={<VaccinesOutlinedIcon />}
-                variant="outlined"
-                label={<Typography>Thống kê tiêm vắc-xin</Typography>}
-              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <VaccinesOutlinedIcon />
+                <Typography variant="h6" marginLeft={1}>
+                  Thống kê tiêm vắc xin
+                </Typography>
+              </Box>
             </Grid>
             <Grid
               item
@@ -179,12 +187,19 @@ export default function Home() {
               )}
             </Grid>
             <Grid item xs={12}>
-              <Chip
-                icon={<BarChartOutlinedIcon />}
-                variant="outlined"
-                label={<Typography>Biểu đồ số ca nhiễm</Typography>}
-                sx={{ mb: 1 }}
-              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <BarChartOutlinedIcon />
+                <Typography variant="h6" marginLeft={1}>
+                  Biểu đồ số ca nhiễm
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
               {pdStat.by_date && (
                 <Chart
                   options={{
@@ -218,36 +233,52 @@ export default function Home() {
               )}
             </Grid>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Chip
-              icon={<QuizOutlinedIcon />}
-              label={<Typography>Các điểm khai báo y tế</Typography>}
-              variant="outlined"
-              sx={{ mb: 1 }}
-            />
-            <Map
-              markers={
-                locations &&
-                locations.map((location, index) => ({
-                  position: location.position,
-                  popup: location.name,
-                }))
-              }
-              style={{
-                height: '400px',
+          <Grid item xs={12} md={6} container>
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <QuizOutlinedIcon />
+                <Typography variant="h6" marginLeft={1}>
+                  Biểu đồ số lượt khai báo
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              {hdStat && (
+                <Chart
+                  width="100%"
+                  height={400}
+                  options={{
+                    ...ZoomableTimeHealthDeclaCount,
+                  }}
+                  series={[
+                    {
+                      name: 'Số ca nhiễm',
+                      data: hdStat.count_by_timestamp,
+                    },
+                  ]}
+                />
+              )}
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
               }}
-            />
+            >
+              <CoronavirusOutlinedIcon />
+              <Typography variant="h6" marginLeft={1}>
+                Những vị trí xuất hiện ca nhiễm
+              </Typography>
+            </Box>
           </Grid>
           <Grid item xs={12}>
-            <Divider />
-          </Grid>
-          <Grid item xs={12}>
-            <Chip
-              icon={<CoronavirusOutlinedIcon />}
-              label={<Typography>Những vị trí xuất hiện ca nhiễm</Typography>}
-              variant="outlined"
-              sx={{ mb: 1 }}
-            />
             <Map
               style={{
                 height: '600px',
@@ -261,7 +292,6 @@ export default function Home() {
           </Grid>
         </Grid>
       </Grid>
-      <Copyright />
     </>
   )
 }

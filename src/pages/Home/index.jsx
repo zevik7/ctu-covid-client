@@ -95,7 +95,6 @@ export default function Home() {
 
     getInjectionGeneralStat().then((rs) => {
       setInjectionStat(rs.data)
-      console.log(rs.data)
     })
 
     getArticles().then((rs) => setArticles(rs.data.data))
@@ -265,12 +264,7 @@ export default function Home() {
           </Grid>
         </Grid>
         {areaSeleted === 'local' && (
-          <Grid
-            container
-            spacing={2}
-            justifyContent="space-between"
-            alignItems="center"
-          >
+          <Grid container spacing={2} justifyContent="space-between">
             <Grid item xs={12} sm={4}>
               <Card
                 title={'Số ca nhiễm'}
@@ -314,11 +308,17 @@ export default function Home() {
             </Grid>
             <Grid item xs={12} md={6} container>
               <Grid item xs={12}>
-                <Chip
-                  icon={<VaccinesOutlinedIcon />}
-                  variant="outlined"
-                  label={<Typography>Thống kê tiêm vắc-xin</Typography>}
-                />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <VaccinesOutlinedIcon />
+                  <Typography variant="h6" marginLeft={1}>
+                    Thống kê tiêm vắc xin
+                  </Typography>
+                </Box>
               </Grid>
               <Grid
                 item
@@ -364,12 +364,17 @@ export default function Home() {
                 )}
               </Grid>
               <Grid item xs={12}>
-                <Chip
-                  icon={<BarChartOutlinedIcon />}
-                  variant="outlined"
-                  label={<Typography>Biểu đồ số ca nhiễm</Typography>}
-                  sx={{ mb: 1 }}
-                />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <BarChartOutlinedIcon />
+                  <Typography variant="h6" marginLeft={1}>
+                    Biểu đồ số ca nhiễm
+                  </Typography>
+                </Box>
               </Grid>
               <Grid item xs={12}>
                 {pdStat.by_date && (
@@ -405,32 +410,47 @@ export default function Home() {
                 )}
               </Grid>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Chip
-                icon={<QuizOutlinedIcon />}
-                label={<Typography>Các điểm khai báo y tế</Typography>}
-                variant="outlined"
-                sx={{ mb: 2 }}
-              />
-              <Map
-                markers={
-                  locations &&
-                  locations.map((location, index) => ({
-                    position: location.position,
-                    popup: location.name,
-                  }))
-                }
-                style={{
-                  height: '400px',
-                }}
-              />
+            <Grid item xs={12} md={6} container>
+              <Grid item xs={12}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <QuizOutlinedIcon />
+                  <Typography variant="h6" marginLeft={1}>
+                    Các điểm khai báo y tế
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12}>
+                <Map
+                  markers={
+                    locations &&
+                    locations.map((location, index) => ({
+                      position: location.position,
+                      popup: location.name,
+                    }))
+                  }
+                  style={{
+                    height: '400px',
+                  }}
+                />
+              </Grid>
             </Grid>
             <Grid item xs={12}>
-              <Chip
-                icon={<CoronavirusOutlinedIcon />}
-                label={<Typography>Những vị trí xuất hiện ca nhiễm</Typography>}
-                variant="outlined"
-              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <CoronavirusOutlinedIcon />
+                <Typography variant="h6" marginLeft={1}>
+                  Những vị trí xuất hiện ca nhiễm
+                </Typography>
+              </Box>
             </Grid>
             <Grid item xs={12}>
               <Map
@@ -445,11 +465,15 @@ export default function Home() {
               />
             </Grid>
             <Grid item xs={12}>
-              <Chip
-                icon={<QuizOutlinedIcon />}
-                variant="outlined"
-                label={<Typography>Các bài viết liên quan</Typography>}
-              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <QuizOutlinedIcon />
+                <Typography variant="h6">Các bài viết liên quan</Typography>
+              </Box>
             </Grid>
             <Grid
               item

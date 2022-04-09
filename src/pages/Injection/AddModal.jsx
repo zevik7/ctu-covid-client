@@ -51,7 +51,7 @@ const AddModal = (props) => {
 
   useEffect(() => {
     getUsers({
-      search: searchText,
+      searchText,
       currentPage: 1,
       perPage: 20,
     }).then((rs) => {

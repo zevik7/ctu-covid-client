@@ -110,7 +110,11 @@ const MainAppBar = (props) => {
         >
           {process.env.REACT_APP_WEBSITE_NAME_SHORT}
         </Typography>
-        <MaterialUISwitch sx={{ m: 1 }} onChange={colorMode.toggleColorMode} />
+        <MaterialUISwitch
+          sx={{ m: 1 }}
+          onChange={colorMode.toggleColorMode}
+          defaultChecked={colorMode.value === 'light' ? false : true}
+        />
         <AccountMenu />
       </Toolbar>
     </AppBar>

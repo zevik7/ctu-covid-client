@@ -105,6 +105,49 @@ export const ZoomableTimePositiveCase = {
   },
 }
 
+export const ZoomableTimeHealthDeclaCount = {
+  chart: {
+    ...globalOptions,
+    type: 'area',
+    stacked: false,
+    height: 500,
+    zoom: {
+      type: 'x',
+      enabled: true,
+      autoScaleYaxis: true,
+    },
+    toolbar: {
+      autoSelected: 'zoom',
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  markers: {
+    size: 0,
+  },
+  title: {
+    text: 'Biểu đồ số ca nhiễm',
+    align: 'left',
+  },
+  yaxis: {
+    title: {
+      text: 'Số ca',
+    },
+  },
+  xaxis: {
+    type: 'datetime',
+    labels: {
+      formatter: function (value) {
+        return dateFormat(value, 'dd/mm/yy')
+      },
+    },
+  },
+  tooltip: {
+    shared: false,
+  },
+}
+
 export const PieChartInjection = {
   chart: {
     ...globalOptions,

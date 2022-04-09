@@ -6,13 +6,26 @@ import { viVN } from '@mui/material/locale'
 import { ThemeContext } from './Context'
 import grey from '@mui/material/colors/grey'
 
+const getStorageTheme = () => {
+  return localStorage.getItem('ctu-covid-theme')
+}
+
+const setStorageTheme = (theme) => {
+  localStorage.setItem('ctu-covid-theme', theme)
+}
+
 const ThemeProvider = (props) => {
-  const [mode, setMode] = useState('light')
+  const [mode, setMode] = useState(getStorageTheme() || 'light')
 
   const colorMode = useMemo(
     () => ({
+      value: mode,
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'))
+        setMode((prevMode) => {
+          const newMode = prevMode === 'light' ? 'dark' : 'light'
+          setStorageTheme(newMode)
+          return newMode
+        })
       },
     }),
     []
