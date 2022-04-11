@@ -142,7 +142,7 @@ const Injection = () => {
   }
 
   return (
-    <Paper>
+    <>
       {openEditModal && (
         <EditModal
           data={editModalData}
@@ -190,7 +190,7 @@ const Injection = () => {
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
       />
-    </Paper>
+    </>
   )
 }
 
