@@ -27,7 +27,7 @@ const MainModal = (props) => {
   const [form, setForm] = useState({
     name: { value: data.name || '', error: false, errorTxt: '' },
     country: { value: data.country || '', error: false, errorTxt: '' },
-    description: { value: data.description || '', error: false, errorTxt: '' },
+    description: '',
   })
 
   const handleInput = (e) => {
@@ -48,7 +48,9 @@ const MainModal = (props) => {
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(form).find((key, index) => form[key].error)
+    const isError = Object.keys(form).find(
+      (key, index) => form[key] && !form[key].value
+    )
 
     if (isError) return
 
@@ -56,7 +58,6 @@ const MainModal = (props) => {
 
     try {
       if (_id) {
-        console.log('r')
         await updateVaccineType({ _id }, data)
       } else {
         await storeVaccineType(data)
@@ -120,12 +121,13 @@ const MainModal = (props) => {
               label="Mô tả"
               placeholder="Nhập mô tả..."
               name="description"
-              d
               fullWidth
               multiline
               rows={6}
-              value={form.description.value}
-              onChange={(e) => handleInput(e)}
+              value={form.description}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
             />
           </Grid>
           <Grid item xs={12}>
@@ -139,7 +141,7 @@ const MainModal = (props) => {
                 type="submit"
                 variant="contained"
                 sx={{
-                  mr: 2,
+                  mr: 1,
                 }}
                 disabled={!enableSubmitBtn}
               >

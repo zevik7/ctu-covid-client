@@ -12,7 +12,7 @@ export const LineWithLabelsPositiveCase = {
       top: 18,
       left: 7,
       blur: 10,
-      opacity: 0.2,
+      opacity: 0.1,
     },
     toolbar: {
       show: true,
@@ -112,7 +112,7 @@ export const ZoomableTimePositiveCase = {
   fill: {
     type: 'gradient',
     gradient: {
-      shadeIntensity: 0.5,
+      shadeIntensity: 0,
       inverseColors: false,
       opacityFrom: 1,
       opacityTo: 0.8,
@@ -137,6 +137,14 @@ export const ZoomableTimeHealthDeclaCount = {
     },
     toolbar: {
       autoSelected: 'zoom',
+    },
+    dropShadow: {
+      enabled: true,
+      color: '#000',
+      top: 18,
+      left: 7,
+      blur: 10,
+      opacity: 0.1,
     },
   },
   dataLabels: {

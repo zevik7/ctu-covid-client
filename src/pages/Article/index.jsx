@@ -3,6 +3,8 @@ import dateFormat from 'dateformat'
 import { Box, Paper } from '@mui/material'
 import TableCell from '@mui/material/TableCell'
 
+import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined'
+
 import TableToolbar from '../../components/TableToolbar'
 import Table from '../../components/Table'
 import TablePagination from '../../components/TablePagination'
@@ -30,7 +32,14 @@ const tableHeadCells = [
 
 const handleRenderTableRow = (row) => (
   <>
-    <TableCell>{row.title}</TableCell>
+    <TableCell
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
+      {row.pinned && <PushPinOutlinedIcon fontSize="small" />} {row.title}
+    </TableCell>
     <TableCell>{row.created_by.name}</TableCell>
     <TableCell>{dateFormat(row.updated_at, 'dd/mm/yyyy')}</TableCell>
   </>

@@ -1,6 +1,8 @@
 import { Box, Avatar, Typography } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
 const Logo = (props) => {
+  const navigate = useNavigate()
   return (
     <Box
       sx={[
@@ -8,9 +10,11 @@ const Logo = (props) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          cursor: 'pointer',
         },
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
       ]}
+      onClick={() => navigate('/')}
     >
       <img
         src="/logo.png"

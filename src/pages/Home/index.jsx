@@ -469,7 +469,9 @@ export default function Home() {
                 }}
               >
                 <QuizOutlinedIcon />
-                <Typography variant="h6">Các bài viết liên quan</Typography>
+                <Typography variant="h6" marginLeft={1}>
+                  Các bài viết liên quan
+                </Typography>
               </Box>
             </Grid>
             <Grid
