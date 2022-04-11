@@ -14,6 +14,10 @@ export default function Card(props) {
           borderBottom: 1,
           borderColor: props.type || 'text.primary',
           p: 2,
+          textAlign: {
+            xs: 'center',
+            sm: 'left',
+          },
         },
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
       ]}

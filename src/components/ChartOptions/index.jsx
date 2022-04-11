@@ -1,10 +1,10 @@
 import dateFormat from 'dateformat'
-import globalOptions from './globalOptions'
+import options from './globalOptions'
 
 export const LineWithLabelsPositiveCase = {
   chart: {
-    ...globalOptions,
-    height: 300, // Default height
+    ...options.chart,
+    height: 200, // Default height
     type: 'line',
     dropShadow: {
       enabled: true,
@@ -15,7 +15,8 @@ export const LineWithLabelsPositiveCase = {
       opacity: 0.2,
     },
     toolbar: {
-      show: false,
+      show: true,
+      autoSelected: 'reset',
     },
   },
   colors: ['#ed6c02', '#ef5350', '#00e676'],
@@ -31,11 +32,11 @@ export const LineWithLabelsPositiveCase = {
     position: 'top',
     horizontalAlign: 'right',
     floating: true,
-    offsetY: -25,
-    offsetX: -5,
+    offsetY: -5,
+    offsetX: 0,
   },
   title: {
-    text: 'Ghi chú',
+    text: 'Trong 7 ngày gần nhất',
     align: 'left',
   },
   grid: {
@@ -63,7 +64,7 @@ export const LineWithLabelsPositiveCase = {
 
 export const ZoomableTimePositiveCase = {
   chart: {
-    ...globalOptions,
+    ...options.chart,
     type: 'area',
     stacked: false,
     height: 500,
@@ -74,6 +75,14 @@ export const ZoomableTimePositiveCase = {
     },
     toolbar: {
       autoSelected: 'zoom',
+    },
+    dropShadow: {
+      enabled: true,
+      color: '#000',
+      top: 18,
+      left: 7,
+      blur: 10,
+      opacity: 0.2,
     },
   },
   colors: ['#ed6c02', '#ef5350', '#00e676'],
@@ -84,12 +93,12 @@ export const ZoomableTimePositiveCase = {
     size: 0,
   },
   title: {
-    text: 'Biểu đồ số ca nhiễm',
+    text: 'Toàn bộ thời gian',
     align: 'left',
   },
   yaxis: {
     title: {
-      text: 'Số ca',
+      text: 'Số ca nhiễm',
     },
   },
   xaxis: {
@@ -100,6 +109,16 @@ export const ZoomableTimePositiveCase = {
       },
     },
   },
+  fill: {
+    type: 'gradient',
+    gradient: {
+      shadeIntensity: 0.5,
+      inverseColors: false,
+      opacityFrom: 1,
+      opacityTo: 0.8,
+      stops: [0, 90, 100],
+    },
+  },
   tooltip: {
     shared: false,
   },
@@ -107,10 +126,10 @@ export const ZoomableTimePositiveCase = {
 
 export const ZoomableTimeHealthDeclaCount = {
   chart: {
-    ...globalOptions,
+    ...options.chart,
     type: 'area',
     stacked: false,
-    height: 500,
+    height: 400,
     zoom: {
       type: 'x',
       enabled: true,
@@ -127,7 +146,7 @@ export const ZoomableTimeHealthDeclaCount = {
     size: 0,
   },
   title: {
-    text: 'Biểu đồ số ca nhiễm',
+    text: 'Trong 30 ngày gần nhất',
     align: 'left',
   },
   yaxis: {
@@ -143,6 +162,16 @@ export const ZoomableTimeHealthDeclaCount = {
       },
     },
   },
+  fill: {
+    type: 'gradient',
+    gradient: {
+      shadeIntensity: 0.5,
+      inverseColors: false,
+      opacityFrom: 1,
+      opacityTo: 0.8,
+      stops: [0, 90, 100],
+    },
+  },
   tooltip: {
     shared: false,
   },
@@ -150,10 +179,10 @@ export const ZoomableTimeHealthDeclaCount = {
 
 export const PieChartInjection = {
   chart: {
-    ...globalOptions,
+    ...options.chart,
     type: 'radialBar',
-    width: 400,
-    height: 300,
+    width: '100%',
+    height: 200,
   },
   plotOptions: {
     radialBar: {
@@ -177,7 +206,7 @@ export const PieChartInjection = {
       },
     },
   },
-  colors: ['#4b9fea', '#1e88e5', '#155fa0'],
+  colors: ['#4b9fea', '#1769aa', '#2c387e'],
   labels: ['Mũi 1', 'Mũi 2', 'Mũi 3'],
   legend: {
     show: true,
@@ -193,20 +222,22 @@ export const PieChartInjection = {
       size: 0,
     },
     formatter: function (seriesName, opts) {
-      return seriesName + ' ' + opts.w.globals.series[opts.seriesIndex]
+      return (
+        seriesName + ' ' + opts.w.globals.series[opts.seriesIndex] + '% người'
+      )
     },
     itemMargin: {
       vertical: 3,
     },
   },
   responsive: [
-    // {
-    //   breakpoint: 480,
-    //   options: {
-    //     legend: {
-    //       show: false,
-    //     },
-    //   },
-    // },
+    {
+      breakpoint: 480,
+      options: {
+        legend: {
+          show: false,
+        },
+      },
+    },
   ],
 }

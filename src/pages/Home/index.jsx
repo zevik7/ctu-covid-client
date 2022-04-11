@@ -265,15 +265,13 @@ export default function Home() {
         </Grid>
         {areaSeleted === 'local' && (
           <Grid container spacing={2} justifyContent="space-between">
+            {/* Cards */}
             <Grid item xs={12} sm={4}>
               <Card
                 title={'Số ca nhiễm'}
                 text={pdStat.total}
                 type="warning.main"
                 subText={positiveCaseDiffSubTxt}
-                sx={{
-                  textAlign: 'center',
-                }}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -286,9 +284,6 @@ export default function Home() {
                   Math.floor((pdStat.total_serious_case * 100) / pdStat.total) +
                   '%'
                 }
-                sx={{
-                  textAlign: 'center',
-                }}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -301,12 +296,10 @@ export default function Home() {
                   Math.floor((pdStat.total_recovered * 100) / pdStat.total) +
                   '%'
                 }
-                sx={{
-                  textAlign: 'center',
-                }}
               />
             </Grid>
-            <Grid item xs={12} md={6} container>
+            {/* End cards */}
+            <Grid item xs={12} md={6} container spacing={1}>
               <Grid item xs={12}>
                 <Box
                   sx={{
@@ -328,35 +321,39 @@ export default function Home() {
                 alignItems={'center'}
                 justifyContent="center"
               >
-                <Typography
-                  variant="h5"
-                  align="center"
-                  color={'success.main'}
-                  sx={{
-                    mt: 1,
-                  }}
-                >
-                  Tổng người đã tiêm: {injectionStat.total}
-                </Typography>
+                {injectionStat.by_time && (
+                  <Typography
+                    variant="h5"
+                    align="center"
+                    color={'success.main'}
+                    sx={{
+                      mt: 1,
+                    }}
+                  >
+                    Tổng người đã tiêm: {injectionStat.total}
+                    <Typography
+                      variant="subtitle2"
+                      color={'success.main'}
+                      component="div"
+                    >
+                      Chiếm{' '}
+                      {Math.floor(
+                        (injectionStat.total * 100) / injectionStat.total_user
+                      )}
+                      % người dùng
+                    </Typography>
+                  </Typography>
+                )}
               </Grid>
               <Grid item xs={12} sm={7}>
                 {injectionStat.by_time && (
                   <Chart
                     options={{
                       ...PieChartInjection,
-                      legend: {
-                        ...PieChartInjection.legend,
-                        formatter: function (seriesName, opts) {
-                          return (
-                            seriesName +
-                            ' ' +
-                            opts.w.globals.series[opts.seriesIndex] +
-                            '%'
-                          )
-                        },
-                      },
                     }}
-                    series={injectionStat.by_time.time}
+                    series={injectionStat.by_time.data.map((time) =>
+                      Math.floor((time * 100) / injectionStat.total_user)
+                    )}
                     type="radialBar"
                     width={'100%'}
                     height={200}
@@ -410,7 +407,7 @@ export default function Home() {
                 )}
               </Grid>
             </Grid>
-            <Grid item xs={12} md={6} container>
+            <Grid item xs={12} md={6} container spacing={1}>
               <Grid item xs={12}>
                 <Box
                   sx={{

@@ -6,8 +6,10 @@ export const getHealthDeclaraions = (params) =>
     params,
   })
 
-export const getHDGeneralStat = () =>
-  axios.get(`/heath_declaration/general_stat`)
+export const getHDGeneralStat = (params) =>
+  axios.get(`/heath_declaration/general_stat`, {
+    params,
+  })
 
 // Require auth
 export const updateDeclaration = (params, data) =>
