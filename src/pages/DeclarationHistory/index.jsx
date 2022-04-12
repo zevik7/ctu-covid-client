@@ -39,7 +39,6 @@ const tableHeadCells = [
 ]
 
 const handleRenderTableRow = (row) => {
-  console.log(row.created_at)
   return (
     <>
       <TableCell>{row.user.name}</TableCell>
@@ -124,9 +123,9 @@ const DeclarationHistory = () => {
     callApi(currentPage, +event.target.value)
   }
 
-  const handleOnSearchChange = (e) => {
-    setSearchText(e.target.value)
-    callApi(1, perPage, e.target.value)
+  const handleOnSearchChange = (newText) => {
+    setSearchText(newText)
+    callApi(1, perPage, newText)
   }
 
   return (

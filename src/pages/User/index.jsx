@@ -128,9 +128,9 @@ const User = () => {
     callApi(currentPage, +event.target.value, searchText)
   }
 
-  const handleOnSearchChange = (e) => {
-    setSearchText(e.target.value)
-    callApi(1, perPage, e.target.value)
+  const handleOnSearchChange = (newText) => {
+    setSearchText(newText)
+    callApi(1, perPage, newText)
   }
 
   return (
@@ -145,7 +145,7 @@ const User = () => {
       )}
       <SearchBar
         popoverContent="Có thể tìm kiếm bằng tên, số điện thoại, email, địa chỉ của người dùng"
-        handleOnChange={handleOnSearchChange}
+        handleOnChange={(newText) => handleOnSearchChange(newText)}
         value={searchText}
       />
       <TableToolbar

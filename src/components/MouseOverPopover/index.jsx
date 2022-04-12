@@ -23,6 +23,13 @@ export default function MouseOverPopover(props) {
         aria-haspopup="true"
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
+        sx={[
+          {
+            display: 'flex',
+            alignItems: 'center',
+          },
+          ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
+        ]}
       >
         {props.holder}
       </Box>

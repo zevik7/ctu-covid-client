@@ -175,9 +175,9 @@ const DeclarationHistory = () => {
     })
   }
 
-  const handleOnSearchChange = (e) => {
-    setSearchText(e.target.value)
-    callApi(1, perPage, e.target.value)
+  const handleOnSearchChange = (newText) => {
+    setSearchText(newText)
+    callApi(1, perPage, newText)
   }
 
   return (
