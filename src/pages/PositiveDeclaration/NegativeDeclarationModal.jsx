@@ -16,11 +16,11 @@ import { updatePostitiveDeclaration } from '../../api'
 import dateFormat from 'dateformat'
 
 const NegativeDeclarationModal = (props) => {
-  const { handleClose, handleOpenPositiveModal } = props
+  const { handleClose, handleOpenRegisterModal, handleOpenPositiveModal } =
+    props
 
   const [successAlert, setSuccessAlert] = useState(false)
   const [errorAlertTxt, setErrorAlertTxt] = useState(false)
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [form, setForm] = useState({
     user_identity: {
@@ -47,17 +47,13 @@ const NegativeDeclarationModal = (props) => {
     }
 
     setForm({ ...form, [name]: { value, errTxt } })
-    setEnableSubmitBtn(errTxt ? false : true)
   }
 
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    if (!form.user_identity.value) {
-      setForm({
-        ...form,
-        user_identity: { value: '', errTxt: 'Vui lòng nhập trường này' },
-      })
+    if (!form.user_identity.value || form.end_date.errTxt) {
+      setErrorAlertTxt('Vui lòng nhập đầy đủ và hợp lệ thông tin')
       return
     }
 
@@ -67,7 +63,16 @@ const NegativeDeclarationModal = (props) => {
     })
       .then(() => {
         setSuccessAlert(true)
-        setEnableSubmitBtn(false)
+        setForm({
+          user_identity: {
+            value: '',
+            errTxt: '',
+          },
+          end_date: {
+            value: new Date(),
+            errTxt: '',
+          },
+        })
       })
       .catch((err) => {
         const errorsData = err?.response?.data
@@ -127,7 +132,11 @@ const NegativeDeclarationModal = (props) => {
             alignItems="center"
           >
             <Typography variant="h6">Khai báo thông tin ca nhiễm</Typography>
-            <Button variant="text" endIcon={<AccountCircleOutlinedIcon />}>
+            <Button
+              variant="text"
+              endIcon={<AccountCircleOutlinedIcon />}
+              onClick={handleOpenRegisterModal}
+            >
               Tạo thông tin
             </Button>
           </Grid>
@@ -198,11 +207,7 @@ const NegativeDeclarationModal = (props) => {
                 justifyContent: 'flex-end',
               }}
             >
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={!enableSubmitBtn}
-              >
+              <Button type="submit" variant="contained">
                 Xác nhận
               </Button>
               <Button variant="text" onClick={handleClose}>

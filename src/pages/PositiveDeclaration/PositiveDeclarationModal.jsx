@@ -22,11 +22,11 @@ import Map from '../../components/Map'
 import dateFormat from 'dateformat'
 
 const PositiveDeclarationModal = (props) => {
-  const { handleClose, handleOpenNegativeModal } = props
+  const { handleClose, handleOpenRegisterModal, handleOpenNegativeModal } =
+    props
 
   const [successAlert, setSuccessAlert] = useState(false)
   const [errorAlertTxt, setErrorAlertTxt] = useState(false)
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [form, setForm] = useState({
     user_identity: {
@@ -37,16 +37,19 @@ const PositiveDeclarationModal = (props) => {
       value: new Date(),
       errTxt: '',
     },
-    severe_symptoms: false,
+    severe_symptoms: {
+      value: false,
+      errTxt: '',
+    },
     location: {
       position: { lat: '', lng: '' },
     },
-    end_date: new Date(),
   })
 
   const handleInput = (e) => {
     const name = e.target.name
     const value = e.target.value
+
     let errTxt = ''
 
     if (!value) {
@@ -58,7 +61,6 @@ const PositiveDeclarationModal = (props) => {
     }
 
     setForm({ ...form, [name]: { value, errTxt } })
-    setEnableSubmitBtn(errTxt ? false : true)
   }
 
   const handleMapClick = (e) => {
@@ -68,21 +70,18 @@ const PositiveDeclarationModal = (props) => {
         position: e.latlng,
       },
     })
-    setEnableSubmitBtn(true)
   }
 
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    if (!form.location.position.lat) {
-      setErrorAlertTxt('Vui lòng chọn vị trí trên bản đồ')
+    if (!form.user_identity.value || form.start_date.errTxt) {
+      setErrorAlertTxt('Vui lòng nhập đầy đủ và hợp lệ thông tin')
       return
     }
-    if (!form.user_identity.value) {
-      setForm({
-        ...form,
-        user_identity: { value: '', errTxt: 'Vui lòng nhập trường này' },
-      })
+
+    if (!form.location.position.lat) {
+      setErrorAlertTxt('Vui lòng chọn vị trí trên bản đồ')
       return
     }
 
@@ -97,7 +96,23 @@ const PositiveDeclarationModal = (props) => {
     })
       .then(() => {
         setSuccessAlert(true)
-        setEnableSubmitBtn(false)
+        setForm({
+          user_identity: {
+            value: '',
+            errTxt: '',
+          },
+          start_date: {
+            value: new Date(),
+            errTxt: '',
+          },
+          severe_symptoms: {
+            value: false,
+            errTxt: '',
+          },
+          location: {
+            position: { lat: '', lng: '' },
+          },
+        })
       })
       .catch((err) => {
         const errorsData = err?.response?.data
@@ -153,6 +168,13 @@ const PositiveDeclarationModal = (props) => {
             alignItems="center"
           >
             <Typography variant="h6">Khai báo thông tin ca nhiễm</Typography>
+            <Button
+              variant="text"
+              endIcon={<AccountCircleOutlinedIcon />}
+              onClick={handleOpenRegisterModal}
+            >
+              Tạo thông tin
+            </Button>
           </Grid>
           <Grid
             item
@@ -225,7 +247,7 @@ const PositiveDeclarationModal = (props) => {
                 aria-labelledby="severe_symptoms"
                 name="severe_symptoms"
                 sx={{ justifyContent: 'center' }}
-                value={form.severe_symptoms}
+                value={form.severe_symptoms.value}
                 onChange={(e) => handleInput(e)}
               >
                 <FormControlLabel
@@ -261,11 +283,7 @@ const PositiveDeclarationModal = (props) => {
                 justifyContent: 'flex-end',
               }}
             >
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={!enableSubmitBtn}
-              >
+              <Button type="submit" variant="contained">
                 Xác nhận
               </Button>
               <Button variant="text" onClick={handleClose}>

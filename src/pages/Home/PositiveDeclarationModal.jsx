@@ -75,12 +75,13 @@ const PositiveDeclarationModal = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    if (!form.location.position.lat) {
-      setErrorAlertTxt('Vui lòng chọn vị trí trên bản đồ')
-      return
-    }
     if (!form.user_identity.value || form.start_date.errTxt) {
       setErrorAlertTxt('Vui lòng nhập đầy đủ và hợp lệ thông tin')
+      return
+    }
+
+    if (!form.location.position.lat) {
+      setErrorAlertTxt('Vui lòng chọn vị trí trên bản đồ')
       return
     }
 
