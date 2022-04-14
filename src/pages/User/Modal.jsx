@@ -46,6 +46,12 @@ const validateField = (name, value) => {
           errorTxt = 'Số điện thoại không hợp lệ'
         }
         break
+      case 'birthday':
+        if (new Date(value) > new Date()) {
+          error = true
+          errorTxt = 'Ngày sinh không được lớn hơn ngày hiện tại'
+        }
+        break
       default:
         break
     }
@@ -60,13 +66,13 @@ const MainModal = (props) => {
   const _id = data._id
 
   const [successAlert, setSuccessAlert] = useState(false)
+  const [errAlertTxt, setErrAlertTxt] = useState('')
   const [avatarUpload, setAvatarUpload] = useState(null)
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [form, setForm] = useState({
     name: { value: data.name || '', error: false, errorTxt: '' },
     birthday: {
-      value: data.birthday || new Date(),
+      value: data.birthday || new Date().setFullYear(2000),
       error: false,
       errorTxt: '',
     },
@@ -88,17 +94,19 @@ const MainModal = (props) => {
     const { error, errorTxt } = validateField(name, value)
 
     setForm({ ...form, [name]: { value, error, errorTxt } })
-    setEnableSubmitBtn(true)
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(form).find(
-      (key, index) => form[key].error || !form[key].value
+    const isErr = Object.keys(form).find(
+      (key, index) => !form[key].value || form[key].errorTxt
     )
 
-    if (isError) return
+    if (isErr) {
+      setErrAlertTxt('Vui lòng nhập đầy đủ và hợp lệ thông tin')
+      return
+    }
 
     const data = new FormData(event.currentTarget)
 
@@ -113,7 +121,6 @@ const MainModal = (props) => {
       }
       setSuccessAlert(true)
       updateRows()
-      setEnableSubmitBtn(false)
     } catch (errors) {
       const errorsData = errors?.response?.data
 
@@ -146,7 +153,6 @@ const MainModal = (props) => {
     if (e.target.files && e.target.files[0]) {
       let avatar = e.target.files[0]
       setAvatarUpload(URL.createObjectURL(avatar))
-      setEnableSubmitBtn(true)
     }
   }
 
@@ -157,6 +163,14 @@ const MainModal = (props) => {
           title="Thông báo"
           text={(_id ? 'Cập nhật' : 'Thêm') + ' thành công'}
           handleClose={() => setSuccessAlert(false)}
+        />
+      )}
+      {errAlertTxt && (
+        <AlertDialog
+          title="Thông báo"
+          text={errAlertTxt}
+          severity="error"
+          handleClose={() => setErrAlertTxt(false)}
         />
       )}
       <Box component="form" noValidate onSubmit={handleSubmit}>
@@ -321,7 +335,6 @@ const MainModal = (props) => {
                 sx={{
                   mr: 2,
                 }}
-                disabled={!enableSubmitBtn}
               >
                 {_id ? 'Lưu' : 'Thêm'}
               </Button>

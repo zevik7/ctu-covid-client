@@ -64,7 +64,7 @@ const AddModal = (props) => {
     >
       {successAlert && (
         <AlertDialog
-          text={'Thêm thành công'}
+          text={'Cập nhật thành công'}
           handleClose={() => setSuccessAlert(false)}
         />
       )}
@@ -78,7 +78,7 @@ const AddModal = (props) => {
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h6">Thêm bài viết</Typography>
+            <Typography variant="h6">Thông tin bài viết</Typography>
           </Grid>
           <Grid item xs={12}>
             <TextField

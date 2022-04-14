@@ -22,12 +22,12 @@ const MainModal = (props) => {
   const _id = data._id
 
   const [successAlert, setSuccessAlert] = useState(false)
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
+  const [errAlertTxt, setErrAlertTxt] = useState('')
 
   const [form, setForm] = useState({
     name: { value: data.name || '', error: false, errorTxt: '' },
     country: { value: data.country || '', error: false, errorTxt: '' },
-    description: '',
+    description: data.description,
   })
 
   const handleInput = (e) => {
@@ -42,17 +42,19 @@ const MainModal = (props) => {
     }
 
     setForm({ ...form, [name]: { value, error, errorTxt } })
-    setEnableSubmitBtn(!error ? true : false)
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    const isError = Object.keys(form).find(
-      (key, index) => form[key] && !form[key].value
+    const isErr = Object.keys(form).find(
+      (key) => key != 'description' && (!form[key].value || form[key].errorTxt)
     )
 
-    if (isError) return
+    if (isErr) {
+      setErrAlertTxt('Vui lòng nhập đầy đủ và hợp lệ thông tin')
+      return
+    }
 
     const data = new FormData(event.currentTarget)
 
@@ -63,7 +65,6 @@ const MainModal = (props) => {
         await storeVaccineType(data)
       }
       setSuccessAlert(true)
-      setEnableSubmitBtn(false)
       updateRows()
     } catch (error) {
       console.log(error)
@@ -77,6 +78,14 @@ const MainModal = (props) => {
           title="Thông báo"
           text={(_id ? 'Cập nhật' : 'Thêm') + ' thành công'}
           handleClose={() => setSuccessAlert(false)}
+        />
+      )}
+      {errAlertTxt && (
+        <AlertDialog
+          title="Thông báo"
+          text={errAlertTxt}
+          severity="error"
+          handleClose={() => setErrAlertTxt(false)}
         />
       )}
       <Box component="form" noValidate onSubmit={handleSubmit}>
@@ -143,7 +152,6 @@ const MainModal = (props) => {
                 sx={{
                   mr: 1,
                 }}
-                disabled={!enableSubmitBtn}
               >
                 {_id ? 'Lưu' : 'Thêm'}
               </Button>
