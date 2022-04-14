@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import dateFormat from 'dateformat'
 
-import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
@@ -12,7 +11,6 @@ import MenuItem from '@mui/material/MenuItem'
 import Alert from '@mui/material/Alert'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
-import Autocomplete from '@mui/material/Autocomplete'
 import { styled } from '@mui/material/styles'
 
 import Modal from '../../components/Modal'
@@ -36,9 +34,6 @@ const AddModal = (props) => {
       errTxt: '',
     },
     vaccine_type_id: {
-      value: '',
-    },
-    vaccine_type_name: {
       value: '',
     },
     injection_date: {
@@ -75,7 +70,7 @@ const AddModal = (props) => {
     if (!value) errTxt = 'Vui lòng nhập trường này'
     else {
       if (name === 'injection_date' && new Date(value) > new Date()) {
-        errTxt = 'Ngày nhiễm không vượt quá ngày hiện tại'
+        errTxt = 'Ngày tiêm không vượt quá ngày hiện tại'
       }
       if (name === 'images' && e.target.files) {
         if (e.target.files.length !== 2) {

@@ -28,7 +28,6 @@ const AddModal = (props) => {
 
   const [successAlert, setSuccessAlert] = useState(false)
   const [errorAlertText, setErrorAlertText] = useState('')
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [errInputUser, setErrInputUser] = useState(false)
   const [vaccineTypeOptions, setVaccineTypeOptions] = useState([])
@@ -43,10 +42,17 @@ const AddModal = (props) => {
     user_name: '',
     user_phone: '',
     user_email: '',
-    vaccine_type_id: '',
-    vaccine_type_name: '',
-    injection_date: new Date(),
-    images: [],
+    vaccine_type_id: {
+      value: '',
+    },
+    injection_date: {
+      value: new Date(),
+      errTxt: '',
+    },
+    images: {
+      value: [],
+      errTxt: '',
+    },
   })
 
   useEffect(() => {
@@ -64,8 +70,10 @@ const AddModal = (props) => {
       setVaccineTypeOptions(rs.data.data)
       setForm({
         ...form,
-        vaccine_type_id: rs.data.data[0]._id,
-        vaccine_type_name: rs.data.data[0].name,
+        vaccine_type_id: {
+          value: rs.data.data[0]._id,
+          errTxt: '',
+        },
       })
     })
   }, [])
@@ -94,56 +102,75 @@ const AddModal = (props) => {
       ...userSelected,
     })
     setErrInputUser(emptyErr)
-    setEnableSubmitBtn(true)
   }
 
   const handleInput = (e) => {
     const name = e.target.name
-    const value = e.target.value
+    let value = e.target.value
+    let errTxt = ''
 
-    let fieldsChange = {
-      [name]: value,
-    }
-
-    // Change vaccine type select
-    if (name === 'vaccine_type_id') {
-      const vaccine_type_name = vaccineTypeOptions.find(
-        (option, index) => option._id === value
-      ).name
-      fieldsChange['vaccine_type_name'] = vaccine_type_name
+    // Validate
+    if (!value) errTxt = 'Vui lòng nhập trường này'
+    else {
+      if (name === 'injection_date' && new Date(value) > new Date()) {
+        errTxt = 'Ngày tiêm không vượt quá ngày hiện tại'
+      }
+      if (name === 'images' && e.target.files) {
+        if (e.target.files.length !== 2) {
+          errTxt = 'Vui lòng chọn đúng 2 hình ảnh'
+        }
+      }
     }
 
     // Add Image
-    if (name === 'images' && e.target.files) {
-      if (e.target.files.length !== 2) {
-        setErrorAlertText('Vui lòng chọn 2 hình ảnh')
-        return
-      }
-
-      const images = [
-        URL.createObjectURL(e.target.files[0]),
-        URL.createObjectURL(e.target.files[1]),
-      ]
-      fieldsChange = {
-        images,
-      }
+    if (name === 'images') {
+      if (!errTxt)
+        value = [
+          URL.createObjectURL(e.target.files[0]),
+          URL.createObjectURL(e.target.files[1]),
+        ]
+      else value = []
     }
 
-    setForm({ ...form, ...fieldsChange })
-    setEnableSubmitBtn(true)
+    setForm({
+      ...form,
+      [name]: {
+        value,
+        errTxt,
+      },
+    })
   }
 
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    if (!form.user_id) return
+    if (
+      !form.user_id ||
+      form.images.value.length !== 2 ||
+      form.injection_date.errTxt
+    ) {
+      setErrorAlertText('Vui lòng nhập đầy đủ và hợp lệ thông tin')
+      return
+    }
 
     const data = new FormData(event.currentTarget)
 
     storeInjection(data)
       .then(() => {
         setSuccessAlert(true)
-        setEnableSubmitBtn(false)
+        setSearchText('')
+        setForm((form) => ({
+          ...form,
+          user_id: '',
+          user_name: '',
+          user_phone: '',
+          user_email: '',
+          injection_date: {
+            value: '',
+            errTxt: '',
+          },
+          images: { value: [], errTxt: '' },
+        }))
         updateRows()
       })
       .catch((err) => console.log(err))
@@ -265,7 +292,7 @@ const AddModal = (props) => {
                   name="vaccine_type_id"
                   label="Loại vắc-xin"
                   onChange={handleInput}
-                  value={form.vaccine_type_id}
+                  value={form.vaccine_type_id.value}
                 >
                   {vaccineTypeOptions.map((option, index) => (
                     <MenuItem key={index} value={option._id}>
@@ -275,15 +302,6 @@ const AddModal = (props) => {
                 </Select>
               )}
             </FormControl>
-            <TextField
-              required
-              fullWidth
-              name="vaccine_type_name"
-              value={form.vaccine_type_name}
-              sx={{
-                display: 'none',
-              }}
-            />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
@@ -295,12 +313,14 @@ const AddModal = (props) => {
               InputLabelProps={{
                 shrink: true,
               }}
-              value={dateFormat(form.injection_date, 'yyyy-mm-dd')}
+              value={dateFormat(form.injection_date.value, 'yyyy-mm-dd')}
               onChange={handleInput}
+              error={form.injection_date.errTxt ? true : false}
+              helperText={form.injection_date.errTxt}
             />
           </Grid>
 
-          {form.images.map((image, index) => (
+          {form.images.value.map((image, index) => (
             <Grid item xs={12} lg={6} key={index}>
               <img
                 img="square"
@@ -352,7 +372,6 @@ const AddModal = (props) => {
                 sx={{
                   mr: 2,
                 }}
-                disabled={!enableSubmitBtn}
               >
                 Lưu
               </Button>
@@ -361,6 +380,11 @@ const AddModal = (props) => {
               </Button>
             </Box>
           </Grid>
+          {form.images.errTxt && (
+            <Grid item xs={12}>
+              <Alert severity={'error'}>Vui lòng chọn đúng 2 hình ảnh</Alert>
+            </Grid>
+          )}
         </Grid>
       </Box>
     </Modal>

@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
+import Alert from '@mui/material/Alert'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import InputLabel from '@mui/material/InputLabel'
@@ -27,7 +28,6 @@ const EditModal = (props) => {
 
   const [successAlert, setSuccessAlert] = useState(false)
   const [errorAlertText, setErrorAlertText] = useState('')
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [vaccineTypeOptions, setVaccineTypeOptions] = useState()
 
@@ -35,10 +35,17 @@ const EditModal = (props) => {
     user_name: data.user.name,
     user_phone: data.user.phone,
     user_email: data.user.email,
-    vaccine_type_id: data.vaccine_type._id,
-    vaccine_type_name: data.vaccine_type.name,
-    injection_date: data.injection_date,
-    images: data.images || [],
+    vaccine_type_id: {
+      value: data.vaccine_type._id,
+    },
+    injection_date: {
+      value: data.injection_date,
+      errTxt: '',
+    },
+    images: {
+      value: data.images,
+      errTxt: '',
+    },
     time: data.time,
   })
 
@@ -50,40 +57,48 @@ const EditModal = (props) => {
 
   const handleInput = (e) => {
     const name = e.target.name
-    const value = e.target.value
-    let fieldsChange = {
-      [name]: value,
-    }
+    let value = e.target.value
+    let errTxt = ''
 
-    if (name === 'vaccine_type_id') {
-      const vaccine_type_name = vaccineTypeOptions.find(
-        (option, index) => option._id === value
-      ).name
-      fieldsChange['vaccine_type_name'] = vaccine_type_name
-    }
-
-    // Edit Image
-    if (name === 'images' && e.target.files) {
-      if (e.target.files.length !== 2) {
-        setErrorAlertText('Vui lòng chọn 2 hình ảnh')
-        return
+    // Validate
+    if (!value) errTxt = 'Vui lòng nhập trường này'
+    else {
+      if (name === 'injection_date' && new Date(value) > new Date()) {
+        errTxt = 'Ngày tiêm không vượt quá ngày hiện tại'
       }
-
-      const images = [
-        URL.createObjectURL(e.target.files[0]),
-        URL.createObjectURL(e.target.files[1]),
-      ]
-      fieldsChange = {
-        images,
+      if (name === 'images' && e.target.files) {
+        if (e.target.files.length !== 2) {
+          errTxt = 'Vui lòng chọn đúng 2 hình ảnh'
+        }
       }
     }
 
-    setForm({ ...form, ...fieldsChange })
-    setEnableSubmitBtn(true)
+    // Add Image
+    if (name === 'images') {
+      if (!errTxt)
+        value = [
+          URL.createObjectURL(e.target.files[0]),
+          URL.createObjectURL(e.target.files[1]),
+        ]
+      else value = []
+    }
+
+    setForm({
+      ...form,
+      [name]: {
+        value,
+        errTxt,
+      },
+    })
   }
 
   const handleSubmit = (event) => {
     event.preventDefault()
+
+    if (form.images.value.length !== 2 || form.injection_date.errTxt) {
+      setErrorAlertText('Vui lòng nhập đầy đủ và hợp lệ thông tin')
+      return
+    }
 
     const data = new FormData(event.currentTarget)
 
@@ -96,7 +111,6 @@ const EditModal = (props) => {
     )
       .then((rs) => {
         setSuccessAlert(true)
-        setEnableSubmitBtn(false)
         updateRows()
       })
       .catch((err) => console.log(err))
@@ -173,8 +187,10 @@ const EditModal = (props) => {
               InputLabelProps={{
                 shrink: true,
               }}
-              value={dateFormat(form.injection_date, 'yyyy-mm-dd')}
-              onChange={(e) => handleInput(e)}
+              value={dateFormat(form.injection_date.value, 'yyyy-mm-dd')}
+              onChange={handleInput}
+              error={form.injection_date.errTxt ? true : false}
+              helperText={form.injection_date.errTxt}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -193,7 +209,7 @@ const EditModal = (props) => {
                   id="vaccine_type_id"
                   name="vaccine_type_id"
                   onChange={(e) => handleInput(e)}
-                  value={form.vaccine_type_id}
+                  value={form.vaccine_type_id.value}
                   sx={{
                     flex: 1,
                   }}
@@ -220,7 +236,7 @@ const EditModal = (props) => {
             </Typography>
           </Grid>
 
-          {form.images.map((image, index) => (
+          {form.images.value.map((image, index) => (
             <Grid item xs={12} lg={6} key={index}>
               <img
                 img="square"
@@ -272,7 +288,6 @@ const EditModal = (props) => {
                 sx={{
                   mr: 2,
                 }}
-                disabled={!enableSubmitBtn}
               >
                 Lưu
               </Button>
@@ -281,6 +296,11 @@ const EditModal = (props) => {
               </Button>
             </Box>
           </Grid>
+          {form.images.errTxt && (
+            <Grid item xs={12}>
+              <Alert severity={'error'}>Vui lòng chọn đúng 2 hình ảnh</Alert>
+            </Grid>
+          )}
         </Grid>
       </Box>
     </Modal>

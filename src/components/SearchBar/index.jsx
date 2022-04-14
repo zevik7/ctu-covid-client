@@ -43,11 +43,9 @@ const Search = (props) => {
   const handleListen = () => {
     if (isListening) {
       mic.start()
-      mic.onend = () => {
-        mic.start()
-      }
     } else {
       mic.stop()
+      return
     }
 
     mic.onresult = (event) => {
