@@ -39,15 +39,18 @@ const Map = ({ center, zoom, style, markers, handleClick, useRedDotIcon }) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {markers &&
-        markers.map((maker, index) => (
-          <Marker
-            key={index}
-            position={maker.position}
-            icon={(useRedDotIcon && RedDotIcon) || DefaultIcon}
-          >
-            <Popup>{maker.popup}</Popup>
-          </Marker>
-        ))}
+        markers.map(
+          (maker, index) =>
+            maker.position && (
+              <Marker
+                key={index}
+                position={maker.position}
+                icon={(useRedDotIcon && RedDotIcon) || DefaultIcon}
+              >
+                <Popup>{maker.popup}</Popup>
+              </Marker>
+            )
+        )}
       <MapEvents handleClick={handleClick} />
     </MapContainer>
   )

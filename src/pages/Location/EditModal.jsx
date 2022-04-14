@@ -6,7 +6,6 @@ import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import Alert from '@mui/material/Alert'
 import Map from '../../components/Map'
 import Modal from '../../components/Modal'
 import AlertDialog from '../../components/AlertDialog'
@@ -35,12 +34,11 @@ const EditModal = (props) => {
   const _id = data._id
 
   const [successAlert, setSuccessAlert] = useState(false)
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [form, setForm] = useState({
     name: {
       value: data.name,
-      error: false,
+      errTxt: '',
     },
     position: { lat: data.position.lat, lng: data.position.lng },
   })
@@ -49,7 +47,10 @@ const EditModal = (props) => {
     event.preventDefault()
 
     if (!form.name.value) {
-      setForm({ ...form, name: { ...form.name, error: true } })
+      setForm({
+        ...form,
+        name: { ...form.name, error: 'Vui lòng nhập trường này' },
+      })
       return
     }
 
@@ -64,7 +65,6 @@ const EditModal = (props) => {
     )
       .then(() => {
         setSuccessAlert(true)
-        setEnableSubmitBtn(false)
         updateRows()
       })
       .catch((err) => console.log(err))
@@ -72,16 +72,14 @@ const EditModal = (props) => {
 
   const handleMapClick = (e) => {
     setForm({ ...form, position: e.latlng })
-    setEnableSubmitBtn(true)
   }
 
   const handleNameChange = (e) => {
     const value = e.target.value
-    let error = false
+    let errTxt = ''
 
-    if (!value) error = true
-    setForm({ ...form, name: { value, error } })
-    setEnableSubmitBtn(true)
+    if (!value) errTxt = 'Vui lòng nhập trường này'
+    setForm({ ...form, name: { value, errTxt } })
   }
 
   return (
@@ -187,7 +185,6 @@ const EditModal = (props) => {
                 sx={{
                   mr: 2,
                 }}
-                disabled={!enableSubmitBtn}
               >
                 Lưu
               </Button>

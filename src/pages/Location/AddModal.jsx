@@ -18,23 +18,22 @@ const AddModal = (props) => {
   const { handleClose, updateRows } = props
 
   const [successAlert, setSuccessAlert] = useState(false)
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
+  const [errAlertTxt, setErrAlertTxt] = useState('')
 
   const [form, setForm] = useState({
     name: {
       value: '',
-      error: false,
+      errTxt: '',
     },
-    position: { lat: 10.030775863927552, lng: 105.77155012533245 },
+    position: null,
   })
 
   const handleNameChange = (e) => {
     const value = e.target.value
-    let error = false
+    let errTxt = ''
 
-    if (!value) error = true
-    setForm({ ...form, name: { value, error } })
-    setEnableSubmitBtn(true)
+    if (!value) errTxt = 'Vui lòng nhập trường này'
+    setForm({ ...form, name: { value, errTxt } })
   }
 
   const handleMapClick = (e) => {
@@ -45,22 +44,32 @@ const AddModal = (props) => {
     event.preventDefault()
 
     if (!form.name.value) {
-      setForm({ ...form, name: { ...form.name, error: true } })
+      setForm({
+        ...form,
+        name: { value: '', errTxt: 'Vui lòng nhập trường này' },
+      })
+      return
+    }
+
+    if (!form.position) {
+      setErrAlertTxt('Vui lòng chọn vị trí trên bản đồ')
       return
     }
 
     storeLocation({
       name: form.name.value,
-      created_by: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+      created_by_id: user._id,
       position: form.position,
     })
       .then(() => {
         setSuccessAlert(true)
-        setEnableSubmitBtn(false)
+        setForm({
+          name: {
+            value: '',
+            errTxt: '',
+          },
+          position: null,
+        })
         updateRows()
       })
       .catch((err) => console.log(err))
@@ -72,6 +81,12 @@ const AddModal = (props) => {
         <AlertDialog
           text={'Thêm thành công'}
           handleClose={() => setSuccessAlert(false)}
+        />
+      )}
+      {errAlertTxt && (
+        <AlertDialog
+          text={errAlertTxt}
+          handleClose={() => setErrAlertTxt(false)}
         />
       )}
       <Box component="form" noValidate onSubmit={handleSubmit}>
@@ -90,8 +105,8 @@ const AddModal = (props) => {
               margin="normal"
               value={form.name.value}
               onChange={handleNameChange}
-              error={form.name.error}
-              helperText={form.name.error && 'Vui lòng nhập trường này'}
+              error={form.name.errTxt ? true : false}
+              helperText={form.name.errTxt}
             />
             <Typography variant="subtitle1" gutterBottom component="div">
               Chọn vị trí trên bản đồ
@@ -123,7 +138,6 @@ const AddModal = (props) => {
                 sx={{
                   mr: 2,
                 }}
-                disabled={!enableSubmitBtn}
               >
                 Thêm
               </Button>
