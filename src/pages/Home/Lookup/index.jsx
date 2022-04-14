@@ -56,7 +56,7 @@ const LookupModal = (props) => {
       user_identify: identifyInput,
     })
       .then((rs) => {
-        setUser(rs.data.data)
+        setUser(rs.data)
       })
       .catch((err) => {
         const errorsData = err?.response?.data

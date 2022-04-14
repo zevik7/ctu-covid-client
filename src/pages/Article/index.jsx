@@ -28,6 +28,10 @@ const tableHeadCells = [
     id: 'updated_at',
     label: 'Cập nhật lần cuối',
   },
+  {
+    id: 'pinned',
+    label: 'Ghim',
+  },
 ]
 
 const handleRenderTableRow = (row) => (
@@ -38,10 +42,13 @@ const handleRenderTableRow = (row) => (
         alignItems: 'center',
       }}
     >
-      {row.pinned && <PushPinOutlinedIcon fontSize="small" />} {row.title}
+      {row.title}
     </TableCell>
     <TableCell>{row.created_by.name}</TableCell>
     <TableCell>{dateFormat(row.updated_at, 'dd/mm/yyyy')}</TableCell>
+    <TableCell>
+      {row.pinned && <PushPinOutlinedIcon fontSize="small" />}
+    </TableCell>
   </>
 )
 

@@ -21,7 +21,7 @@ const PositiveDeclarationListModal = (props) => {
       'user._id': user._id,
     })
       .then((rs) => {
-        setPosDecla(rs.data.data)
+        setPosDecla(rs.data)
       })
       .catch((error) => console.log(error.response))
   }, [])

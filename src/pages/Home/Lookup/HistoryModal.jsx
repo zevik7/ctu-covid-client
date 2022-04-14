@@ -35,7 +35,7 @@ const HistoryModal = (props) => {
       },
     })
       .then((rs) => {
-        setDeclaration(rs.data.data)
+        setDeclaration(rs.data)
       })
       .catch((rs) => console.log(rs.response))
   }, [dateFilter])

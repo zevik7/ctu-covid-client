@@ -24,7 +24,7 @@ const InjectionModal = (props) => {
       'user._id': user._id,
     })
       .then((rs) => {
-        setInjections(rs.data.data)
+        setInjections(rs.data)
       })
       .catch((error) => console.log(error.response))
   }, [])
