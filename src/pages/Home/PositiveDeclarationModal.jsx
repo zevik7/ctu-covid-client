@@ -27,7 +27,6 @@ const PositiveDeclarationModal = (props) => {
 
   const [successAlert, setSuccessAlert] = useState(false)
   const [errorAlertTxt, setErrorAlertTxt] = useState(false)
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [form, setForm] = useState({
     user_identity: {
@@ -45,7 +44,6 @@ const PositiveDeclarationModal = (props) => {
     location: {
       position: { lat: '', lng: '' },
     },
-    end_date: new Date(),
   })
 
   const handleInput = (e) => {
@@ -63,7 +61,6 @@ const PositiveDeclarationModal = (props) => {
     }
 
     setForm({ ...form, [name]: { value, errTxt } })
-    setEnableSubmitBtn(errTxt ? false : true)
   }
 
   const handleMapClick = (e) => {
@@ -73,7 +70,6 @@ const PositiveDeclarationModal = (props) => {
         position: e.latlng,
       },
     })
-    setEnableSubmitBtn(true)
   }
 
   const handleSubmit = (event) => {
@@ -83,11 +79,8 @@ const PositiveDeclarationModal = (props) => {
       setErrorAlertTxt('Vui lòng chọn vị trí trên bản đồ')
       return
     }
-    if (!form.user_identity.value) {
-      setForm({
-        ...form,
-        user_identity: { value: '', errTxt: 'Vui lòng nhập trường này' },
-      })
+    if (!form.user_identity.value || form.start_date.errTxt) {
+      setErrorAlertTxt('Vui lòng nhập đầy đủ và hợp lệ thông tin')
       return
     }
 
@@ -102,7 +95,23 @@ const PositiveDeclarationModal = (props) => {
     })
       .then(() => {
         setSuccessAlert(true)
-        setEnableSubmitBtn(false)
+        setForm({
+          user_identity: {
+            value: '',
+            errTxt: '',
+          },
+          start_date: {
+            value: new Date(),
+            errTxt: '',
+          },
+          severe_symptoms: {
+            value: false,
+            errTxt: '',
+          },
+          location: {
+            position: { lat: '', lng: '' },
+          },
+        })
       })
       .catch((err) => {
         const errorsData = err?.response?.data
@@ -273,11 +282,7 @@ const PositiveDeclarationModal = (props) => {
                 justifyContent: 'flex-end',
               }}
             >
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={!enableSubmitBtn}
-              >
+              <Button type="submit" variant="contained">
                 Xác nhận
               </Button>
               <Button variant="text" onClick={handleClose}>

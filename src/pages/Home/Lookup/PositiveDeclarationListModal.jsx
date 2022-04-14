@@ -64,7 +64,8 @@ const PositiveDeclarationListModal = (props) => {
             </Grid>
             <Grid item xs="auto">
               <Typography>
-                Ngày khỏi: {dateFormat(pos.end_date, 'dd/mm/yy') || '---'}
+                Ngày khỏi:{' '}
+                {pos.end_date ? dateFormat(pos.end_date, 'dd/mm/yy') : '---'}
               </Typography>
             </Grid>
             <Grid item xs="auto">

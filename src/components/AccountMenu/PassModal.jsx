@@ -19,6 +19,7 @@ const PassModal = (props) => {
   const [form, setForm] = useState({
     password: { value: '', errTxt: '' },
     newPassword: { value: '', errTxt: '' },
+    retypeNewPassWord: { value: '', errTxt: '' },
   })
 
   const handleInput = (e) => {
@@ -28,7 +29,10 @@ const PassModal = (props) => {
 
     if (!value) errTxt = 'Yêu cầu nhập trường này'
     else {
-      if (value.length < 6) errTxt = 'Mật khẩu phải có tối thiểu 6 kí tự'
+      if (name === 'newPassword' && value.length < 6)
+        errTxt = 'Mật khẩu phải có tối thiểu 6 kí tự'
+      if (name === 'retypeNewPassword' && value !== form.newPassword.value)
+        errTxt = 'Mật khẩu nhập lại chưa đúng'
     }
 
     setForm({ ...form, [name]: { value, errTxt } })
@@ -55,7 +59,6 @@ const PassModal = (props) => {
       .catch((errors) => {
         const errorsData = errors?.response?.data
         if (errorsData && errorsData.type === 'unmatch' && errorsData.errors) {
-          console.log('here')
           if (errorsData.errors.password) {
             setForm({
               ...form,
@@ -114,6 +117,18 @@ const PassModal = (props) => {
               onChange={(e) => handleInput(e)}
               error={form.newPassword.errTxt && true}
               helperText={form.newPassword.errTxt}
+            />
+            <TextField
+              required
+              fullWidth
+              margin="normal"
+              id="retypeNewPassWord"
+              label="Nhập lại mật khẩu mởi"
+              name="retypeNewPassWord"
+              value={form.retypeNewPassWord.value}
+              onChange={(e) => handleInput(e)}
+              error={form.retypeNewPassWord.errTxt && true}
+              helperText={form.retypeNewPassWord.errTxt}
             />
           </Grid>
           <Grid item xs={12}>

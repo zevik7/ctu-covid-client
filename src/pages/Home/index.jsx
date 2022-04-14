@@ -40,6 +40,7 @@ import LookupModal from './Lookup'
 import ArticleModal from './ArticleModal'
 import PositiveDeclarationModal from './PositiveDeclarationModal'
 import NegativeDeclarationModal from './NegativeDeclarationModal'
+import AddInjectionModal from './AddInjectionModal'
 import RegisterModal from './RegisterModal'
 import WorldStat from './WorldStat'
 
@@ -54,6 +55,7 @@ export default function Home() {
   const [areaSeleted, setAreaSelected] = useState('local')
   const [openDrawer, setOpenDrawer] = useState(false)
   const [openLookupModal, setOpenLookupModal] = useState(false)
+  const [openAddInjectionModal, setOpenAddInjectionModal] = useState(false)
   const [openArticleModal, setOpenArticleModal] = useState(false)
   const [openRegisterModal, setOpenRegisterModal] = useState(false)
   const [openPositiveDeclarationModal, setOpenPositiveDeclarationModal] =
@@ -130,6 +132,14 @@ export default function Home() {
         Tra cứu
       </Button>
       <Button
+        variant="outlined"
+        onClick={() => setOpenAddInjectionModal(true)}
+        endIcon={<VaccinesOutlinedIcon />}
+        sx={{ mr: 1 }}
+      >
+        Khai báo tiêm chủng
+      </Button>
+      <Button
         variant="contained"
         onClick={() => setOpenPositiveDeclarationModal(true)}
         endIcon={<MedicalInformationIcon />}
@@ -158,6 +168,11 @@ export default function Home() {
       )}
       {openRegisterModal && (
         <RegisterModal handleClose={() => setOpenRegisterModal(false)} />
+      )}
+      {openAddInjectionModal && (
+        <AddInjectionModal
+          handleClose={() => setOpenAddInjectionModal(false)}
+        />
       )}
       {openPositiveDeclarationModal && (
         <PositiveDeclarationModal
@@ -226,8 +241,8 @@ export default function Home() {
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    width: 230,
-                    height: 140,
+                    width: 250,
+                    height: 180,
                     p: 1,
                   }}
                   onClick={toggleDrawer}
@@ -490,7 +505,7 @@ export default function Home() {
                   <ListItemButton
                     onClick={() => handleSelectArticle(article)}
                     sx={{
-                      boxShadow: 4,
+                      boxShadow: 2,
                     }}
                   >
                     <ListItemText

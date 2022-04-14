@@ -47,6 +47,12 @@ const validateField = (name, value) => {
           errorTxt = 'Số điện thoại không hợp lệ'
         }
         break
+      case 'birthday':
+        if (new Date(value) > new Date()) {
+          error = true
+          errorTxt = 'Ngày sinh không được lớn hơn ngày hiện tại'
+        }
+        break
       default:
         break
     }
@@ -60,7 +66,6 @@ const RegisterModal = (props) => {
   const [successAlert, setSuccessAlert] = useState(false)
   const [errAlertTxt, setErrAlertTxt] = useState('')
   const [avatarUpload, setAvatarUpload] = useState(null)
-  const [enableSubmitBtn, setEnableSubmitBtn] = useState(false)
 
   const [form, setForm] = useState({
     name: { value: '', error: false, errorTxt: '' },
@@ -87,16 +92,17 @@ const RegisterModal = (props) => {
     const { error, errorTxt } = validateField(name, value)
 
     setForm({ ...form, [name]: { value, error, errorTxt } })
-    setEnableSubmitBtn(true)
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    const isEmpty = Object.keys(form).find((key, index) => !form[key].value)
+    const isErr = Object.keys(form).find(
+      (key, index) => !form[key].value || form[key].errorTxt
+    )
 
-    if (isEmpty) {
-      setErrAlertTxt('Vui lòng nhập tất cả các trường')
+    if (isErr) {
+      setErrAlertTxt('Vui lòng nhập đầy đủ và hợp lệ thông tin')
       return
     }
 
@@ -105,7 +111,23 @@ const RegisterModal = (props) => {
     try {
       await storeUser(data)
       setSuccessAlert(true)
-      setEnableSubmitBtn(false)
+      setForm({
+        name: { value: '', error: false, errorTxt: '' },
+        birthday: {
+          value: new Date().setFullYear(2000),
+          error: false,
+          errorTxt: '',
+        },
+        gender: { value: 'Nam', error: false, errorTxt: '' },
+        email: { value: '', error: false, errorTxt: '' },
+        phone: { value: '', error: false, errorTxt: '' },
+        address: { value: '', error: false, errorTxt: '' },
+        avatar: {
+          value: '/images/default_avatar.jpeg',
+          error: false,
+          errorTxt: '',
+        },
+      })
     } catch (errors) {
       const errorsData = errors?.response?.data
 
@@ -319,7 +341,6 @@ const RegisterModal = (props) => {
                 sx={{
                   mr: 2,
                 }}
-                disabled={!enableSubmitBtn}
               >
                 Tạo thông tin
               </Button>
