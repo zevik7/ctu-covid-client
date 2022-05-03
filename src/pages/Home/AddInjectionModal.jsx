@@ -175,7 +175,7 @@ const AddModal = (props) => {
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h6">Thêm thông tin tiêm chủng</Typography>
+            <Typography variant="h6">Khai báo thông tin tiêm chủng</Typography>
           </Grid>
           <Grid item xs={12}>
             <TextField
@@ -286,7 +286,7 @@ const AddModal = (props) => {
                   mr: 2,
                 }}
               >
-                Lưu
+                Khai báo
               </Button>
               <Button variant="text" onClick={handleClose}>
                 Đóng

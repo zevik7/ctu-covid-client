@@ -33,6 +33,8 @@ const EditModal = (props) => {
 
   const _id = data._id
 
+  console.log(_id)
+
   const [successAlert, setSuccessAlert] = useState(false)
 
   const [form, setForm] = useState({

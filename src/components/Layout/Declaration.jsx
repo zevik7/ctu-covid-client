@@ -34,10 +34,11 @@ const Declaration = () => {
   const [symptom, setSymptomRadio] = useState(false)
 
   useEffect(() => {
-    getLocation(locationId).then((rs) => {
-      // if (!rs.data.data) navigate('/*')
-      setLocation(rs.data.data)
-    })
+    getLocation(locationId)
+      .then((rs) => {
+        setLocation(rs.data)
+      })
+      .catch(() => navigate('/*'))
   }, [])
 
   const handleSubmit = (e) => {
@@ -143,7 +144,9 @@ const Declaration = () => {
           value={indentityInput}
         />
         <FormControl sx={{ mt: 2 }}>
-          <FormLabel id="status2">Bạn đang là F1 ?</FormLabel>
+          <FormLabel id="status2">
+            <Typography align="center">Bạn đang là F1 ?</Typography>
+          </FormLabel>
           <RadioGroup
             aria-labelledby="status2"
             name="controlled-radio-buttons-group"
@@ -167,7 +170,10 @@ const Declaration = () => {
         </FormControl>
         <FormControl sx={{ mt: 2 }}>
           <FormLabel id="status1">
-            Bạn có triệu chứng của nhiễm bệnh ? (Ho, sốt, mệt mỏi, mất vị giác)
+            <Typography align="center">
+              Bạn có triệu chứng của nhiễm bệnh ? (Ho, sốt, mệt mỏi, mất vị
+              giác)
+            </Typography>
           </FormLabel>
           <RadioGroup
             aria-labelledby="status1"

@@ -121,7 +121,7 @@ export default function Home() {
         endIcon={<AccountCircleOutlinedIcon />}
         sx={{ mr: 1 }}
       >
-        Tạo thông tin
+        Đăng ký thông tin
       </Button>
       <Button
         variant="outlined"

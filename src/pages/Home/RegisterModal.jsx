@@ -168,7 +168,7 @@ const RegisterModal = (props) => {
       {successAlert && (
         <AlertDialog
           title="Thông báo"
-          text={'Tạo thông tin thành công'}
+          text={'Đăng ký thông tin thành công'}
           handleClose={() => setSuccessAlert(false)}
         />
       )}
@@ -183,7 +183,7 @@ const RegisterModal = (props) => {
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2} justifyContent="center" alignItems="center">
           <Grid item xs={12}>
-            <Typography variant="h6">Tạo thông tin người dùng</Typography>
+            <Typography variant="h6">Đăng ký thông tin người dùng</Typography>
           </Grid>
           <Grid
             container
@@ -342,7 +342,7 @@ const RegisterModal = (props) => {
                   mr: 2,
                 }}
               >
-                Tạo thông tin
+                Đăng ký
               </Button>
               <Button variant="text" onClick={handleClose}>
                 Đóng

@@ -137,7 +137,7 @@ const NegativeDeclarationModal = (props) => {
               endIcon={<AccountCircleOutlinedIcon />}
               onClick={handleOpenRegisterModal}
             >
-              Tạo thông tin
+              Đăng ký thông tin
             </Button>
           </Grid>
           <Grid
