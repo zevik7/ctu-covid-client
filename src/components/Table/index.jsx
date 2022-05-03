@@ -71,7 +71,7 @@ export default function EnhancedTable(props) {
     <>
       <TableContainer
         sx={{
-          maxHeight: '65vh',
+          maxHeight: '55vh',
         }}
       >
         <Table

@@ -56,13 +56,14 @@ const TableToolbar = (props) => {
       )}
 
       {numSelected > 0 && (
-        <Tooltip title="Delete">
+        <Tooltip title="Delete" sx={{ mr: 1 }}>
           <IconButton
             onClick={() => {
               setOpenModal(!openModal)
             }}
           >
             <DeleteIcon />
+            <Typography>Xóa</Typography>
           </IconButton>
         </Tooltip>
       )}
