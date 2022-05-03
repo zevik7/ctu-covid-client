@@ -49,7 +49,7 @@ export default function Login() {
       justifyContent="center"
       alignItems="center"
       sx={{
-        height: '100vh',
+        minHeight: '100vh',
         backgroundImage: (theme) => theme.palette.background.lightBlue,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
@@ -59,10 +59,10 @@ export default function Login() {
       <Box
         sx={{
           m: 2,
-          maxWidth: '600px',
+          maxWidth: '500px',
           p: {
-            md: 10,
-            xs: 5,
+            md: 6,
+            xs: 3,
           },
           display: 'flex',
           flexDirection: 'column',

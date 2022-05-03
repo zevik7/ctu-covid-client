@@ -36,7 +36,7 @@ const AuthProvider = ({ children }) => {
       },
       onLogout: () => {
         setUser({})
-        localStorage.removeItem('user')
+        localStorage.removeItem('ctu-covid-user')
       },
     }),
     [user]
