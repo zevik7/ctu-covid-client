@@ -24,3 +24,5 @@ export * from './lookup'
 export * from './admin'
 
 export * from './article'
+
+export * from './otp'

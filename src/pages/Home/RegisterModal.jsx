@@ -16,7 +16,7 @@ import { styled } from '@mui/material/styles'
 
 import Modal from '../../components/Modal'
 import AlertDialog from '../../components/AlertDialog'
-import { storeUser } from '../../api'
+import { storeUser, getOtp } from '../../api'
 
 import dateFormat from 'dateformat'
 
@@ -109,6 +109,9 @@ const RegisterModal = (props) => {
     const data = new FormData(event.currentTarget)
 
     try {
+      // Otp proccess
+      // const rs = await getOtp({ phone: '0898007389' })
+      // console.log(rs)
       await storeUser(data)
       setSuccessAlert(true)
       setForm({
