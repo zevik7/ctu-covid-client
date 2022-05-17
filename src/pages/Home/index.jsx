@@ -258,10 +258,10 @@ export default function Home() {
             alignItems="center"
             justifyContent={'center'}
           >
-            <Typography variant="h6" sx={{ mr: 1, color: 'text.secondary' }}>
+            {/* <Typography variant="h6" sx={{ mr: 1, color: 'text.secondary' }}>
               Số liệu tại
-            </Typography>
-            <ToggleButtonGroup
+            </Typography> */}
+            {/* <ToggleButtonGroup
               color="primary"
               value={areaSeleted}
               exclusive
@@ -275,7 +275,7 @@ export default function Home() {
             >
               <ToggleButton value="local">Khu vực</ToggleButton>
               <ToggleButton value="world">Thế giới</ToggleButton>
-            </ToggleButtonGroup>
+            </ToggleButtonGroup> */}
           </Grid>
         </Grid>
         {areaSeleted === 'local' && (
@@ -485,7 +485,7 @@ export default function Home() {
               >
                 <QuizOutlinedIcon />
                 <Typography variant="h6" marginLeft={1}>
-                  Các bài viết liên quan
+                  Hướng dẫn y tế
                 </Typography>
               </Box>
             </Grid>

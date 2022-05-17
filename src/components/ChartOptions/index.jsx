@@ -230,22 +230,20 @@ export const PieChartInjection = {
       size: 0,
     },
     formatter: function (seriesName, opts) {
-      return (
-        seriesName + ' ' + opts.w.globals.series[opts.seriesIndex] + '% người'
-      )
+      return seriesName + ' ' + opts.w.globals.series[opts.seriesIndex] + '%'
     },
     itemMargin: {
       vertical: 3,
     },
   },
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {
-        legend: {
-          show: false,
-        },
-      },
-    },
-  ],
+  // responsive: [
+  //   {
+  //     breakpoint: 480,
+  //     options: {
+  //       legend: {
+  //         show: false,
+  //       },
+  //     },
+  //   },
+  // ],
 }
