@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import dateformat from 'dateformat'
 
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -7,6 +8,7 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
+import Divider from '@mui/material/Divider'
 import Map from '../../components/Map'
 
 import { updateLocation } from '../../api'
@@ -53,6 +55,13 @@ const ViewModal = (props) => {
             <Typography>Số điện thoại: {data.user.phone}</Typography>
             <Typography>Email: {data.user.email}</Typography>
             <Typography>Địa chỉ: {data.user.address}</Typography>
+            <Divider />
+            <Typography>
+              <i>Ngày nhiễm: {dateformat(data.start_date, 'dd/mm/yyyy')}</i>
+            </Typography>
+            <Typography>
+              <i>Ngày khỏi: {dateformat(data.end_date, 'dd/mm/yyyy')}</i>
+            </Typography>
           </Box>
         </Grid>
         <Grid item xs={12} md={6}>

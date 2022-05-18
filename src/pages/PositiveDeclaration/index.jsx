@@ -204,7 +204,7 @@ const DeclarationHistory = () => {
         />
       )}
       <SearchBar
-        popoverContent="Có thể tìm kiếm người dùng bằng tên, số điện thoại, email, địa chỉ"
+        popoverContent="Tìm kiếm bằng tên, số điện thoại, email, địa chỉ của người dùng"
         handleOnChange={handleOnSearchChange}
         value={searchText}
       />

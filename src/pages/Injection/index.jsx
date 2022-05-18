@@ -163,7 +163,7 @@ const Injection = () => {
             Có thể tìm kiếm bằng tên, số điện thoại, email, địa chỉ của người
             dùng
             <br />
-            Có thể tìm kiếm bằng tên vắc-xin, ngày tiêm
+            Có thể tìm kiếm bằng tên vắc-xin
           </>
         }
         handleOnChange={handleOnSearchChange}

@@ -156,7 +156,7 @@ const DeclarationHistory = () => {
           <>
             Tìm kiếm người dùng bằng tên, số điện thoại, email
             <br />
-            Tìm kiếm bằng địa điểm, thời gian khai báo
+            Tìm kiếm bằng tên địa điểm
           </>
         }
         handleOnChange={handleOnSearchChange}
