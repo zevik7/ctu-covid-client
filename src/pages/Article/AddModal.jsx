@@ -80,7 +80,7 @@ const AddModal = (props) => {
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h6">Thêm bài viết</Typography>
+            <Typography variant="h6">Thêm hướng dẫn</Typography>
           </Grid>
           <Grid item xs={12}>
             <TextField
@@ -91,7 +91,7 @@ const AddModal = (props) => {
               name="title"
               autoComplete="title"
               autoFocus
-              placeholder="Nhập tiêu đề bài viết..."
+              placeholder="Nhập tiêu đề hướng dẫn..."
               value={title}
               onChange={handleChangeTitle}
             />

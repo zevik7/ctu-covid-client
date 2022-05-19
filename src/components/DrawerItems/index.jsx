@@ -71,7 +71,7 @@ export const mainListItems = (
     <LinkItem
       to="/admin/article"
       icon={<DescriptionOutlinedIcon />}
-      text="Quản lý bài viết"
+      text="Quản lý hướng dẫn y tế"
     />
   </>
 )

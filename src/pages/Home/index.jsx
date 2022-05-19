@@ -117,19 +117,19 @@ export default function Home() {
     <Box sx={props.sx} {...props}>
       <Button
         variant="outlined"
-        onClick={() => setOpenRegisterModal(true)}
-        endIcon={<AccountCircleOutlinedIcon />}
-        sx={{ mr: 1 }}
-      >
-        Đăng ký thông tin
-      </Button>
-      <Button
-        variant="outlined"
         onClick={() => setOpenLookupModal(true)}
         endIcon={<SearchIcon />}
         sx={{ mr: 1 }}
       >
         Tra cứu
+      </Button>
+      <Button
+        variant="outlined"
+        onClick={() => setOpenRegisterModal(true)}
+        endIcon={<AccountCircleOutlinedIcon />}
+        sx={{ mr: 1 }}
+      >
+        Đăng ký thông tin
       </Button>
       <Button
         variant="outlined"

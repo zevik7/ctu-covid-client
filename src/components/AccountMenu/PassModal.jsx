@@ -100,6 +100,7 @@ const PassModal = (props) => {
               margin="normal"
               id="password"
               label="Mật khẩu cũ"
+              type="password"
               name="password"
               value={form.password.value}
               onChange={(e) => handleInput(e)}
@@ -111,6 +112,7 @@ const PassModal = (props) => {
               fullWidth
               margin="normal"
               id="newPassword"
+              type="password"
               label="Nhập mật khẩu mởi"
               name="newPassword"
               value={form.newPassword.value}
@@ -123,6 +125,7 @@ const PassModal = (props) => {
               fullWidth
               margin="normal"
               id="retypeNewPassWord"
+              type="password"
               label="Nhập lại mật khẩu mởi"
               name="retypeNewPassWord"
               value={form.retypeNewPassWord.value}

@@ -312,7 +312,7 @@ export default function Home() {
                 }}
                 series={[
                   {
-                    name: 'Số ca nhiễm',
+                    name: 'Số lượt khai báo',
                     data: hdStat.count_by_timestamp,
                   },
                 ]}

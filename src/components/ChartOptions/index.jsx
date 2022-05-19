@@ -159,7 +159,7 @@ export const ZoomableTimeHealthDeclaCount = {
   },
   yaxis: {
     title: {
-      text: 'Số ca',
+      text: 'Số lượt khi báo',
     },
   },
   xaxis: {
